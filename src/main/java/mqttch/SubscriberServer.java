@@ -1,5 +1,7 @@
 package mqttch;
 
+import org.eclipse.paho.client.mqttv3.MqttException;
+
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
@@ -55,6 +57,8 @@ public class SubscriberServer extends Thread {
             System.out.println("eClientData : " + eClientData);
             List<String> MessageList = StaticApp.GetListFromString(eClientData);
 
+            System.out.println("MessageList.size :" + MessageList.size());
+
             if (MessageList.size() == 4) {
 
                 String ActionType = MessageList.get(0);
@@ -67,20 +71,36 @@ public class SubscriberServer extends Thread {
                 System.out.println("SubcriberType :" + SubcriberType);
                 System.out.println("SubscriberId :" + SubscriberId);
 
-                if (!ActionType.equals("add") || !ActionType.equals("delete")) {
+
+                if (!(ActionType.equals("add") || ActionType.equals("delete"))) {
                     OutMessage = "Неизвестный тип операции;";
                 }
 
-                if (!SubcriberType.equals("sensor") || !SubcriberType.equals("state")) {
+                if (!(SubcriberType.equals("sensor") || SubcriberType.equals("state"))) {
                     OutMessage = OutMessage + "Неизвестный тип подписчика;";
                 }
 
                 if (OutMessage.equals("")) {
+                    String topicName = UserLog + "/" + SubscriberId;
                     try {
-                        StaticApp.SubscriberList.add(new Subscriber(UserLog + "/" + SubscriberId));
-                        OutMessage = "Подписчик " + UserLog + "/" + SubscriberId + " успешно добавлен";
-                    } catch (Exception e) {
-                        OutMessage = OutMessage + "Ошибка добавления подписчика;";
+                        if (ActionType.equals("add")) {
+                            StaticApp.SubscriberList.add(new Subscriber(topicName));
+                            OutMessage = "Подписчик " + topicName + " успешно добавлен";
+                        } else {
+                            int SubscriberIndx = StaticApp.getSubsriberIndexByName(topicName);
+                            if (SubscriberIndx != -1){
+                                Subscriber s1 = StaticApp.SubscriberList.get(SubscriberIndx);
+                                s1.interrupt();
+                                StaticApp.SubscriberList.remove(SubscriberIndx);
+                                s1 = null;
+                                System.gc();
+                                OutMessage = "Подписчик " + topicName + " успешно удалён";
+                            } else {
+                                OutMessage = "Подписчик " + topicName + " не найден";
+                            }
+                        }
+                    } catch (Throwable e) {
+                        OutMessage = "Ошибка добавления подписчика;";
                     }
                 }
             } else {
