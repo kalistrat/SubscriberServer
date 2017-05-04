@@ -80,29 +80,37 @@ public class SubscriberServer extends Thread {
                     OutMessage = OutMessage + "Неизвестный тип подписчика;";
                 }
 
-                if (OutMessage.equals("")) {
-                    String topicName = UserLog + "/" + SubscriberId;
-                    try {
-                        if (ActionType.equals("add")) {
-                            StaticApp.SubscriberList.add(new Subscriber(topicName));
-                            OutMessage = "Подписчик " + topicName + " успешно добавлен";
-                        } else {
-                            int SubscriberIndx = StaticApp.getSubsriberIndexByName(topicName);
-                            if (SubscriberIndx != -1){
-                                Subscriber s1 = StaticApp.SubscriberList.get(SubscriberIndx);
-                                s1.interrupt();
-                                StaticApp.SubscriberList.remove(SubscriberIndx);
-                                s1 = null;
-                                System.gc();
-                                OutMessage = "Подписчик " + topicName + " успешно удалён";
+                    if (OutMessage.equals("")) {
+                        String topicName = UserLog + "/" + SubscriberId;
+                        int SubscriberIndx = StaticApp.getSubsriberIndexByName(topicName);
+                        try {//sensorListUpdate
+                            if (ActionType.equals("add")) {
+                                if (SubscriberIndx == -1) {
+                                    StaticApp.SubscriberList.add(new Subscriber(topicName));
+                                    OutMessage = "Подписчик " + topicName + " успешно добавлен";
+                                } else {
+                                    OutMessage = "Подписчик " + topicName + " уже добавлен";
+                                }
+
                             } else {
-                                OutMessage = "Подписчик " + topicName + " не найден";
+                                if (SubscriberIndx != -1) {
+                                    Subscriber s1 = StaticApp.SubscriberList.get(SubscriberIndx);
+                                    s1.client.disconnect();
+                                    StaticApp.SubscriberList.remove(SubscriberIndx);
+                                    //s1 = null;
+                                    //System.gc();
+                                    OutMessage = "Подписчик " + topicName + " успешно удалён";
+                                } else {
+                                    OutMessage = "Подписчик " + topicName + " не найден";
+                                }
                             }
-                        }
-                    } catch (Throwable e) {
-                        OutMessage = "Ошибка добавления подписчика;";
+                        } catch(Throwable e) {
+                            OutMessage = "Ошибка подключения\\отключения подписчика;";
+                        }//sensorListUpdate
+                        //itransitionListUpdate
+                        //dtransitionListUpdate
                     }
-                }
+
             } else {
                 OutMessage = "Неподдерживаемый тип сообщения;";
             }
