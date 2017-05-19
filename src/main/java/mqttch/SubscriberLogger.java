@@ -2,19 +2,23 @@ package mqttch;
 
 import org.eclipse.paho.client.mqttv3.*;
 
+import java.util.List;
+
 /**
  * Created by kalistrat on 02.05.2017.
  */
-public class Subscriber implements MqttCallback {
+public class SubscriberLogger implements MqttCallback {
 
     String TopicName;
     MqttClient client;
+    String MqttHostName;
 
-    public Subscriber(String topicName) throws Throwable {
+    public SubscriberLogger(String topicName,String mqttServerHost) throws Throwable {
 
         try {
             TopicName = topicName;
-            client = new MqttClient("tcp://localhost:1883", TopicName);
+            MqttHostName = mqttServerHost;
+            client = new MqttClient("tcp://" + MqttHostName, TopicName);
             client.connect();
             client.setCallback(this);
             client.subscribe(TopicName);
@@ -48,7 +52,17 @@ public class Subscriber implements MqttCallback {
 
     public void messageArrived(String topic, MqttMessage message)
             throws Exception {
-        System.out.println(topic + " : " + message);
+        //System.out.println(topic + " : " + message);
+        //TopicName: UserLog/DeviceId/W
+
+        List<String> TopicAttr = MessageHandling.GetListFromString(topic);
+        String iUserLog = TopicAttr.get(0);
+        Integer iDeviceId = Integer.parseInt(TopicAttr.get(1));
+        String iTopicType = TopicAttr.get(2);
+        if (iTopicType.equals("W")) {
+            MessageHandling.topicDataLog(iDeviceId, message.toString());
+        }
+
     }
 
 

@@ -13,7 +13,7 @@ public class Main {
         try {
 
             int i = 0;
-            //List<Subscriber> SubscriberList = new ArrayList<Subscriber>();
+            //List<SubscriberLogger> SubscriberList = new ArrayList<SubscriberLogger>();
 
             ServerSocket server = new ServerSocket(3128, 0,
                     InetAddress.getByName("localhost"));
