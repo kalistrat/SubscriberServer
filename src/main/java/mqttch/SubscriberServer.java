@@ -38,7 +38,7 @@ public class SubscriberServer extends Thread {
 
             String ClientData = new String(buf, 0, r);
             // выводим данные:
-            os.write(MessageHandling.ExecuteMessage(ClientData).getBytes());
+            os.write(MessageHandling.ExecuteMessage(ClientData).getBytes("UTF8"));
             // завершаем соединение
             s.close();
         }

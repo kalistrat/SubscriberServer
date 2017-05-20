@@ -6,7 +6,7 @@
 
     <groupId>groupId</groupId>
     <artifactId>SubscriberServer</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
 
     <repositories>
         <repository>
@@ -28,5 +28,43 @@
         </dependency>
     </dependencies>
 
-    
+    <build>
+        <plugins>
+            <plugin>
+                <!-- Build an executable JAR -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.0.2</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <mainClass>mqttch.Main</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-dependency-plugin</artifactId>
+            <executions>
+                <execution>
+                    <id>copy-dependencies</id>
+                    <phase>package</phase>
+                    <goals>
+                        <goal>copy-dependencies</goal>
+                    </goals>
+                    <configuration>
+                        <outputDirectory>${project.build.directory}/lib</outputDirectory>
+                        <overWriteReleases>false</overWriteReleases>
+                        <overWriteSnapshots>false</overWriteSnapshots>
+                        <overWriteIfNewer>true</overWriteIfNewer>
+                    </configuration>
+                </execution>
+            </executions>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>

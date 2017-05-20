@@ -14,16 +14,25 @@ public class MessageHandling {
     static final private String USER = "kalistrat";
     static final private String PASS = "045813";
 
-    public static List<SubscriberLogger> SubscriberLoggerList = new ArrayList<SubscriberLogger>();
+    //public static List<SubscriberLogger> SubscriberLoggerList = new ArrayList<SubscriberLogger>();
 
     public static int getSubsriberIndexByName(String sName){
         int indx = -1;
-        for (SubscriberLogger iObj : SubscriberLoggerList) {
+        for (SubscriberLogger iObj : Main.SubscriberLoggerList) {
             if (iObj.TopicName.equals(sName)) {
-                indx = SubscriberLoggerList.indexOf(iObj);
+                indx = Main.SubscriberLoggerList.indexOf(iObj);
             }
         }
         return indx;
+    }
+
+    public static Double StrToDouble(String StrValue){
+        try {
+            //System.out.println(Sval);
+            return Double.parseDouble(StrValue.replace(",","."));
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 
     public static List<String> GetListFromString(String DevidedString){
@@ -135,7 +144,7 @@ public class MessageHandling {
                     , PASS
             );
 
-            CallableStatement Stmt = Con.prepareCall("{call s_p_topic_initial(?, ?, ?, ?)}");
+            CallableStatement Stmt = Con.prepareCall("{call s_p_sensor_initial(?, ?, ?, ?)}");
             Stmt.setString(1, qUserLog);
             Stmt.setInt(2, iDeviceId);
             Stmt.registerOutParameter(3, Types.VARCHAR);
@@ -143,8 +152,8 @@ public class MessageHandling {
 
             Stmt.execute();
 
-            TopicName = Stmt.getString(1);
-            MqttServerHost = Stmt.getString(2);
+            TopicName = Stmt.getString(3);
+            MqttServerHost = Stmt.getString(4);
 
             Con.close();
 
@@ -166,7 +175,7 @@ public class MessageHandling {
             try {
                 if (qActionType.equals("add")) {
                     if (SubscriberIndx == -1) {
-                        MessageHandling.SubscriberLoggerList.add(new SubscriberLogger(TopicName,MqttServerHost));
+                        Main.SubscriberLoggerList.add(new SubscriberLogger(TopicName,MqttServerHost));
                         outMess = "Подписчик " + TopicName + " успешно добавлен";
                     } else {
                         outMess = "Подписчик " + TopicName + " уже добавлен";
@@ -174,9 +183,9 @@ public class MessageHandling {
 
                 } else {
                     if (SubscriberIndx != -1) {
-                        SubscriberLogger s1 = MessageHandling.SubscriberLoggerList.get(SubscriberIndx);
+                        SubscriberLogger s1 = Main.SubscriberLoggerList.get(SubscriberIndx);
                         s1.client.disconnect();
-                        MessageHandling.SubscriberLoggerList.remove(SubscriberIndx);
+                        Main.SubscriberLoggerList.remove(SubscriberIndx);
                         //s1 = null;
                         //System.gc();
                         outMess = "Подписчик " + TopicName + " успешно удалён";
@@ -194,7 +203,10 @@ public class MessageHandling {
         return outMess;
     }
 
-    public static void topicDataLog(int qDeviceId,String mqttMes){
+    public static void topicDataLog(int qDeviceId
+            ,String mqttMes
+            ,Double doubleValue
+    ){
         try {
 
             Class.forName(JDBC_DRIVER);
@@ -204,9 +216,10 @@ public class MessageHandling {
                     , PASS
             );
 
-            CallableStatement Stmt = Con.prepareCall("{call s_p_topic_data_log(?, ?)}");
+            CallableStatement Stmt = Con.prepareCall("{call s_p_topic_data_log(?, ?, ?)}");
             Stmt.setInt(1, qDeviceId);
             Stmt.setString(2, mqttMes);
+            Stmt.setDouble(3,doubleValue);
             Stmt.execute();
 
             Con.close();
@@ -219,5 +232,49 @@ public class MessageHandling {
             e.printStackTrace();
         }
 
+    }
+
+    public static void createSubscriberLoggerList(){
+        try {
+            Class.forName(JDBC_DRIVER);
+            Connection Con = DriverManager.getConnection(
+                    DB_URL
+                    , USER
+                    , PASS
+            );
+
+            String DataSql = "select 'add'\n" +
+                    ",u.user_log\n" +
+                    ",ud.user_device_id\n" +
+                    "from user_device ud\n" +
+                    "join users u on u.user_id=ud.user_id";
+
+            PreparedStatement DataStmt = Con.prepareStatement(DataSql);
+
+
+            ResultSet DataRs = DataStmt.executeQuery();
+
+            while (DataRs.next()) {
+
+                System.out.println(
+
+                        DataRs.getString(1)
+                        +DataRs.getString(2)
+                        +String.valueOf(DataRs.getInt(3))
+                        + " : "
+                        + sensorListUpdate(DataRs.getString(1),DataRs.getString(2),String.valueOf(DataRs.getInt(3)))
+                );
+            }
+
+
+            Con.close();
+
+        } catch (SQLException se3) {
+            //Handle errors for JDBC
+            se3.printStackTrace();
+        } catch (Exception e13) {
+            //Handle errors for Class.forName
+            e13.printStackTrace();
+        }
     }
 }

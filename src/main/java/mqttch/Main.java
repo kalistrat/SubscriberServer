@@ -7,18 +7,23 @@ import java.util.List;
 
 public class Main {
 
+    public static List<SubscriberLogger> SubscriberLoggerList;
+
 
     public static void main(String[] args) {
 
         try {
 
             int i = 0;
-            //List<SubscriberLogger> SubscriberList = new ArrayList<SubscriberLogger>();
+            SubscriberLoggerList = new ArrayList<SubscriberLogger>();
 
             ServerSocket server = new ServerSocket(3128, 0,
                     InetAddress.getByName("localhost"));
 
             System.out.println("Сервер стартовал...");
+            System.out.println("Создание подписчиков для датчиков...");
+            MessageHandling.createSubscriberLoggerList();
+            System.out.println("Подписка завершена");
 
             // слушаем порт
             while(true) {

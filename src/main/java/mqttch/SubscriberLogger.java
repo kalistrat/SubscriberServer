@@ -18,7 +18,7 @@ public class SubscriberLogger implements MqttCallback {
         try {
             TopicName = topicName;
             MqttHostName = mqttServerHost;
-            client = new MqttClient("tcp://" + MqttHostName, TopicName);
+            client = new MqttClient("tcp://" + MqttHostName, TopicName, null);
             client.connect();
             client.setCallback(this);
             client.subscribe(TopicName);
@@ -59,8 +59,10 @@ public class SubscriberLogger implements MqttCallback {
         String iUserLog = TopicAttr.get(0);
         Integer iDeviceId = Integer.parseInt(TopicAttr.get(1));
         String iTopicType = TopicAttr.get(2);
+        String iStringMessage = message.toString();
+        Double iDoubleValue = MessageHandling.StrToDouble(iStringMessage);
         if (iTopicType.equals("W")) {
-            MessageHandling.topicDataLog(iDeviceId, message.toString());
+            MessageHandling.topicDataLog(iDeviceId, iStringMessage, iDoubleValue);
         }
 
     }
