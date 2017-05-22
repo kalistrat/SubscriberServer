@@ -68,7 +68,7 @@ public class MessageHandling {
             System.out.println("eClientData : " + eClientData);
             List<String> MessageList = MessageHandling.GetListFromString(eClientData);
 
-            System.out.println("MessageList.size :" + MessageList.size());
+            //System.out.println("MessageList.size :" + MessageList.size());
 
             if (MessageList.size() == 4) {
 
@@ -77,10 +77,10 @@ public class MessageHandling {
                 String SubcriberType = MessageList.get(2);
                 String SubscriberId = MessageList.get(3);
 
-                System.out.println("ActionType :" + ActionType);
-                System.out.println("UserLog :" + UserLog);
-                System.out.println("SubcriberType :" + SubcriberType);
-                System.out.println("SubscriberId :" + SubscriberId);
+//                System.out.println("ActionType :" + ActionType);
+//                System.out.println("UserLog :" + UserLog);
+//                System.out.println("SubcriberType :" + SubcriberType);
+//                System.out.println("SubscriberId :" + SubscriberId);
 
 
                 if (!(
@@ -104,24 +104,26 @@ public class MessageHandling {
                     }
 
                     if (SubcriberType.equals("i_transion")) {
-                        OutMessage = "добавление\\удаление независимых переходов не поддерживается";
+                        OutMessage = "добавление\\удаление независимых переходов не поддерживается;";
                     }
 
                     if (SubcriberType.equals("d_transion")) {
-                        OutMessage = "добавление\\удаление зависимых переходов не поддерживается";
+                        OutMessage = "добавление\\удаление зависимых переходов не поддерживается;";
                     }
 
                     //itransitionListUpdate
                     //dtransitionListUpdate
+                } else {
+                    OutMessage = "N|" + OutMessage + "|";
                 }
 
             } else {
-                OutMessage = "Неподдерживаемый тип сообщения;";
+                OutMessage = "N|Неподдерживаемый тип сообщения;|";
             }
 
             return OutMessage;
         } catch (Exception eMessageHandling){
-            return "Ошибка обработчика сообщения";
+            return "N|Ошибка обработчика сообщения;|";
         }
     }
 
@@ -176,9 +178,9 @@ public class MessageHandling {
                 if (qActionType.equals("add")) {
                     if (SubscriberIndx == -1) {
                         Main.SubscriberLoggerList.add(new SubscriberLogger(TopicName,MqttServerHost));
-                        outMess = "Подписчик " + TopicName + " успешно добавлен";
+                        outMess = "Y|"+"Подписчик " + TopicName + " успешно добавлен" + "|";
                     } else {
-                        outMess = "Подписчик " + TopicName + " уже добавлен";
+                        outMess = "N|"+"Подписчик " + TopicName + " уже добавлен" + "|";
                     }
 
                 } else {
@@ -188,16 +190,16 @@ public class MessageHandling {
                         Main.SubscriberLoggerList.remove(SubscriberIndx);
                         //s1 = null;
                         //System.gc();
-                        outMess = "Подписчик " + TopicName + " успешно удалён";
+                        outMess = "Y|"+"Подписчик " + TopicName + " успешно удалён" + "|";
                     } else {
-                        outMess = "Подписчик " + TopicName + " не найден";
+                        outMess = "N|"+"Подписчик " + TopicName + " не найден" + "|";
                     }
                 }
             } catch (Throwable e) {
-                outMess = "Ошибка подключения к mqtt-серверу;";
+                outMess = "N|Ошибка подключения к mqtt-серверу;|";
             }
         } else {
-            outMess = "Ошибка инициализации устройства из базы данных";
+            outMess = "N|Ошибка инициализации устройства из базы данных;|";
         }
 
         return outMess;

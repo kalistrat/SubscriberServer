@@ -18,6 +18,9 @@ public class SubscriberLogger implements MqttCallback {
         try {
             TopicName = topicName;
             MqttHostName = mqttServerHost;
+            //MqttConnectOptions options = new MqttConnectOptions();
+            //options.setConnectionTimeout(0);
+            //options.setKeepAliveInterval(0);
             client = new MqttClient("tcp://" + MqttHostName, TopicName, null);
             client.connect();
             client.setCallback(this);
