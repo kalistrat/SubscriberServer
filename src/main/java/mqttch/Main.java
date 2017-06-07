@@ -8,6 +8,7 @@ import java.util.List;
 public class Main {
 
     public static List<SubscriberLogger> SubscriberLoggerList;
+    public static List<DtransitionCondition> DtransitionConditionList;
 
 
     public static void main(String[] args) {
@@ -16,6 +17,7 @@ public class Main {
 
             int i = 0;
             SubscriberLoggerList = new ArrayList<SubscriberLogger>();
+            DtransitionConditionList = new ArrayList<DtransitionCondition>();
 
             ServerSocket server = new ServerSocket(3128, 0,
                     InetAddress.getByName("localhost"));

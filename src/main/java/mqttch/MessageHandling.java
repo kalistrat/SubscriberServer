@@ -9,10 +9,10 @@ import java.util.List;
  */
 public class MessageHandling {
 
-    static final private String JDBC_DRIVER = "com.mysql.jdbc.Driver";
-    static final private String DB_URL = "jdbc:mysql://localhost/things";
-    static final private String USER = "kalistrat";
-    static final private String PASS = "045813";
+    static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
+    static final String DB_URL = "jdbc:mysql://localhost/things";
+    static final String USER = "kalistrat";
+    static final String PASS = "045813";
 
     //public static List<SubscriberLogger> SubscriberLoggerList = new ArrayList<SubscriberLogger>();
 
@@ -21,6 +21,16 @@ public class MessageHandling {
         for (SubscriberLogger iObj : Main.SubscriberLoggerList) {
             if (iObj.TopicName.equals(sName)) {
                 indx = Main.SubscriberLoggerList.indexOf(iObj);
+            }
+        }
+        return indx;
+    }
+
+    public static int getItransitionConditionIndexByName(String sName){
+        int indx = -1;
+        for (DtransitionCondition iObj : Main.DtransitionConditionList) {
+            if (iObj.ReadTopicName.equals(sName)) {
+                indx = Main.DtransitionConditionList.indexOf(iObj);
             }
         }
         return indx;
@@ -75,7 +85,7 @@ public class MessageHandling {
                 String ActionType = MessageList.get(0);
                 String UserLog = MessageList.get(1);
                 String SubcriberType = MessageList.get(2);
-                String SubscriberId = MessageList.get(3);
+                String EntityId = MessageList.get(3);
 
 //                System.out.println("ActionType :" + ActionType);
 //                System.out.println("UserLog :" + UserLog);
@@ -100,7 +110,7 @@ public class MessageHandling {
 
                 if (OutMessage.equals("")) {
                     if (SubcriberType.equals("sensor")) {
-                        OutMessage = sensorListUpdate(ActionType, UserLog, SubscriberId);
+                        OutMessage = sensorListUpdate(ActionType, UserLog, EntityId);
                     }
 
                     if (SubcriberType.equals("i_transion")) {
@@ -108,7 +118,7 @@ public class MessageHandling {
                     }
 
                     if (SubcriberType.equals("d_transion")) {
-                        OutMessage = "добавление\\удаление зависимых переходов не поддерживается;";
+                        OutMessage = dTransitionListUpdate(ActionType,UserLog,EntityId);
                     }
 
                     //itransitionListUpdate
@@ -123,6 +133,7 @@ public class MessageHandling {
 
             return OutMessage;
         } catch (Exception eMessageHandling){
+            eMessageHandling.printStackTrace();
             return "N|Ошибка обработчика сообщения;|";
         }
     }
@@ -278,5 +289,113 @@ public class MessageHandling {
             //Handle errors for Class.forName
             e13.printStackTrace();
         }
+    }
+
+    public static String dTransitionListUpdate(
+            String qActionType
+            ,String qUserLog
+            ,String qConditionId
+    ){
+        String outMess;
+        String ReadTopicName = "";
+        String MqttServerHost = "";
+        String leftExpr = "";
+        String rightExpr = "";
+        String signExpr = "";
+        Integer TimeInt = null;
+
+        int iConditionId = Integer.parseInt(qConditionId);
+
+        try {
+
+            Class.forName(JDBC_DRIVER);
+            Connection Con = DriverManager.getConnection(
+                    DB_URL
+                    , USER
+                    , PASS
+            );
+
+            String DataSql = "select ud.mqtt_topic_read\n" +
+                    ",concat(ms.server_ip,concat(':',ms.server_port))\n" +
+                    ",uasc.left_part_expression\n" +
+                    ",uasc.right_part_expression\n" +
+                    ",uasc.sign_expression\n" +
+                    ",uasc.condition_interval\n" +
+                    "from user_actuator_state_condition uasc\n" +
+                    "join user_actuator_state uas on uas.user_actuator_state_id=uasc.user_actuator_state_id\n" +
+                    "join user_device ud on ud.user_device_id=uas.user_device_id\n" +
+                    "join mqtt_servers ms on ms.server_id=ud.mqqt_server_id\n" +
+                    "where uasc.actuator_state_condition_id = ?";
+
+            PreparedStatement DataStmt = Con.prepareStatement(DataSql);
+            DataStmt.setInt(1, iConditionId);
+
+
+            ResultSet DataRs = DataStmt.executeQuery();
+
+            while (DataRs.next()) {
+                ReadTopicName = DataRs.getString(1);
+                MqttServerHost = DataRs.getString(2);
+                leftExpr = DataRs.getString(3);
+                rightExpr = DataRs.getString(4);
+                signExpr = DataRs.getString(5);
+                TimeInt = DataRs.getInt(6);
+            }
+
+            Con.close();
+
+        }catch(SQLException se){
+            //Handle errors for JDBC
+            se.printStackTrace();
+        }catch(Exception e) {
+            //Handle errors for Class.forName
+            e.printStackTrace();
+        }
+
+        if (ReadTopicName == null) {
+            ReadTopicName = "";
+        }
+
+        if (!ReadTopicName.equals("")) {
+
+            int ConditionIndx = MessageHandling.getItransitionConditionIndexByName(ReadTopicName);
+            try {
+                if (qActionType.equals("add")) {
+                    if (ConditionIndx == -1) {
+                        Main.DtransitionConditionList.add(new DtransitionCondition(
+                                ReadTopicName
+                                ,MqttServerHost
+                                ,leftExpr
+                                ,rightExpr
+                                ,signExpr
+                                ,TimeInt
+                                ,iConditionId
+                            )
+                        );
+                        outMess = "Y|"+"Зависимый переход " + ReadTopicName + " успешно добавлен" + "|";
+                    } else {
+                        outMess = "N|"+"Зависимый переход " + ReadTopicName + " уже добавлен" + "|";
+                    }
+
+                } else {
+                    if (ConditionIndx != -1) {
+                        DtransitionCondition ic1 = Main.DtransitionConditionList.get(ConditionIndx);
+                        ic1.disconnectVarList();
+                        Main.DtransitionConditionList.remove(ConditionIndx);
+                        //s1 = null;
+                        //System.gc();
+                        outMess = "Y|"+"Зависимый переход " + ReadTopicName + " успешно удалён" + "|";
+                    } else {
+                        outMess = "N|"+"Зависимый переход " + ReadTopicName + " не найден" + "|";
+                    }
+                }
+            } catch (Throwable e) {
+                outMess = "N|Ошибка подключения к mqtt-серверу;|";
+            }
+        } else {
+            outMess = "N|Ошибка инициализации условия из базы данных;|";
+        }
+
+        return outMess;
     }
 }

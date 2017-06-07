@@ -18,7 +18,7 @@ public class ConditionVariable implements MqttCallback,Listenable {
     String VarName;
     VarListener varListener;
 
-    public ConditionVariable(String topicName,String mqttServerHost, String varName) throws Throwable {
+    public ConditionVariable(int conditionId,String topicName,String mqttServerHost, String varName) throws Throwable {
 
         try {
             TopicName = topicName;
@@ -28,7 +28,7 @@ public class ConditionVariable implements MqttCallback,Listenable {
             VarValue = null;
             MqttConnectOptions options = new MqttConnectOptions();
             options.setConnectionTimeout(0);
-            client = new MqttClient("tcp://" + MqttHostName, TopicName, null);
+            client = new MqttClient("tcp://" + MqttHostName, VarName + String.valueOf(conditionId), null);
             client.connect(options);
             client.setCallback(this);
             client.subscribe(TopicName);
@@ -48,6 +48,7 @@ public class ConditionVariable implements MqttCallback,Listenable {
             throws Exception {
         setVariableValue(message.toString());
         varListener.afterValueChange(VarName);
+        System.out.println("topic : " + topic);
     }
 
 
