@@ -18,7 +18,10 @@ public class ConditionVariable implements MqttCallback,Listenable {
     String VarName;
     VarListener varListener;
 
-    public ConditionVariable(int conditionId,String topicName,String mqttServerHost, String varName) throws Throwable {
+    public ConditionVariable(int conditionId
+            ,String topicName
+            ,String mqttServerHost
+            , String varName) throws Throwable {
 
         try {
             TopicName = topicName;

@@ -68,10 +68,12 @@ public class DtransitionCondition {
 
                 VarsList.add(new ConditionVariable(
                         qConditionId
-                        ,DataRs.getString(1)
-                        ,DataRs.getString(3)
-                        ,DataRs.getString(2)
+                        ,DataRs.getString(2)//String topicName
+                        ,DataRs.getString(3)//String mqttServerHost
+                        ,DataRs.getString(1)//String varName
                 ));
+
+
 
             }
 

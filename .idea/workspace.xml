@@ -7,13 +7,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6527b389-cdbd-482e-a02b-cfd0bcb699b8" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/mqttch/DtransitionCondition.java" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/src/main/java/mqttch/ItransitionCondition.java" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/mqttch/Main.class" afterPath="$PROJECT_DIR$/target/classes/mqttch/Main.class" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/mqttch/ConditionVariable.java" afterPath="$PROJECT_DIR$/src/main/java/mqttch/ConditionVariable.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/mqttch/Main.java" afterPath="$PROJECT_DIR$/src/main/java/mqttch/Main.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/mqttch/MessageHandling.java" afterPath="$PROJECT_DIR$/src/main/java/mqttch/MessageHandling.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/mqttch/DtransitionCondition.java" afterPath="$PROJECT_DIR$/src/main/java/mqttch/DtransitionCondition.java" />
     </list>
     <ignored path="SubscriberServer.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -37,10 +32,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="Main.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Main.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.6993671">
+            <state vertical-scroll-proportion="0.0">
               <caret line="26" column="12" selection-start-line="26" selection-start-column="12" selection-end-line="26" selection-end-column="12" />
               <folding>
                 <element signature="imports" expanded="true" />
@@ -56,7 +51,6 @@
               <caret line="30" column="27" selection-start-line="30" selection-start-column="27" selection-end-line="30" selection-end-column="27" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#1518#1526#0" expanded="true" />
                 <marker date="1496866562263" expanded="true" signature="8641:8845" placeholder="select 'add'... user_device" />
                 <marker date="1496866562263" expanded="true" signature="10319:11040" placeholder="select ud.mq... user_actuator_state_condition" />
               </folding>
@@ -74,17 +68,15 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="DtransitionCondition.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="DtransitionCondition.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/DtransitionCondition.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="69" column="36" selection-start-line="69" selection-start-column="36" selection-end-line="69" selection-end-column="36" />
+            <state vertical-scroll-proportion="0.82753164">
+              <caret line="75" column="0" selection-start-line="75" selection-start-column="0" selection-end-line="75" selection-end-column="0" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#840#1044#0" expanded="true" />
-                <element signature="e#1043#1044#0" expanded="true" />
-                <marker date="1496868069120" expanded="true" signature="825:1046" placeholder="..." />
-                <marker date="1496868069120" expanded="true" signature="1418:1851" placeholder="select cv.va... user_state_condition_vars" />
+                <marker date="1496870467516" expanded="true" signature="825:1046" placeholder="..." />
+                <marker date="1496870467516" expanded="true" signature="1418:1851" placeholder="select cv.va... user_state_condition_vars" />
               </folding>
             </state>
           </provider>
@@ -104,11 +96,9 @@
         <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/ConditionVariable.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="30" column="68" selection-start-line="30" selection-start-column="61" selection-end-line="30" selection-end-column="68" />
+              <caret line="23" column="28" selection-start-line="23" selection-start-column="13" selection-end-line="23" selection-end-column="28" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#1747#1748#0" expanded="true" />
-                <element signature="e#1790#1791#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -167,9 +157,9 @@
         <option value="$PROJECT_DIR$/src/main/java/mqttch/VarListener.java" />
         <option value="$PROJECT_DIR$/src/main/java/mqttch/ItransitionCondition.java" />
         <option value="$PROJECT_DIR$/src/main/java/mqttch/MessageHandling.java" />
-        <option value="$PROJECT_DIR$/src/main/java/mqttch/DtransitionCondition.java" />
-        <option value="$PROJECT_DIR$/src/main/java/mqttch/ConditionVariable.java" />
         <option value="$PROJECT_DIR$/src/main/java/mqttch/Main.java" />
+        <option value="$PROJECT_DIR$/src/main/java/mqttch/ConditionVariable.java" />
+        <option value="$PROJECT_DIR$/src/main/java/mqttch/DtransitionCondition.java" />
       </list>
     </option>
   </component>
@@ -262,9 +252,9 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
-      <pane id="Scratches" />
       <pane id="PackagesPane" />
+      <pane id="Scratches" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -342,7 +332,7 @@
   <component name="PropertiesComponent">
     <property name="aspect.path.notification.shown" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../SampleClient" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="project.structure.last.edited" value="Artifacts" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
@@ -821,11 +811,12 @@
       <workItem from="1495466971128" duration="282000" />
       <workItem from="1496827807794" duration="11127000" />
       <workItem from="1496863037381" duration="5742000" />
+      <workItem from="1496870307044" duration="272000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="70911000" />
+    <option name="totallyTimeSpent" value="71183000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1296" height="1000" extended-state="6" />
@@ -908,7 +899,6 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#1518#1526#0" expanded="true" />
             <marker date="1496866562263" expanded="true" signature="8641:8845" placeholder="select 'add'... user_device" />
             <marker date="1496866562263" expanded="true" signature="10319:11040" placeholder="select ud.mq... user_actuator_state_condition" />
           </folding>
@@ -947,7 +937,6 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#1518#1526#0" expanded="true" />
             <marker date="1496866562263" expanded="true" signature="8641:8845" placeholder="select 'add'... user_device" />
             <marker date="1496866562263" expanded="true" signature="10319:11040" placeholder="select ud.mq... user_actuator_state_condition" />
           </folding>
@@ -986,7 +975,6 @@
           <caret line="121" column="22" selection-start-line="121" selection-start-column="22" selection-end-line="121" selection-end-column="22" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#1518#1526#0" expanded="true" />
             <marker date="1496866562263" expanded="true" signature="8641:8845" placeholder="select 'add'... user_device" />
             <marker date="1496866562263" expanded="true" signature="10319:11040" placeholder="select ud.mq... user_actuator_state_condition" />
           </folding>
@@ -1025,7 +1013,6 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#1518#1526#0" expanded="true" />
             <marker date="1496866562263" expanded="true" signature="8641:8845" placeholder="select 'add'... user_device" />
             <marker date="1496866562263" expanded="true" signature="10319:11040" placeholder="select ud.mq... user_actuator_state_condition" />
           </folding>
@@ -1064,7 +1051,6 @@
           <caret line="28" column="36" selection-start-line="28" selection-start-column="25" selection-end-line="28" selection-end-column="36" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#1518#1526#0" expanded="true" />
             <marker date="1496866562263" expanded="true" signature="8641:8845" placeholder="select 'add'... user_device" />
             <marker date="1496866562263" expanded="true" signature="10319:11040" placeholder="select ud.mq... user_actuator_state_condition" />
           </folding>
@@ -1103,7 +1089,6 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#1518#1526#0" expanded="true" />
             <marker date="1496866562263" expanded="true" signature="8641:8845" placeholder="select 'add'... user_device" />
             <marker date="1496866562263" expanded="true" signature="10319:11040" placeholder="select ud.mq... user_actuator_state_condition" />
           </folding>
@@ -1150,7 +1135,6 @@
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#1518#1526#0" expanded="true" />
             <marker date="1496866562263" expanded="true" signature="8641:8845" placeholder="select 'add'... user_device" />
             <marker date="1496866562263" expanded="true" signature="10319:11040" placeholder="select ud.mq... user_actuator_state_condition" />
           </folding>
@@ -1189,7 +1173,6 @@
           <caret line="59" column="22" selection-start-line="59" selection-start-column="22" selection-end-line="59" selection-end-column="22" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#1518#1526#0" expanded="true" />
             <marker date="1496866562263" expanded="true" signature="8641:8845" placeholder="select 'add'... user_device" />
             <marker date="1496866562263" expanded="true" signature="10319:11040" placeholder="select ud.mq... user_actuator_state_condition" />
           </folding>
@@ -1228,7 +1211,6 @@
           <caret line="17" column="10" selection-start-line="17" selection-start-column="10" selection-end-line="17" selection-end-column="10" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#1518#1526#0" expanded="true" />
             <marker date="1496866562263" expanded="true" signature="8641:8845" placeholder="select 'add'... user_device" />
             <marker date="1496866562263" expanded="true" signature="10319:11040" placeholder="select ud.mq... user_actuator_state_condition" />
           </folding>
@@ -1322,23 +1304,18 @@
           <caret line="30" column="27" selection-start-line="30" selection-start-column="27" selection-end-line="30" selection-end-column="27" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#1518#1526#0" expanded="true" />
             <marker date="1496866562263" expanded="true" signature="8641:8845" placeholder="select 'add'... user_device" />
             <marker date="1496866562263" expanded="true" signature="10319:11040" placeholder="select ud.mq... user_actuator_state_condition" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/DtransitionCondition.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/Main.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="69" column="36" selection-start-line="69" selection-start-column="36" selection-end-line="69" selection-end-column="36" />
+          <caret line="26" column="12" selection-start-line="26" selection-start-column="12" selection-end-line="26" selection-end-column="12" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#840#1044#0" expanded="true" />
-            <element signature="e#1043#1044#0" expanded="true" />
-            <marker date="1496868069120" expanded="true" signature="825:1046" placeholder="..." />
-            <marker date="1496868069120" expanded="true" signature="1418:1851" placeholder="select cv.va... user_state_condition_vars" />
           </folding>
         </state>
       </provider>
@@ -1346,21 +1323,21 @@
     <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/ConditionVariable.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="30" column="68" selection-start-line="30" selection-start-column="61" selection-end-line="30" selection-end-column="68" />
+          <caret line="23" column="28" selection-start-line="23" selection-start-column="13" selection-end-line="23" selection-end-column="28" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#1747#1748#0" expanded="true" />
-            <element signature="e#1790#1791#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/Main.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/DtransitionCondition.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.6993671">
-          <caret line="26" column="12" selection-start-line="26" selection-start-column="12" selection-end-line="26" selection-end-column="12" />
+        <state vertical-scroll-proportion="0.82753164">
+          <caret line="75" column="0" selection-start-line="75" selection-start-column="0" selection-end-line="75" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
+            <marker date="1496870467516" expanded="true" signature="825:1046" placeholder="..." />
+            <marker date="1496870467516" expanded="true" signature="1418:1851" placeholder="select cv.va... user_state_condition_vars" />
           </folding>
         </state>
       </provider>
