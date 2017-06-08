@@ -1,7 +1,5 @@
 package mqttch;
 
-import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttException;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -22,25 +20,34 @@ public class DtransitionCondition {
             , int conditionId
     ) throws Throwable {
 
+        try {
 
-        VarsList = new ArrayList<ConditionVariable>();
-        setVarsList(conditionId);
-        ReadTopicName = readTopicName;
 
-        for (ConditionVariable iO : VarsList) {
+            VarsList = new ArrayList<ConditionVariable>();
+            setVarsList(conditionId);
+            ReadTopicName = readTopicName;
 
-            iO.setListener(new VarListener() {
-                public void afterValueChange(String ChangedVarName) {
-                    System.out.println("Изменена переменная : " + ChangedVarName);
-                }
-            });
+            for (ConditionVariable iO : VarsList) {
+
+                iO.setListener(new VarListener() {
+                    public void afterValueChange(String ChangedVarName) {
+                        System.out.println("Изменена переменная : " + ChangedVarName);
+                    }
+                });
+            }
+
+        } catch (Throwable e0){
+        //e0.printStackTrace();
+        //System.out.println("Исключение передаётся в конструктор");
+            throw  e0;
+
         }
 
 
 
     }
 
-    public void setVarsList(int qConditionId){
+    public void setVarsList(int qConditionId) throws Throwable {
         try {
 
             Class.forName(MessageHandling.JDBC_DRIVER);
@@ -79,11 +86,15 @@ public class DtransitionCondition {
 
             Con.close();
 
-        }catch(SQLException se) {
+        } catch(SQLException se) {
             //Handle errors for JDBC
             se.printStackTrace();
-        }catch (Throwable e){
-            e.printStackTrace();
+        } catch (Throwable edc){
+            //System.out.println("Начала трейса..");
+            //edc.printStackTrace();
+            //System.out.println("Конец трейса..");
+            //System.out.println("MqttException in setVarsList");
+            throw  edc;
 
         }
     }
@@ -95,6 +106,7 @@ public class DtransitionCondition {
             }
         }catch (Throwable e){
             e.printStackTrace();
+            //throw  e;
         }
     }
 }
