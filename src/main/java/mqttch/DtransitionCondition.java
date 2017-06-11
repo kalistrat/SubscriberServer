@@ -99,14 +99,14 @@ public class DtransitionCondition {
         }
     }
 
-    public void disconnectVarList(){
+    public void disconnectVarList() throws Throwable {
         try {
             for (ConditionVariable iObj : VarsList){
                 iObj.client.disconnect();
             }
         }catch (Throwable e){
-            e.printStackTrace();
-            //throw  e;
+            //e.printStackTrace();
+            throw  e;
         }
     }
 }
