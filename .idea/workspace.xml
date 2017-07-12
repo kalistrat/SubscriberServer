@@ -7,7 +7,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6527b389-cdbd-482e-a02b-cfd0bcb699b8" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/mqttch/DtransitionCondition.java" afterPath="$PROJECT_DIR$/src/main/java/mqttch/DtransitionCondition.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/mqttch/MessageHandling.java" afterPath="$PROJECT_DIR$/src/main/java/mqttch/MessageHandling.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/mqttch/SubscriberLogger.java" afterPath="$PROJECT_DIR$/src/main/java/mqttch/SubscriberLogger.java" />
     </list>
     <ignored path="SubscriberServer.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -31,12 +33,24 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="Main.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="Main.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
+            <state vertical-scroll-proportion="0.5956873">
               <caret line="26" column="12" selection-start-line="26" selection-start-column="12" selection-end-line="26" selection-end-column="12" />
               <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SubscriberLogger.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/SubscriberLogger.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="75" column="14" selection-start-line="75" selection-start-column="14" selection-end-line="75" selection-end-column="14" />
+              <folding>
+                <marker date="1499874066908" expanded="true" signature="1703:2205" placeholder="..." />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -45,44 +59,12 @@
         <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/MessageHandling.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="372" column="29" selection-start-line="372" selection-start-column="29" selection-end-line="372" selection-end-column="29" />
+              <caret line="259" column="27" selection-start-line="259" selection-start-column="27" selection-end-line="259" selection-end-column="27" />
               <folding>
-                <marker date="1496866562263" expanded="true" signature="8641:8845" placeholder="select 'add'... user_device" />
-                <marker date="1496866562263" expanded="true" signature="10319:11040" placeholder="select ud.mq... user_actuator_state_condition" />
+                <element signature="imports" expanded="true" />
+                <marker date="1499872207409" expanded="true" signature="9489:9835" placeholder="select 'add'... user_device" />
+                <marker date="1499872207409" expanded="true" signature="11309:12030" placeholder="select ud.mq... user_actuator_state_condition" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="DtransitionCondition.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/DtransitionCondition.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="2.7974684">
-              <caret line="108" column="12" selection-start-line="108" selection-start-column="12" selection-end-line="108" selection-end-column="12" />
-              <folding>
-                <marker date="1497084368525" expanded="true" signature="757:994" placeholder="..." />
-                <marker date="1497084368525" expanded="true" signature="1556:1989" placeholder="select cv.va... user_state_condition_vars" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="ConditionVariable.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/ConditionVariable.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="35" column="130" selection-start-line="35" selection-start-column="130" selection-end-line="35" selection-end-column="130" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="pom.xml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/pom.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-42.5">
-              <caret line="65" column="21" selection-start-line="65" selection-start-column="21" selection-end-line="65" selection-end-column="21" />
-              <folding />
             </state>
           </provider>
         </entry>
@@ -115,15 +97,15 @@
         <option value="$PROJECT_DIR$/src/main/java/mqttch/SubscribeLogger.java" />
         <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/src/main/java/mqttch/SubscriberServer.java" />
-        <option value="$PROJECT_DIR$/src/main/java/mqttch/SubscriberLogger.java" />
         <option value="$PROJECT_DIR$/src/main/java/mqttch/Listenable.java" />
         <option value="$PROJECT_DIR$/src/main/java/mqttch/VarListener.java" />
         <option value="$PROJECT_DIR$/src/main/java/mqttch/ItransitionCondition.java" />
-        <option value="$PROJECT_DIR$/src/main/java/mqttch/MessageHandling.java" />
         <option value="$PROJECT_DIR$/src/main/java/mqttch/Main.java" />
         <option value="$PROJECT_DIR$/src/main/java/mqttch/MathParser.java" />
         <option value="$PROJECT_DIR$/src/main/java/mqttch/ConditionVariable.java" />
         <option value="$PROJECT_DIR$/src/main/java/mqttch/DtransitionCondition.java" />
+        <option value="$PROJECT_DIR$/src/main/java/mqttch/MessageHandling.java" />
+        <option value="$PROJECT_DIR$/src/main/java/mqttch/SubscriberLogger.java" />
       </list>
     </option>
   </component>
@@ -188,8 +170,8 @@
   <component name="ProjectFrameBounds">
     <option name="x" value="-8" />
     <option name="y" value="-8" />
-    <option name="width" value="1296" />
-    <option name="height" value="1000" />
+    <option name="width" value="1168" />
+    <option name="height" value="696" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
     <OptionsSetting value="true" id="Add" />
@@ -216,8 +198,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
-      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -290,13 +270,15 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scope" />
+      <pane id="PackagesPane" />
       <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="aspect.path.notification.shown" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../SampleClient" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="project.structure.last.edited" value="Artifacts" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
@@ -779,23 +761,27 @@
       <workItem from="1496945510127" duration="201000" />
       <workItem from="1496948003850" duration="3543000" />
       <workItem from="1497084248513" duration="158000" />
+      <workItem from="1499855803765" duration="1217000" />
+      <workItem from="1499865043468" duration="3539000" />
+      <workItem from="1499870165220" duration="3897000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="75085000" />
+    <option name="totallyTimeSpent" value="83738000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1296" height="1000" extended-state="6" />
-    <editor active="false" />
+    <frame x="-8" y="-8" width="1168" height="696" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32435465" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1328125" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25925925" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32027256" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -806,7 +792,6 @@
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32435465" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
@@ -838,7 +823,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="28" column="36" selection-start-line="28" selection-start-column="36" selection-end-line="28" selection-end-column="36" />
-          <folding />
+          <folding>
+            <marker date="1499874066908" expanded="true" signature="1703:2205" placeholder="..." />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -855,8 +842,9 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <marker date="1496866562263" expanded="true" signature="8641:8845" placeholder="select 'add'... user_device" />
-            <marker date="1496866562263" expanded="true" signature="10319:11040" placeholder="select ud.mq... user_actuator_state_condition" />
+            <element signature="imports" expanded="true" />
+            <marker date="1499872207409" expanded="true" signature="9489:9835" placeholder="select 'add'... user_device" />
+            <marker date="1499872207409" expanded="true" signature="11309:12030" placeholder="select ud.mq... user_actuator_state_condition" />
           </folding>
         </state>
       </provider>
@@ -873,7 +861,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="28" column="36" selection-start-line="28" selection-start-column="36" selection-end-line="28" selection-end-column="36" />
-          <folding />
+          <folding>
+            <marker date="1499874066908" expanded="true" signature="1703:2205" placeholder="..." />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -890,8 +880,9 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <marker date="1496866562263" expanded="true" signature="8641:8845" placeholder="select 'add'... user_device" />
-            <marker date="1496866562263" expanded="true" signature="10319:11040" placeholder="select ud.mq... user_actuator_state_condition" />
+            <element signature="imports" expanded="true" />
+            <marker date="1499872207409" expanded="true" signature="9489:9835" placeholder="select 'add'... user_device" />
+            <marker date="1499872207409" expanded="true" signature="11309:12030" placeholder="select ud.mq... user_actuator_state_condition" />
           </folding>
         </state>
       </provider>
@@ -908,7 +899,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="28" column="36" selection-start-line="28" selection-start-column="36" selection-end-line="28" selection-end-column="36" />
-          <folding />
+          <folding>
+            <marker date="1499874066908" expanded="true" signature="1703:2205" placeholder="..." />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -925,8 +918,9 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="121" column="22" selection-start-line="121" selection-start-column="22" selection-end-line="121" selection-end-column="22" />
           <folding>
-            <marker date="1496866562263" expanded="true" signature="8641:8845" placeholder="select 'add'... user_device" />
-            <marker date="1496866562263" expanded="true" signature="10319:11040" placeholder="select ud.mq... user_actuator_state_condition" />
+            <element signature="imports" expanded="true" />
+            <marker date="1499872207409" expanded="true" signature="9489:9835" placeholder="select 'add'... user_device" />
+            <marker date="1499872207409" expanded="true" signature="11309:12030" placeholder="select ud.mq... user_actuator_state_condition" />
           </folding>
         </state>
       </provider>
@@ -951,7 +945,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="49" column="5" selection-start-line="49" selection-start-column="5" selection-end-line="49" selection-end-column="5" />
-          <folding />
+          <folding>
+            <marker date="1499874066908" expanded="true" signature="1703:2205" placeholder="..." />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -960,8 +956,9 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <marker date="1496866562263" expanded="true" signature="8641:8845" placeholder="select 'add'... user_device" />
-            <marker date="1496866562263" expanded="true" signature="10319:11040" placeholder="select ud.mq... user_actuator_state_condition" />
+            <element signature="imports" expanded="true" />
+            <marker date="1499872207409" expanded="true" signature="9489:9835" placeholder="select 'add'... user_device" />
+            <marker date="1499872207409" expanded="true" signature="11309:12030" placeholder="select ud.mq... user_actuator_state_condition" />
           </folding>
         </state>
       </provider>
@@ -986,7 +983,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <folding>
+            <marker date="1499874066908" expanded="true" signature="1703:2205" placeholder="..." />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -995,8 +994,9 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="28" column="36" selection-start-line="28" selection-start-column="25" selection-end-line="28" selection-end-column="36" />
           <folding>
-            <marker date="1496866562263" expanded="true" signature="8641:8845" placeholder="select 'add'... user_device" />
-            <marker date="1496866562263" expanded="true" signature="10319:11040" placeholder="select ud.mq... user_actuator_state_condition" />
+            <element signature="imports" expanded="true" />
+            <marker date="1499872207409" expanded="true" signature="9489:9835" placeholder="select 'add'... user_device" />
+            <marker date="1499872207409" expanded="true" signature="11309:12030" placeholder="select ud.mq... user_actuator_state_condition" />
           </folding>
         </state>
       </provider>
@@ -1021,7 +1021,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="58" column="8" selection-start-line="58" selection-start-column="8" selection-end-line="58" selection-end-column="8" />
-          <folding />
+          <folding>
+            <marker date="1499874066908" expanded="true" signature="1703:2205" placeholder="..." />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1030,8 +1032,9 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <marker date="1496866562263" expanded="true" signature="8641:8845" placeholder="select 'add'... user_device" />
-            <marker date="1496866562263" expanded="true" signature="10319:11040" placeholder="select ud.mq... user_actuator_state_condition" />
+            <element signature="imports" expanded="true" />
+            <marker date="1499872207409" expanded="true" signature="9489:9835" placeholder="select 'add'... user_device" />
+            <marker date="1499872207409" expanded="true" signature="11309:12030" placeholder="select ud.mq... user_actuator_state_condition" />
           </folding>
         </state>
       </provider>
@@ -1056,7 +1059,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="22" column="9" selection-start-line="22" selection-start-column="9" selection-end-line="22" selection-end-column="9" />
-          <folding />
+          <folding>
+            <marker date="1499874066908" expanded="true" signature="1703:2205" placeholder="..." />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1073,8 +1078,9 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <marker date="1496866562263" expanded="true" signature="8641:8845" placeholder="select 'add'... user_device" />
-            <marker date="1496866562263" expanded="true" signature="10319:11040" placeholder="select ud.mq... user_actuator_state_condition" />
+            <element signature="imports" expanded="true" />
+            <marker date="1499872207409" expanded="true" signature="9489:9835" placeholder="select 'add'... user_device" />
+            <marker date="1499872207409" expanded="true" signature="11309:12030" placeholder="select ud.mq... user_actuator_state_condition" />
           </folding>
         </state>
       </provider>
@@ -1091,7 +1097,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <folding>
+            <marker date="1499874066908" expanded="true" signature="1703:2205" placeholder="..." />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1108,8 +1116,9 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="59" column="22" selection-start-line="59" selection-start-column="22" selection-end-line="59" selection-end-column="22" />
           <folding>
-            <marker date="1496866562263" expanded="true" signature="8641:8845" placeholder="select 'add'... user_device" />
-            <marker date="1496866562263" expanded="true" signature="10319:11040" placeholder="select ud.mq... user_actuator_state_condition" />
+            <element signature="imports" expanded="true" />
+            <marker date="1499872207409" expanded="true" signature="9489:9835" placeholder="select 'add'... user_device" />
+            <marker date="1499872207409" expanded="true" signature="11309:12030" placeholder="select ud.mq... user_actuator_state_condition" />
           </folding>
         </state>
       </provider>
@@ -1126,7 +1135,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="9" column="20" selection-start-line="9" selection-start-column="11" selection-end-line="9" selection-end-column="20" />
-          <folding />
+          <folding>
+            <marker date="1499874066908" expanded="true" signature="1703:2205" placeholder="..." />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1143,8 +1154,9 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="17" column="10" selection-start-line="17" selection-start-column="10" selection-end-line="17" selection-end-column="10" />
           <folding>
-            <marker date="1496866562263" expanded="true" signature="8641:8845" placeholder="select 'add'... user_device" />
-            <marker date="1496866562263" expanded="true" signature="10319:11040" placeholder="select ud.mq... user_actuator_state_condition" />
+            <element signature="imports" expanded="true" />
+            <marker date="1499872207409" expanded="true" signature="9489:9835" placeholder="select 'add'... user_device" />
+            <marker date="1499872207409" expanded="true" signature="11309:12030" placeholder="select ud.mq... user_actuator_state_condition" />
           </folding>
         </state>
       </provider>
@@ -1161,7 +1173,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <folding>
+            <marker date="1499874066908" expanded="true" signature="1703:2205" placeholder="..." />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1185,14 +1199,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/SubscriberLogger.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.4841772">
-          <caret line="28" column="30" selection-start-line="28" selection-start-column="17" selection-end-line="28" selection-end-column="30" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1227,47 +1233,59 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/pom.xml">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-42.5">
+        <state vertical-scroll-proportion="0.0">
           <caret line="65" column="21" selection-start-line="65" selection-start-column="21" selection-end-line="65" selection-end-column="21" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/ConditionVariable.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/SubscriberLogger.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="35" column="130" selection-start-line="35" selection-start-column="130" selection-end-line="35" selection-end-column="130" />
-          <folding />
+          <caret line="75" column="14" selection-start-line="75" selection-start-column="14" selection-end-line="75" selection-end-column="14" />
+          <folding>
+            <marker date="1499874066908" expanded="true" signature="1703:2205" placeholder="..." />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/MessageHandling.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="372" column="29" selection-start-line="372" selection-start-column="29" selection-end-line="372" selection-end-column="29" />
+          <caret line="259" column="27" selection-start-line="259" selection-start-column="27" selection-end-line="259" selection-end-column="27" />
           <folding>
-            <marker date="1496866562263" expanded="true" signature="8641:8845" placeholder="select 'add'... user_device" />
-            <marker date="1496866562263" expanded="true" signature="10319:11040" placeholder="select ud.mq... user_actuator_state_condition" />
+            <element signature="imports" expanded="true" />
+            <marker date="1499872207409" expanded="true" signature="9489:9835" placeholder="select 'add'... user_device" />
+            <marker date="1499872207409" expanded="true" signature="11309:12030" placeholder="select ud.mq... user_actuator_state_condition" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/Main.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="26" column="12" selection-start-line="26" selection-start-column="12" selection-end-line="26" selection-end-column="12" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/DtransitionCondition.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="2.7974684">
-          <caret line="108" column="12" selection-start-line="108" selection-start-column="12" selection-end-line="108" selection-end-column="12" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="35" column="19" selection-start-line="35" selection-start-column="19" selection-end-line="35" selection-end-column="19" />
           <folding>
-            <marker date="1497084368525" expanded="true" signature="757:994" placeholder="..." />
-            <marker date="1497084368525" expanded="true" signature="1556:1989" placeholder="select cv.va... user_state_condition_vars" />
+            <element signature="e#772#992#0" expanded="true" />
+            <element signature="e#991#992#0" expanded="true" />
+            <marker date="1497364774225" expanded="true" signature="1556:1989" placeholder="select cv.va... user_state_condition_vars" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/ConditionVariable.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.35040432">
+          <caret line="30" column="28" selection-start-line="30" selection-start-column="28" selection-end-line="30" selection-end-column="28" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/Main.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.5956873">
+          <caret line="26" column="12" selection-start-line="26" selection-start-column="12" selection-end-line="26" selection-end-column="12" />
+          <folding />
         </state>
       </provider>
     </entry>

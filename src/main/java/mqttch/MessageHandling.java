@@ -70,6 +70,24 @@ public class MessageHandling {
         return StrPieces;
     }
 
+    public static List<String> GetListFromStringDevider(String DevidedString,String Devider){
+        List<String> StrPieces = new ArrayList<String>();
+        int k = 0;
+        String iDevidedString = DevidedString;
+
+        while (!iDevidedString.equals("")) {
+            int Pos = iDevidedString.indexOf(Devider);
+            StrPieces.add(iDevidedString.substring(0, Pos));
+            iDevidedString = iDevidedString.substring(Pos + 1);
+            k = k + 1;
+            if (k > 100000) {
+                iDevidedString = "";
+            }
+        }
+
+        return StrPieces;
+    }
+
     public static String ExecuteMessage(String eClientData){
 
         try {
@@ -216,8 +234,9 @@ public class MessageHandling {
         return outMess;
     }
 
-    public static void topicDataLog(int qDeviceId
-            ,String mqttMes
+    public static void topicDataLog(String qTopicName
+                                    ,java.sql.Timestamp qMessDate
+            ,String StringValue
             ,Double doubleValue
     ){
         try {
@@ -229,10 +248,15 @@ public class MessageHandling {
                     , PASS
             );
 
-            CallableStatement Stmt = Con.prepareCall("{call s_p_topic_data_log(?, ?, ?)}");
-            Stmt.setInt(1, qDeviceId);
-            Stmt.setString(2, mqttMes);
-            Stmt.setDouble(3,doubleValue);
+            CallableStatement Stmt = Con.prepareCall("{call s_p_topic_data_log(?, ?, ? ,?)}");
+            Stmt.setString(1, qTopicName);
+            Stmt.setTimestamp(2, qMessDate);
+            Stmt.setString(3,StringValue);
+            if (doubleValue != null) {
+                Stmt.setDouble(4, doubleValue);
+            } else {
+                Stmt.setNull(4, Types.DECIMAL);
+            }
             Stmt.execute();
 
             Con.close();
@@ -260,7 +284,9 @@ public class MessageHandling {
                     ",u.user_log\n" +
                     ",ud.user_device_id\n" +
                     "from user_device ud\n" +
-                    "join users u on u.user_id=ud.user_id";
+                    "join action_type aty on aty.action_type_id=ud.action_type_id\n" +
+                    "join users u on u.user_id=ud.user_id\n" +
+                    "where aty.action_type_id = 1";
 
             PreparedStatement DataStmt = Con.prepareStatement(DataSql);
 

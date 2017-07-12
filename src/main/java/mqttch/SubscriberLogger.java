@@ -2,6 +2,7 @@ package mqttch;
 
 import org.eclipse.paho.client.mqttv3.*;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -58,14 +59,33 @@ public class SubscriberLogger implements MqttCallback {
         //System.out.println(topic + " : " + message);
         //TopicName: UserLog/DeviceId/W
 
-        List<String> TopicAttr = MessageHandling.GetListFromString(topic);
-        String iUserLog = TopicAttr.get(0);
-        Integer iDeviceId = Integer.parseInt(TopicAttr.get(1));
-        String iTopicType = TopicAttr.get(2);
-        String iStringMessage = message.toString();
-        Double iDoubleValue = MessageHandling.StrToDouble(iStringMessage);
-        if (iTopicType.equals("W")) {
-            MessageHandling.topicDataLog(iDeviceId, iStringMessage, iDoubleValue);
+//        List<String> TopicAttr = MessageHandling.GetListFromString(topic);
+//        String iUserLog = TopicAttr.get(0);
+//        Integer iDeviceId = Integer.parseInt(TopicAttr.get(1));
+//        String iTopicType = TopicAttr.get(2);
+//        String iStringMessage = message.toString();
+//        Double iDoubleValue = MessageHandling.StrToDouble(iStringMessage);
+//        if (iTopicType.equals("W")) {
+//            MessageHandling.topicDataLog(iDeviceId, iStringMessage, iDoubleValue);
+//        }
+        try {
+            String iStringMessage = message.toString().replace(" ","");
+            List<String> MessAttr = MessageHandling.GetListFromStringDevider(iStringMessage + ":", ":");
+            String messUnixTime = MessAttr.get(0);
+            String messArrivedValue = MessAttr.get(1);
+            //System.out.println("topic : " + topic);
+            //java.util.Date MeasureDate = new java.util.Date(Long.valueOf(messUnixTime)*1000);
+            java.sql.Timestamp MeasureDate = new java.sql.Timestamp(new Date(Long.valueOf(messUnixTime)*1000L).getTime());
+
+            Double messDoubleValue = MessageHandling.StrToDouble(messArrivedValue);
+            //System.out.println("messDoubleValue : " + messDoubleValue);
+            MessageHandling.topicDataLog(topic, MeasureDate, messArrivedValue,messDoubleValue);
+            //System.out.println("topic : " + topic);
+            //System.out.println("messUnixTime : " + Long.valueOf(messUnixTime));
+            //System.out.println("MeasureDate : " + MeasureDate);
+            //System.out.println("messArrivedValue : " + messArrivedValue);
+        } catch (Exception e){
+            e.printStackTrace();
         }
 
     }
