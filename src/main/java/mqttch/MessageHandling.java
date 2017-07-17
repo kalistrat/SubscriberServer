@@ -122,6 +122,7 @@ public class MessageHandling {
                         SubcriberType.equals("sensor")
                                 || SubcriberType.equals("i_transion")
                                 || SubcriberType.equals("d_transion")
+                                || SubcriberType.equals("task")
                 )) {
                     OutMessage = OutMessage + "Неизвестный тип подписчика;";
                 }
@@ -137,6 +138,10 @@ public class MessageHandling {
 
                     if (SubcriberType.equals("d_transion")) {
                         OutMessage = dTransitionListUpdate(ActionType,UserLog,EntityId);
+                    }
+
+                    if (SubcriberType.equals("task")) {
+                        //OutMessage = dTaskListUpdate(ActionType,UserLog,EntityId);
                     }
 
                     //itransitionListUpdate
@@ -341,8 +346,8 @@ public class MessageHandling {
                     , PASS
             );
 
-            String DataSql = "select ud.mqtt_topic_read\n" +
-                    ",concat(ms.server_ip,concat(':',ms.server_port))\n" +
+            String DataSql = "select ud.mqtt_topic_write\n" +
+                    ",ms.server_ip\n" +
                     ",uasc.left_part_expression\n" +
                     ",uasc.right_part_expression\n" +
                     ",uasc.sign_expression\n" +
