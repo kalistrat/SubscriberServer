@@ -1,8 +1,8 @@
 package mqttch;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.Date;
 
 /**
  * Created by kalistrat on 02.05.2017.
@@ -43,6 +43,25 @@ public class MessageHandling {
         } catch (NumberFormatException e) {
             return null;
         }
+    }
+
+    public static Integer StrToIntValue(String Sval) {
+
+        try {
+            //System.out.println(Sval);
+            return Integer.parseInt(Sval);
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
+    public static java.util.Date redefineSyncDate(String TimeZone){
+        int addHours = StrToIntValue(TimeZone.replace("UTC",""));
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        cal.add(Calendar.HOUR, -3);
+        cal.add(Calendar.HOUR, addHours);
+        return cal.getTime();
     }
 
     public static List<String> GetListFromString(String DevidedString){
@@ -423,6 +442,124 @@ public class MessageHandling {
             } catch (Throwable e) {
                 outMess = "N|Ошибка подключения к mqtt-серверу;|";
             }
+        } else {
+            outMess = "N|Ошибка инициализации условия из базы данных;|";
+        }
+
+        return outMess;
+    }
+
+    public static String dTaskListUpdate(
+            String qActionType
+            ,String qUserLog
+            ,String qTaskId
+    ){
+        String iTaskTypeName;
+        int iTaskInterval;
+        String iIntervalType;
+        String iWriteTopicName = null;
+        String iServerIp;
+        String iControlLog;
+        String iControlPass;
+        String iMessageValue;
+        String outMess;
+
+        int iTaskId = Integer.parseInt(qTaskId);
+
+        try {
+
+            Class.forName(JDBC_DRIVER);
+            Connection Con = DriverManager.getConnection(
+                    DB_URL
+                    , USER
+                    , PASS
+            );
+
+            String DataSql = "select tt.task_type_name\n" +
+                    ",tas.task_interval\n" +
+                    ",tas.interval_type\n" +
+                    ",case when tt.task_type_name = 'SYNCTIME' then udtr.time_topic\n" +
+                    "else null end write_topic_name\n" +
+                    ",ms.server_ip\n" +
+                    ",udtr.control_log\n" +
+                    ",udtr.control_pass\n" +
+                    ",case when tt.task_type_name = 'SYNCTIME' then tz.timezone_value\n" +
+                    "else null end message_value\n" +
+                    "from user_device_task tas\n" +
+                    "join task_type tt on tt.task_type_id=tas.task_type_id\n" +
+                    "left join user_devices_tree udtr on udtr.user_device_id=tas.user_device_id\n" +
+                    "left join mqtt_servers ms on ms.server_id=udtr.mqtt_server_id\n" +
+                    "left join timezones tz on tz.timezone_id=udtr.timezone_id\n" +
+                    "where tas.user_device_task_id = ?";
+
+            PreparedStatement DataStmt = Con.prepareStatement(DataSql);
+            DataStmt.setInt(1, iTaskId);
+
+
+            ResultSet DataRs = DataStmt.executeQuery();
+
+            while (DataRs.next()) {
+                iTaskTypeName = DataRs.getString(1);
+                iTaskInterval = DataRs.getInt(2);
+                iIntervalType = DataRs.getString(3);
+                iWriteTopicName = DataRs.getString(4);
+                iServerIp = DataRs.getString(5);
+                iControlLog = DataRs.getString(6);
+                iControlPass = DataRs.getString(7);
+                iMessageValue = DataRs.getString(8);
+            }
+
+            Con.close();
+
+        }catch(SQLException se){
+            //Handle errors for JDBC
+            se.printStackTrace();
+        }catch(Exception e) {
+            //Handle errors for Class.forName
+            e.printStackTrace();
+        }
+
+        if (iWriteTopicName == null) {
+            iWriteTopicName = "";
+        }
+
+        if (!iWriteTopicName.equals("")) {
+
+//            int ConditionIndx = MessageHandling.getItransitionConditionIndexByName(iWriteTopicName);
+//            try {
+//                if (qActionType.equals("add")) {
+//                    if (ConditionIndx == -1) {
+//                        Main.DtransitionConditionList.add(new DtransitionCondition(
+//                                        ReadTopicName
+//                                        ,MqttServerHost
+//                                        ,leftExpr
+//                                        ,rightExpr
+//                                        ,signExpr
+//                                        ,TimeInt
+//                                        ,iConditionId
+//                                )
+//                        );
+//                        outMess = "Y|"+"Зависимый переход " + ReadTopicName + " успешно добавлен" + "|";
+//                    } else {
+//                        outMess = "N|"+"Зависимый переход " + ReadTopicName + " уже добавлен" + "|";
+//                    }
+//
+//                } else {
+//                    if (ConditionIndx != -1) {
+//                        DtransitionCondition ic1 = Main.DtransitionConditionList.get(ConditionIndx);
+//                        ic1.disconnectVarList();
+//                        Main.DtransitionConditionList.remove(ConditionIndx);
+//                        //s1 = null;
+//                        //System.gc();
+//                        outMess = "Y|"+"Зависимый переход " + ReadTopicName + " успешно удалён" + "|";
+//                    } else {
+//                        outMess = "N|"+"Зависимый переход " + ReadTopicName + " не найден" + "|";
+//                    }
+//                }
+//            } catch (Throwable e) {
+//                outMess = "N|Ошибка подключения к mqtt-серверу;|";
+//            }
+            outMess = "N|Ошибка инициализации задания, они пока не поддерживаются;|";
         } else {
             outMess = "N|Ошибка инициализации условия из базы данных;|";
         }
