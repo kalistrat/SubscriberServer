@@ -2,6 +2,7 @@ package mqttch;
 
 import org.eclipse.paho.client.mqttv3.*;
 
+import javax.net.ssl.SSLContext;
 import java.util.Date;
 import java.util.List;
 
@@ -13,16 +14,33 @@ public class SubscriberLogger implements MqttCallback {
     String TopicName;
     MqttClient client;
     String MqttHostName;
+    String MesDataType;
 
-    public SubscriberLogger(String topicName,String mqttServerHost) throws Throwable {
+    public SubscriberLogger(String topicName
+            ,String mqttServerHost
+                            ,String qDevLog
+                            ,String qDevPass
+                            ,String qMesDataType
+
+    ) throws Throwable {
 
         try {
             TopicName = topicName;
             MqttHostName = mqttServerHost;
+            MesDataType = qMesDataType;
             MqttConnectOptions options = new MqttConnectOptions();
             options.setConnectionTimeout(0);
-            //options.setKeepAliveInterval(0);
-            client = new MqttClient("tcp://" + MqttHostName, TopicName, null);
+            options.setUserName(qDevLog);
+            options.setPassword(qDevPass.toCharArray());
+
+            if (mqttServerHost.contains("ssl://")) {
+                SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
+                sslContext.init(null, null, null);
+                options.setSocketFactory(sslContext.getSocketFactory());
+            }
+
+            client = new MqttClient(MqttHostName, TopicName, null);
+
             client.connect(options);
             client.setCallback(this);
             client.subscribe(TopicName);
@@ -69,6 +87,7 @@ public class SubscriberLogger implements MqttCallback {
 //            MessageHandling.topicDataLog(iDeviceId, iStringMessage, iDoubleValue);
 //        }
         try {
+
             String iStringMessage = message.toString().replace(" ","");
             List<String> MessAttr = MessageHandling.GetListFromStringDevider(iStringMessage + ":", ":");
             String messUnixTime = MessAttr.get(0);
@@ -76,10 +95,23 @@ public class SubscriberLogger implements MqttCallback {
             //System.out.println("topic : " + topic);
             //java.util.Date MeasureDate = new java.util.Date(Long.valueOf(messUnixTime)*1000);
             java.sql.Timestamp MeasureDate = new java.sql.Timestamp(new Date(Long.valueOf(messUnixTime)*1000L).getTime());
+            java.sql.Timestamp MeasureDateValue;
+            Double messDoubleValue;
 
-            Double messDoubleValue = MessageHandling.StrToDouble(messArrivedValue);
+            if (MesDataType.equals("дата")) {
+                String measDateTime = MessAttr.get(1);
+                MeasureDateValue = new java.sql.Timestamp(new Date(Long.valueOf(measDateTime)*1000L).getTime());
+                messDoubleValue = null;
+            } else if (MesDataType.equals("число")) {
+                messDoubleValue = MessageHandling.StrToDouble(messArrivedValue);
+                MeasureDateValue = null;
+            } else {
+                MeasureDateValue = null;
+                messDoubleValue = null;
+            }
+
             //System.out.println("messDoubleValue : " + messDoubleValue);
-            MessageHandling.topicDataLog(topic, MeasureDate, messArrivedValue,messDoubleValue);
+            MessageHandling.topicDataLog(topic, MeasureDate, messArrivedValue ,messDoubleValue, MeasureDateValue);
             //System.out.println("topic : " + topic);
             //System.out.println("messUnixTime : " + Long.valueOf(messUnixTime));
             //System.out.println("MeasureDate : " + MeasureDate);

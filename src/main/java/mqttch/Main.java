@@ -9,6 +9,7 @@ public class Main {
 
     public static List<SubscriberLogger> SubscriberLoggerList;
     public static List<DtransitionCondition> DtransitionConditionList;
+    public static List<PublisherTask> PublisherTaskList;
 
 
     public static void main(String[] args) {
@@ -18,6 +19,7 @@ public class Main {
             int i = 0;
             SubscriberLoggerList = new ArrayList<SubscriberLogger>();
             DtransitionConditionList = new ArrayList<DtransitionCondition>();
+            PublisherTaskList = new ArrayList<PublisherTask>();
 
             ServerSocket server = new ServerSocket(3128, 0,
                     InetAddress.getByName("localhost"));
@@ -25,6 +27,9 @@ public class Main {
             System.out.println("Сервер стартовал...");
             System.out.println("Создание подписчиков для датчиков...");
             MessageHandling.createSubscriberLoggerList();
+            System.out.println("Создание заданий...");
+            MessageHandling.createPublisherTaskList();
+
             System.out.println("Подписка завершена");
 
             // слушаем порт

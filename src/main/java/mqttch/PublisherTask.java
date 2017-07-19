@@ -30,11 +30,20 @@ public class PublisherTask {
             ,final String qControlLog
             ,final String qControlPass
             ,final String qMessageValue
-    ){
+    )throws Throwable {
+
+        try {
 
         iTaskTypeName = qTaskTypeName;
         iIntervalValue = qTaskInterval;
         iWriteTopicName = qWriteTopicName;
+
+        mqttServerConnectionTest(
+                qServerIp
+                ,qControlLog
+                ,qControlPass
+        );
+
 
         ScheduledExecutorService ses =
                 Executors.newScheduledThreadPool(1);
@@ -42,6 +51,7 @@ public class PublisherTask {
             public void run() {
                 //System.out.println("PING!");
                 if (iTaskTypeName.equals("SYNCTIME")) {
+                    try {
                     publishTimeValue(
                             iWriteTopicName
                             ,qServerIp
@@ -49,6 +59,12 @@ public class PublisherTask {
                             ,qControlPass
                             ,qMessageValue
                     );
+                    } catch (Throwable e3) {
+                        //e3.printStackTrace();
+                        //System.out.println("pinger running..");
+                        throw  e3;
+                    }
+
                 }
             }
         };
@@ -58,6 +74,12 @@ public class PublisherTask {
             ses.scheduleAtFixedRate(pinger, iIntervalValue, iIntervalValue, TimeUnit.HOURS);
         } else if (qIntervalType.equals("MINUTES")){
             ses.scheduleAtFixedRate(pinger, iIntervalValue, iIntervalValue, TimeUnit.MINUTES);
+        } else if (qIntervalType.equals("SECONDS")){
+            ses.scheduleAtFixedRate(pinger, iIntervalValue, iIntervalValue, TimeUnit.SECONDS);
+        }
+        } catch (Throwable e1) {
+            //e1.printStackTrace();
+            throw  e1;
         }
     }
 
@@ -67,7 +89,7 @@ public class PublisherTask {
             ,String wControlLog
             ,String wControlPass
             ,String wMessageValue
-    ){
+    ) {
         try {
 
             Date syncDate = MessageHandling.redefineSyncDate(wMessageValue);
@@ -75,6 +97,8 @@ public class PublisherTask {
             String MessCode = String.valueOf(unixSyncDate) + " : " + String.valueOf(unixSyncDate);
             MqttClient client = new MqttClient(wServerIp, wControlLog, null);
             MqttConnectOptions options = new MqttConnectOptions();
+            options.setUserName(wControlLog);
+            options.setPassword(wControlPass.toCharArray());
 
             if (wServerIp.contains("ssl://")) {
                 SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
@@ -90,6 +114,40 @@ public class PublisherTask {
             client.disconnect();
         } catch(MqttException | GeneralSecurityException me) {
             me.printStackTrace();
+            //System.out.println("publishTimeValue exception");
         }
+
+    }
+
+    public void mqttServerConnectionTest(
+           String wServerIp
+            ,String wControlLog
+            ,String wControlPass
+    ) throws Throwable {
+        try {
+
+            String MessCode = "try connection";
+            MqttClient client = new MqttClient(wServerIp, wControlLog, null);
+            MqttConnectOptions options = new MqttConnectOptions();
+            options.setUserName(wControlLog);
+            options.setPassword(wControlPass.toCharArray());
+
+            if (wServerIp.contains("ssl://")) {
+                SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
+                sslContext.init(null, null, null);
+                options.setSocketFactory(sslContext.getSocketFactory());
+            }
+
+
+            MqttMessage message = new MqttMessage(MessCode.getBytes());
+
+            client.connect(options);
+            client.publish("/taskTopic", message);
+            client.disconnect();
+        } catch(MqttException | GeneralSecurityException me) {
+            //me.printStackTrace();
+            throw  me;
+        }
+
     }
 }

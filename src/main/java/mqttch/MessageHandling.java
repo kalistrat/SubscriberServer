@@ -36,6 +36,16 @@ public class MessageHandling {
         return indx;
     }
 
+    public static int getPublisherTaskIndexByName(String sName){
+        int indx = -1;
+        for (PublisherTask iObj : Main.PublisherTaskList) {
+            if (iObj.iWriteTopicName.equals(sName)) {
+                indx = Main.PublisherTaskList.indexOf(iObj);
+            }
+        }
+        return indx;
+    }
+
     public static Double StrToDouble(String StrValue){
         try {
             //System.out.println(Sval);
@@ -112,7 +122,7 @@ public class MessageHandling {
         try {
 
             String OutMessage = "";
-            System.out.println("eClientData : " + eClientData);
+            System.out.println("Принятое сообщение : " + eClientData);
             List<String> MessageList = MessageHandling.GetListFromString(eClientData);
 
             //System.out.println("MessageList.size :" + MessageList.size());
@@ -160,7 +170,7 @@ public class MessageHandling {
                     }
 
                     if (SubcriberType.equals("task")) {
-                        //OutMessage = dTaskListUpdate(ActionType,UserLog,EntityId);
+                        OutMessage = dTaskListUpdate(ActionType,UserLog,EntityId);
                     }
 
                     //itransitionListUpdate
@@ -172,6 +182,8 @@ public class MessageHandling {
             } else {
                 OutMessage = "N|Неподдерживаемый тип сообщения;|";
             }
+
+            System.out.println("Отправленое сообщение :" + OutMessage);
 
             return OutMessage;
         } catch (Exception eMessageHandling){
@@ -188,6 +200,9 @@ public class MessageHandling {
         String outMess;
         String TopicName = "";
         String MqttServerHost = "";
+        String DeviceLog = "";
+        String DevicePass = "";
+        String MesDataType = "";
         int iDeviceId = Integer.parseInt(qDeviceId);
 
         try {
@@ -199,16 +214,22 @@ public class MessageHandling {
                     , PASS
             );
 
-            CallableStatement Stmt = Con.prepareCall("{call s_p_sensor_initial(?, ?, ?, ?)}");
+            CallableStatement Stmt = Con.prepareCall("{call s_p_sensor_initial(?, ?, ?, ?, ?, ?, ?)}");
             Stmt.setString(1, qUserLog);
             Stmt.setInt(2, iDeviceId);
             Stmt.registerOutParameter(3, Types.VARCHAR);
             Stmt.registerOutParameter(4, Types.VARCHAR);
+            Stmt.registerOutParameter(5, Types.VARCHAR);
+            Stmt.registerOutParameter(6, Types.VARCHAR);
+            Stmt.registerOutParameter(7, Types.VARCHAR);
 
             Stmt.execute();
 
             TopicName = Stmt.getString(3);
             MqttServerHost = Stmt.getString(4);
+            DeviceLog = Stmt.getString(5);
+            DevicePass = Stmt.getString(6);
+            MesDataType = Stmt.getString(7);
 
             Con.close();
 
@@ -230,7 +251,7 @@ public class MessageHandling {
             try {
                 if (qActionType.equals("add")) {
                     if (SubscriberIndx == -1) {
-                        Main.SubscriberLoggerList.add(new SubscriberLogger(TopicName,MqttServerHost));
+                        Main.SubscriberLoggerList.add(new SubscriberLogger(TopicName,MqttServerHost,DeviceLog,DevicePass,MesDataType));
                         outMess = "Y|"+"Подписчик " + TopicName + " успешно добавлен" + "|";
                     } else {
                         outMess = "N|"+"Подписчик " + TopicName + " уже добавлен" + "|";
@@ -262,6 +283,7 @@ public class MessageHandling {
                                     ,java.sql.Timestamp qMessDate
             ,String StringValue
             ,Double doubleValue
+                                    ,java.sql.Timestamp qMeasDateValue
     ){
         try {
 
@@ -272,7 +294,7 @@ public class MessageHandling {
                     , PASS
             );
 
-            CallableStatement Stmt = Con.prepareCall("{call s_p_topic_data_log(?, ?, ? ,?)}");
+            CallableStatement Stmt = Con.prepareCall("{call s_p_topic_data_log(?, ?, ?, ?, ?)}");
             Stmt.setString(1, qTopicName);
             Stmt.setTimestamp(2, qMessDate);
             Stmt.setString(3,StringValue);
@@ -280,6 +302,12 @@ public class MessageHandling {
                 Stmt.setDouble(4, doubleValue);
             } else {
                 Stmt.setNull(4, Types.DECIMAL);
+            }
+
+            if (qMeasDateValue != null) {
+                Stmt.setTimestamp(5, qMeasDateValue);
+            } else {
+                Stmt.setNull(5, Types.TIMESTAMP);
             }
             Stmt.execute();
 
@@ -454,14 +482,14 @@ public class MessageHandling {
             ,String qUserLog
             ,String qTaskId
     ){
-        String iTaskTypeName;
-        int iTaskInterval;
-        String iIntervalType;
+        String iTaskTypeName = "";
+        int iTaskInterval=0;
+        String iIntervalType = "";
         String iWriteTopicName = null;
-        String iServerIp;
-        String iControlLog;
-        String iControlPass;
-        String iMessageValue;
+        String iServerIp = "";
+        String iControlLog = "";
+        String iControlPass = "";
+        String iMessageValue = "";
         String outMess;
 
         int iTaskId = Integer.parseInt(qTaskId);
@@ -525,45 +553,87 @@ public class MessageHandling {
 
         if (!iWriteTopicName.equals("")) {
 
-//            int ConditionIndx = MessageHandling.getItransitionConditionIndexByName(iWriteTopicName);
-//            try {
-//                if (qActionType.equals("add")) {
-//                    if (ConditionIndx == -1) {
-//                        Main.DtransitionConditionList.add(new DtransitionCondition(
-//                                        ReadTopicName
-//                                        ,MqttServerHost
-//                                        ,leftExpr
-//                                        ,rightExpr
-//                                        ,signExpr
-//                                        ,TimeInt
-//                                        ,iConditionId
-//                                )
-//                        );
-//                        outMess = "Y|"+"Зависимый переход " + ReadTopicName + " успешно добавлен" + "|";
-//                    } else {
-//                        outMess = "N|"+"Зависимый переход " + ReadTopicName + " уже добавлен" + "|";
-//                    }
-//
-//                } else {
-//                    if (ConditionIndx != -1) {
-//                        DtransitionCondition ic1 = Main.DtransitionConditionList.get(ConditionIndx);
-//                        ic1.disconnectVarList();
-//                        Main.DtransitionConditionList.remove(ConditionIndx);
-//                        //s1 = null;
-//                        //System.gc();
-//                        outMess = "Y|"+"Зависимый переход " + ReadTopicName + " успешно удалён" + "|";
-//                    } else {
-//                        outMess = "N|"+"Зависимый переход " + ReadTopicName + " не найден" + "|";
-//                    }
-//                }
-//            } catch (Throwable e) {
-//                outMess = "N|Ошибка подключения к mqtt-серверу;|";
-//            }
-            outMess = "N|Ошибка инициализации задания, они пока не поддерживаются;|";
+            int TaskIndx = MessageHandling.getPublisherTaskIndexByName(iWriteTopicName);
+            try {
+                if (qActionType.equals("add")) {
+                    if (TaskIndx == -1) {
+                        Main.PublisherTaskList.add(new PublisherTask(
+                                iTaskTypeName
+                                ,iTaskInterval
+                                ,iIntervalType
+                                ,iWriteTopicName
+                                ,iServerIp
+                                ,iControlLog
+                                ,iControlPass
+                                ,iMessageValue
+                                )
+                        );
+                        outMess = "Y|"+"Задание " + iWriteTopicName + " успешно добавлено" + "|";
+                    } else {
+                        outMess = "N|"+"Задание " + iWriteTopicName + " уже добавлено" + "|";
+                    }
+
+                } else {
+                    if (TaskIndx != -1) {
+                        PublisherTask ic1 = Main.PublisherTaskList.get(TaskIndx);
+                        Main.PublisherTaskList.remove(TaskIndx);
+                        outMess = "Y|"+"Задание " + iWriteTopicName + " успешно удалёно" + "|";
+                    } else {
+                        outMess = "N|"+"Задание " + iWriteTopicName + " не найдено" + "|";
+                    }
+                }
+            } catch (Throwable e) {
+                outMess = "N|Ошибка подключения к mqtt-серверу;|";
+            }
         } else {
-            outMess = "N|Ошибка инициализации условия из базы данных;|";
+            outMess = "N|Ошибка инициализации задания из базы данных;|";
         }
 
         return outMess;
+    }
+
+    public static void createPublisherTaskList(){
+        try {
+            Class.forName(JDBC_DRIVER);
+            Connection Con = DriverManager.getConnection(
+                    DB_URL
+                    , USER
+                    , PASS
+            );
+
+            String DataSql = "select 'add' act_type\n" +
+                    ",u.user_log\n" +
+                    ",tas.user_device_task_id\n" +
+                    "from user_device_task tas\n" +
+                    "join user_device ud on ud.user_device_id=tas.user_device_id\n" +
+                    "join users u on u.user_id=ud.user_id";
+
+            PreparedStatement DataStmt = Con.prepareStatement(DataSql);
+
+
+            ResultSet DataRs = DataStmt.executeQuery();
+
+            while (DataRs.next()) {
+
+                System.out.println(
+
+                        DataRs.getString(1)
+                                +DataRs.getString(2)
+                                +String.valueOf(DataRs.getInt(3))
+                                + " : "
+                                + dTaskListUpdate(DataRs.getString(1),DataRs.getString(2),String.valueOf(DataRs.getInt(3)))
+                );
+            }
+
+
+            Con.close();
+
+        } catch (SQLException se3) {
+            //Handle errors for JDBC
+            se3.printStackTrace();
+        } catch (Exception e13) {
+            //Handle errors for Class.forName
+            e13.printStackTrace();
+        }
     }
 }
