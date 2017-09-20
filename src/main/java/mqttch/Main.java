@@ -4,12 +4,15 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Main {
 
     public static List<SubscriberLogger> SubscriberLoggerList;
     public static List<DtransitionCondition> DtransitionConditionList;
     public static List<PublisherTask> PublisherTaskList;
+    public static String AbsPath;
 
 
     public static void main(String[] args) {
@@ -20,6 +23,22 @@ public class Main {
             SubscriberLoggerList = new ArrayList<SubscriberLogger>();
             DtransitionConditionList = new ArrayList<DtransitionCondition>();
             PublisherTaskList = new ArrayList<PublisherTask>();
+            String PrevAbsPath = "";
+
+            for (String iPath : MessageHandling.GetListFromStringDevider(MessageHandling.getCurrentDir()+";",";")){
+                if (iPath.contains("SubscriberServer")){
+                    PrevAbsPath = iPath.replace("\\","/");
+                    break;
+                }
+            }
+
+            Pattern pat=Pattern.compile(".*SubscriberServer");
+            Matcher matcher=pat.matcher(PrevAbsPath);
+            while (matcher.find()) {
+                AbsPath = matcher.group();
+            }
+
+            System.out.println("AbsPath : " + AbsPath);
 
             ServerSocket server = new ServerSocket(3128, 0,
                     InetAddress.getByName("localhost"));

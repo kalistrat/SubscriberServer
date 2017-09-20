@@ -1,6 +1,8 @@
 package mqttch;
 
+import java.io.FileWriter;
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Date;
 
@@ -24,6 +26,23 @@ public class MessageHandling {
             }
         }
         return indx;
+    }
+
+    public static String getCurrentDir(){
+        String path=System.getProperty("java.class.path");
+        String FileSeparator=(String)System.getProperty("file.separator");
+        return path.substring(0, path.lastIndexOf(FileSeparator)+1);
+    }
+
+    public static void logAction(String strLog){
+        try {
+            String filename = Main.AbsPath + "/" + "SubscriberServer.log";
+            FileWriter fw = new FileWriter(filename, true); //the true will append the new data
+            fw.write((new SimpleDateFormat("dd/MM/YYYY HH:mm:ss")).format(new Date()) + " : " + strLog +"\n");//appends the string to the file
+            fw.close();
+        }  catch (Exception e){
+        e.printStackTrace();
+        }
     }
 
     public static int getItransitionConditionIndexByName(String sName){
@@ -312,6 +331,8 @@ public class MessageHandling {
             Stmt.execute();
 
             Con.close();
+            MessageHandling.logAction("Сообщение " + StringValue + " записано в базу данных");
+
 
         }catch(SQLException se){
             //Handle errors for JDBC

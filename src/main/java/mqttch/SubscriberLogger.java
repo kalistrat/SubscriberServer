@@ -3,6 +3,8 @@ package mqttch;
 import org.eclipse.paho.client.mqttv3.*;
 
 import javax.net.ssl.SSLContext;
+import java.io.FileWriter;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -111,7 +113,10 @@ public class SubscriberLogger implements MqttCallback {
             }
 
             //System.out.println("messDoubleValue : " + messDoubleValue);
+
+            MessageHandling.logAction("Сообщение " + iStringMessage + " от устройства передано обработчику");
             MessageHandling.topicDataLog(topic, MeasureDate, messArrivedValue ,messDoubleValue, MeasureDateValue);
+
             //System.out.println("topic : " + topic);
             //System.out.println("messUnixTime : " + Long.valueOf(messUnixTime));
             //System.out.println("MeasureDate : " + MeasureDate);
