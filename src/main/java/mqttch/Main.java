@@ -32,6 +32,7 @@ public class Main {
                 }
             }
 
+
             Pattern pat=Pattern.compile(".*SubscriberServer");
             Matcher matcher=pat.matcher(PrevAbsPath);
             while (matcher.find()) {
@@ -39,6 +40,13 @@ public class Main {
             }
 
             System.out.println("AbsPath : " + AbsPath);
+            if (AbsPath == null) {
+                AbsPath = "/home/admin/app_soft/SubsriberServer";
+            }
+
+            System.out.println("AbsPath : " + AbsPath);
+
+            MessageHandling.logAction("Начинаю логирование");
 
             ServerSocket server = new ServerSocket(3128, 0,
                     InetAddress.getByName("localhost"));
