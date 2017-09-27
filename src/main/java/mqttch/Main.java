@@ -23,6 +23,8 @@ public class Main {
             SubscriberLoggerList = new ArrayList<SubscriberLogger>();
             DtransitionConditionList = new ArrayList<DtransitionCondition>();
             PublisherTaskList = new ArrayList<PublisherTask>();
+            internalMqttServer iServ = new internalMqttServer();
+
             String PrevAbsPath = "";
 
             for (String iPath : MessageHandling.GetListFromStringDevider(MessageHandling.getCurrentDir()+";",";")){
