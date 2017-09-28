@@ -5,6 +5,7 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 
 import javax.net.ssl.*;
 import java.io.*;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -681,7 +682,7 @@ public class MessageHandling {
         try {
             String filename = Main.AbsPath + "password_file.conf";
             FileWriter fw = new FileWriter(filename, true); //the true will append the new data
-            fw.write(ControlName + ":" + ControlPassSha + "\n");//appends the string to the file
+            fw.append("\n" + ControlName + ":" + ControlPassSha);//appends the string to the file
             fw.close();
         }  catch (Exception e){
             e.printStackTrace();
@@ -708,57 +709,31 @@ public class MessageHandling {
 //        }
 //    }
 
-    public static void deleteControllerPassWord(
+    public static void deleteControllerPassWord (
             String ControlName
             , String ControlPassSha
     ){
-        try {
-            String filename = Main.AbsPath + "password_file.conf";
-            File inFile = new File(filename);
+            try {
 
-            if (!inFile.isFile()) {
-                System.out.println("Parameter is not an existing file");
-                return;
+                String filename = Main.AbsPath + "password_file.conf";
+                Charset charset = StandardCharsets.UTF_8;
+
+                filename = filename.replaceFirst("^/(.:/)", "$1");
+                System.out.println("filename.replaceFirst : " + filename);
+
+                byte[] encoded = Files.readAllBytes(Paths.get(filename));
+                String fileContent = new String(encoded, charset);
+
+
+                String trimFileContent = fileContent.replace("\n" + ControlName + ":" + ControlPassSha,"");
+                FileWriter fw = new FileWriter(filename);
+                fw.write(trimFileContent);
+                fw.close();
+
+            } catch (IOException e) {
+            //Simple exception handling, replace with what's necessary for your use case!
+            e.printStackTrace();
             }
-
-            //Construct the new file that will later be renamed to the original filename.
-            File tempFile = new File(inFile.getAbsolutePath() + ".tmp");
-
-            BufferedReader br = new BufferedReader(new FileReader(filename));
-            PrintWriter pw = new PrintWriter(new FileWriter(tempFile));
-
-            String line = null;
-
-            //Read from the original file and write to the new
-            //unless content matches data to be removed.
-            while ((line = br.readLine()) != null) {
-
-                if (!line.trim().equals(ControlName + ":" + ControlPassSha)) {
-
-                    pw.println(line);
-                    pw.flush();
-                }
-            }
-            pw.close();
-            br.close();
-
-            //Delete the original file
-            if (!inFile.delete()) {
-                System.out.println("Could not delete file");
-                return;
-            }
-
-            //Rename the new file to the filename the original file had.
-            if (!tempFile.renameTo(inFile))
-                System.out.println("Could not rename file");
-
-        }
-        catch (FileNotFoundException ex) {
-            ex.printStackTrace();
-        }
-        catch (IOException ex) {
-            ex.printStackTrace();
-        }
     }
 
     public static void rebootMqttServer() throws InterruptedException, IOException, MqttException, Throwable {
@@ -864,12 +839,14 @@ public class MessageHandling {
 
                 } else {
 
-                    deleteControllerPassWord(ControlLogin,ControlPassSha);
+                    //deleteControllerPassWord(ControlLogin,ControlPassSha);
                     rebootMqttServer();
+                    deleteControllerPassWord(ControlLogin,ControlPassSha);
                     outMess = "Y|"+"Контроллер " + ControlLogin + " успешно удалён" + "|";
 
                 }
             } catch (Throwable e) {
+                e.printStackTrace();
                 outMess = "N|Ошибка подключения к mqtt-серверу;|";
             }
         } else {
