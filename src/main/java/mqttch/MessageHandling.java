@@ -1,7 +1,19 @@
 package mqttch;
 
-import java.io.FileWriter;
+
+import org.eclipse.paho.client.mqttv3.MqttException;
+
+import javax.net.ssl.*;
+import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.security.*;
+import java.security.cert.CertificateException;
 import java.sql.*;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Date;
@@ -36,7 +48,7 @@ public class MessageHandling {
 
     public static void logAction(String strLog){
         try {
-            String filename = Main.AbsPath + "/" + "SubscriberServer.log";
+            String filename = Main.AbsPath + "SubscriberServer.log";
             FileWriter fw = new FileWriter(filename, true); //the true will append the new data
             fw.write((new SimpleDateFormat("dd/MM/YYYY HH:mm:ss")).format(new Date()) + " : " + strLog +"\n");//appends the string to the file
             fw.close();
@@ -171,6 +183,7 @@ public class MessageHandling {
                                 || SubcriberType.equals("i_transion")
                                 || SubcriberType.equals("d_transion")
                                 || SubcriberType.equals("task")
+                                || SubcriberType.equals("folder")
                 )) {
                     OutMessage = OutMessage + "Неизвестный тип подписчика;";
                 }
@@ -190,6 +203,10 @@ public class MessageHandling {
 
                     if (SubcriberType.equals("task")) {
                         OutMessage = dTaskListUpdate(ActionType,UserLog,EntityId);
+                    }
+
+                    if (SubcriberType.equals("folder")) {
+                        OutMessage = folderListUpdate(ActionType,UserLog,EntityId);
                     }
 
                     //itransitionListUpdate
@@ -281,8 +298,8 @@ public class MessageHandling {
                         SubscriberLogger s1 = Main.SubscriberLoggerList.get(SubscriberIndx);
                         s1.client.disconnect();
                         Main.SubscriberLoggerList.remove(SubscriberIndx);
-                        //s1 = null;
-                        //System.gc();
+                        s1 = null;
+                        System.gc();
                         outMess = "Y|"+"Подписчик " + TopicName + " успешно удалён" + "|";
                     } else {
                         outMess = "N|"+"Подписчик " + TopicName + " не найден" + "|";
@@ -481,8 +498,8 @@ public class MessageHandling {
                         DtransitionCondition ic1 = Main.DtransitionConditionList.get(ConditionIndx);
                         ic1.disconnectVarList();
                         Main.DtransitionConditionList.remove(ConditionIndx);
-                        //s1 = null;
-                        //System.gc();
+                        ic1 = null;
+                        System.gc();
                         outMess = "Y|"+"Зависимый переход " + ReadTopicName + " успешно удалён" + "|";
                     } else {
                         outMess = "N|"+"Зависимый переход " + ReadTopicName + " не найден" + "|";
@@ -598,6 +615,8 @@ public class MessageHandling {
                     if (TaskIndx != -1) {
                         PublisherTask ic1 = Main.PublisherTaskList.get(TaskIndx);
                         Main.PublisherTaskList.remove(TaskIndx);
+                        ic1 = null;
+                        System.gc();
                         outMess = "Y|"+"Задание " + iWriteTopicName + " успешно удалёно" + "|";
                     } else {
                         outMess = "N|"+"Задание " + iWriteTopicName + " не найдено" + "|";
@@ -656,5 +675,228 @@ public class MessageHandling {
             //Handle errors for Class.forName
             e13.printStackTrace();
         }
+    }
+
+    public static void addControllerPassWord(String ControlName, String ControlPassSha){
+        try {
+            String filename = Main.AbsPath + "password_file.conf";
+            FileWriter fw = new FileWriter(filename, true); //the true will append the new data
+            fw.write(ControlName + ":" + ControlPassSha + "\n");//appends the string to the file
+            fw.close();
+        }  catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+//    public static void changeControllerPassWord(
+//            String ControlName
+//            , String ControlPassSha
+//            , String NewControlName
+//            , String NewControlPassSha
+//    ){
+//        try {
+//            String filename = Main.AbsPath + "/password_file.conf";
+//            Path path = Paths.get(filename);
+//            Charset charset = StandardCharsets.UTF_8;
+//            String content = new String(Files.readAllBytes(path), charset);
+//            content = content.replaceAll(ControlName + ":" + ControlPassSha
+//                    ,NewControlName + ":" + NewControlPassSha);
+//            Files.write(path, content.getBytes(charset));
+//        } catch (IOException e) {
+//            //Simple exception handling, replace with what's necessary for your use case!
+//            e.printStackTrace();
+//        }
+//    }
+
+    public static void deleteControllerPassWord(
+            String ControlName
+            , String ControlPassSha
+    ){
+        try {
+            String filename = Main.AbsPath + "password_file.conf";
+            File inFile = new File(filename);
+
+            if (!inFile.isFile()) {
+                System.out.println("Parameter is not an existing file");
+                return;
+            }
+
+            //Construct the new file that will later be renamed to the original filename.
+            File tempFile = new File(inFile.getAbsolutePath() + ".tmp");
+
+            BufferedReader br = new BufferedReader(new FileReader(filename));
+            PrintWriter pw = new PrintWriter(new FileWriter(tempFile));
+
+            String line = null;
+
+            //Read from the original file and write to the new
+            //unless content matches data to be removed.
+            while ((line = br.readLine()) != null) {
+
+                if (!line.trim().equals(ControlName + ":" + ControlPassSha)) {
+
+                    pw.println(line);
+                    pw.flush();
+                }
+            }
+            pw.close();
+            br.close();
+
+            //Delete the original file
+            if (!inFile.delete()) {
+                System.out.println("Could not delete file");
+                return;
+            }
+
+            //Rename the new file to the filename the original file had.
+            if (!tempFile.renameTo(inFile))
+                System.out.println("Could not rename file");
+
+        }
+        catch (FileNotFoundException ex) {
+            ex.printStackTrace();
+        }
+        catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    public static void rebootMqttServer() throws InterruptedException, IOException, MqttException, Throwable {
+
+        //Stoping Subscribers
+        for (SubscriberLogger iLog : Main.SubscriberLoggerList) {
+            SubscriberLogger delLog = iLog;
+            delLog.client.disconnect();
+            delLog = null;
+        }
+        Main.SubscriberLoggerList.clear();
+
+        //Stoping Rules
+        for (DtransitionCondition iRule : Main.DtransitionConditionList) {
+            DtransitionCondition delRule = iRule;
+            delRule.disconnectVarList();
+            delRule = null;
+        }
+        Main.DtransitionConditionList.clear();
+
+        //Stoping Rules
+        for (PublisherTask iTask : Main.PublisherTaskList) {
+            PublisherTask delTask = iTask;
+            delTask = null;
+        }
+        Main.PublisherTaskList.clear();
+        Main.iServ.stopServer();
+        System.gc();
+
+        Main.iServ.startServer(Main.iServ.configProps);
+        for (int i=0; i<Main.iServ.userHandlers.size(); i++) {
+            Main.iServ.addInterceptHandler(Main.iServ.userHandlers.get(0));
+        }
+        Thread.sleep(2000);
+        System.out.println("Сервер перезагружен...");
+        System.out.println("Создание подписчиков для датчиков...");
+        MessageHandling.createSubscriberLoggerList();
+        System.out.println("Создание заданий...");
+        MessageHandling.createPublisherTaskList();
+        System.out.println("Подписка завершена");
+
+    }
+
+    public static String folderListUpdate(
+            String qActionType
+            ,String qUserLog
+            ,String qUserLeafId
+    ){
+        String outMess;
+        int iLeafId = Integer.parseInt(qUserLeafId);
+        String ControlLogin = "";
+        String ControlPassSha = "";
+
+        try {
+
+            Class.forName(JDBC_DRIVER);
+            Connection Con = DriverManager.getConnection(
+                    DB_URL
+                    , USER
+                    , PASS
+            );
+
+            String DataSql = "select udt.control_log\n" +
+                    ",udt.control_pass_sha\n" +
+                    "from user_devices_tree udt\n" +
+                    "join users u on u.user_id=udt.user_id\n" +
+                    "where u.user_log=?\n" +
+                    "and udt.leaf_id=?";
+
+            PreparedStatement DataStmt = Con.prepareStatement(DataSql);
+            DataStmt.setString(1,qUserLog);
+            DataStmt.setInt(2,iLeafId);
+
+            ResultSet DataRs = DataStmt.executeQuery();
+
+            while (DataRs.next()) {
+                ControlLogin = DataRs.getString(1);
+                ControlPassSha = DataRs.getString(2);
+            }
+
+            Con.close();
+
+        }catch(SQLException se){
+            //Handle errors for JDBC
+            se.printStackTrace();
+        }catch(Exception e) {
+            //Handle errors for Class.forName
+            e.printStackTrace();
+        }
+
+        if (ControlLogin == null) {
+            ControlLogin = "";
+        }
+
+        if (!ControlLogin.equals("")) {
+
+            try {
+                if (qActionType.equals("add")) {
+
+                    addControllerPassWord(ControlLogin,ControlPassSha);
+                    rebootMqttServer();
+                    outMess = "Y|"+"Контроллер " + ControlLogin + " успешно добавлен" + "|";
+
+                } else {
+
+                    deleteControllerPassWord(ControlLogin,ControlPassSha);
+                    rebootMqttServer();
+                    outMess = "Y|"+"Контроллер " + ControlLogin + " успешно удалён" + "|";
+
+                }
+            } catch (Throwable e) {
+                outMess = "N|Ошибка подключения к mqtt-серверу;|";
+            }
+        } else {
+            outMess = "N|Ошибка инициализации устройства из базы данных;|";
+        }
+
+        return outMess;
+    }
+
+
+    public static SSLSocketFactory configureSSLSocketFactory() throws KeyManagementException, NoSuchAlgorithmException,
+            UnrecoverableKeyException, IOException, CertificateException, KeyStoreException {
+        KeyStore ks = KeyStore.getInstance("JKS");
+        InputStream jksInputStream = new FileInputStream(Main.AbsPath + "clientkeystore.jks");
+        ks.load(jksInputStream, "3Point".toCharArray());
+
+        KeyManagerFactory kmf = KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm());
+        kmf.init(ks, "3Point".toCharArray());
+
+        TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+        tmf.init(ks);
+
+        SSLContext sc = SSLContext.getInstance("TLS");
+        TrustManager[] trustManagers = tmf.getTrustManagers();
+        sc.init(kmf.getKeyManagers(), trustManagers, null);
+
+        SSLSocketFactory ssf = sc.getSocketFactory();
+        return ssf;
     }
 }

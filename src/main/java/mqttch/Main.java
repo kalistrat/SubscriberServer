@@ -2,6 +2,7 @@ package mqttch;
 
 import java.net.InetAddress;
 import java.net.ServerSocket;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -13,7 +14,7 @@ public class Main {
     public static List<DtransitionCondition> DtransitionConditionList;
     public static List<PublisherTask> PublisherTaskList;
     public static String AbsPath;
-
+    public static internalMqttServer iServ;
 
     public static void main(String[] args) {
 
@@ -23,30 +24,21 @@ public class Main {
             SubscriberLoggerList = new ArrayList<SubscriberLogger>();
             DtransitionConditionList = new ArrayList<DtransitionCondition>();
             PublisherTaskList = new ArrayList<PublisherTask>();
-            internalMqttServer iServ = new internalMqttServer();
 
-            String PrevAbsPath = "";
+            String path = Main.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+            String decodedPath = URLDecoder.decode(path, "UTF-8");
 
-            for (String iPath : MessageHandling.GetListFromStringDevider(MessageHandling.getCurrentDir()+";",";")){
-                if (iPath.contains("SubscriberServer")){
-                    PrevAbsPath = iPath.replace("\\","/");
-                    break;
-                }
-            }
+            System.out.println("decodedPath : " + decodedPath);
 
 
-            Pattern pat=Pattern.compile(".*SubscriberServer");
-            Matcher matcher=pat.matcher(PrevAbsPath);
-            while (matcher.find()) {
-                AbsPath = matcher.group();
-            }
+            String AbsPath1 = decodedPath.replace("SubscriberServer-1.0.jar","");
+            AbsPath = AbsPath1.replace("target/classes/","");
+
+            //System.out.println("TrimeddecodedPath : " + AbsPath2);
 
             System.out.println("AbsPath : " + AbsPath);
-            if (AbsPath == null) {
-                AbsPath = "/home/admin/app_soft/SubsriberServer";
-            }
 
-            System.out.println("AbsPath : " + AbsPath);
+            iServ = new internalMqttServer();
 
             MessageHandling.logAction("Начинаю логирование");
 

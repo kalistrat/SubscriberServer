@@ -2,8 +2,13 @@ package mqttch;
 
 import org.eclipse.paho.client.mqttv3.*;
 
-import javax.net.ssl.SSLContext;
+import javax.net.ssl.*;
+import java.io.FileInputStream;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.*;
+import java.security.cert.CertificateException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -31,15 +36,20 @@ public class SubscriberLogger implements MqttCallback {
             MqttHostName = mqttServerHost;
             MesDataType = qMesDataType;
             MqttConnectOptions options = new MqttConnectOptions();
-            options.setConnectionTimeout(0);
+            //options.setConnectionTimeout(0);
             options.setUserName(qDevLog);
             options.setPassword(qDevPass.toCharArray());
 
             if (mqttServerHost.contains("ssl://")) {
-                SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
-                sslContext.init(null, null, null);
-                options.setSocketFactory(sslContext.getSocketFactory());
+                SSLSocketFactory ssf = MessageHandling.configureSSLSocketFactory();
+                options.setSocketFactory(ssf);
             }
+
+
+            System.out.println("SubscriberLogger->topicName :" + topicName);
+            System.out.println("SubscriberLogger->mqttServerHost :" + mqttServerHost);
+            System.out.println("SubscriberLogger->qDevLog :" + qDevLog);
+            System.out.println("SubscriberLogger->qDevPass :" + qDevPass);
 
             client = new MqttClient(MqttHostName, TopicName, null);
 
@@ -48,11 +58,13 @@ public class SubscriberLogger implements MqttCallback {
             client.subscribe(TopicName);
             //System.out.println("Я завершился");
         } catch (MqttException e1) {
-            //e1.printStackTrace();
+            e1.printStackTrace();
             throw  e1;
         }
 
     }
+
+
 
 //    @Override
 //    public void run() {

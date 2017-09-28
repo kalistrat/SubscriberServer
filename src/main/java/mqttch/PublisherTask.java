@@ -5,8 +5,12 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
-import javax.net.ssl.SSLContext;
-import java.security.GeneralSecurityException;
+import javax.net.ssl.*;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.*;
+import java.security.cert.CertificateException;
 import java.util.Date;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -101,9 +105,8 @@ public class PublisherTask {
             options.setPassword(wControlPass.toCharArray());
 
             if (wServerIp.contains("ssl://")) {
-                SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
-                sslContext.init(null, null, null);
-                options.setSocketFactory(sslContext.getSocketFactory());
+                SSLSocketFactory ssf = MessageHandling.configureSSLSocketFactory();
+                options.setSocketFactory(ssf);
             }
 
 
@@ -112,12 +115,14 @@ public class PublisherTask {
             client.connect(options);
             client.publish(wWriteTopicName, message);
             client.disconnect();
-        } catch(MqttException | GeneralSecurityException me) {
+        } catch(MqttException | GeneralSecurityException | IOException me) {
             me.printStackTrace();
             //System.out.println("publishTimeValue exception");
         }
 
     }
+
+
 
     public void mqttServerConnectionTest(
            String wServerIp
