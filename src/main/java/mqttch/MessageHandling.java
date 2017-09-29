@@ -839,9 +839,8 @@ public class MessageHandling {
 
                 } else {
 
-                    //deleteControllerPassWord(ControlLogin,ControlPassSha);
-                    rebootMqttServer();
                     deleteControllerPassWord(ControlLogin,ControlPassSha);
+                    rebootMqttServer();
                     outMess = "Y|"+"Контроллер " + ControlLogin + " успешно удалён" + "|";
 
                 }
