@@ -13,6 +13,9 @@ public class Main {
     public static List<SubscriberLogger> SubscriberLoggerList;
     public static List<DtransitionCondition> DtransitionConditionList;
     public static List<PublisherTask> PublisherTaskList;
+
+    public static List<internalMqttServer> mqttServersList;
+
     public static String AbsPath;
     public static internalMqttServer iServ;
 
@@ -38,7 +41,7 @@ public class Main {
 
             System.out.println("AbsPath : " + AbsPath);
 
-            iServ = new internalMqttServer();
+            iServ = new internalMqttServer("k","1883","1884");
 
             MessageHandling.logAction("Начинаю логирование");
 
@@ -47,9 +50,9 @@ public class Main {
 
             System.out.println("Сервер стартовал...");
             System.out.println("Создание подписчиков для датчиков...");
-            MessageHandling.createSubscriberLoggerList();
+            //MessageHandling.createSubscriberLoggerList();
             System.out.println("Создание заданий...");
-            MessageHandling.createPublisherTaskList();
+            //MessageHandling.createPublisherTaskList();
 
             System.out.println("Подписка завершена");
 

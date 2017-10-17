@@ -180,19 +180,14 @@ public class MessageHandling {
                 }
 
                 if (!(
-                        SubcriberType.equals("sensor")
-                                || SubcriberType.equals("i_transion")
-                                || SubcriberType.equals("d_transion")
+                        SubcriberType.equals("d_transion")
                                 || SubcriberType.equals("task")
-                                || SubcriberType.equals("folder")
+                                || SubcriberType.equals("server")
                 )) {
                     OutMessage = OutMessage + "Неизвестный тип подписчика;";
                 }
 
                 if (OutMessage.equals("")) {
-                    if (SubcriberType.equals("sensor")) {
-                        OutMessage = sensorListUpdate(ActionType, UserLog, EntityId);
-                    }
 
                     if (SubcriberType.equals("i_transion")) {
                         OutMessage = "добавление\\удаление независимых переходов не поддерживается;";
@@ -206,8 +201,8 @@ public class MessageHandling {
                         OutMessage = dTaskListUpdate(ActionType,UserLog,EntityId);
                     }
 
-                    if (SubcriberType.equals("folder")) {
-                        OutMessage = folderListUpdate(ActionType,UserLog,EntityId);
+                    if (SubcriberType.equals("server")) {
+                        OutMessage = "добавление\\удаление независимых переходов не поддерживается;";
                     }
 
                     //itransitionListUpdate
@@ -592,11 +587,17 @@ public class MessageHandling {
 
         if (!iWriteTopicName.equals("")) {
 
-            int TaskIndx = MessageHandling.getPublisherTaskIndexByName(iWriteTopicName);
+            internalMqttServer changeServer = null;
+                    for (internalMqttServer iServ: Main.mqttServersList) {
+                        if (iServ.iUserLog.equals(qUserLog)){
+                            changeServer = iServ;
+                        }
+                    }
+
             try {
                 if (qActionType.equals("add")) {
-                    if (TaskIndx == -1) {
-                        Main.PublisherTaskList.add(new PublisherTask(
+                    if (changeServer != null) {
+                        if (changeServer.addServerTask(
                                 iTaskTypeName
                                 ,iTaskInterval
                                 ,iIntervalType
@@ -605,19 +606,17 @@ public class MessageHandling {
                                 ,iControlLog
                                 ,iControlPass
                                 ,iMessageValue
-                                )
-                        );
-                        outMess = "Y|"+"Задание " + iWriteTopicName + " успешно добавлено" + "|";
+                        )) {
+                            outMess = "Y|"+"Задание " + iWriteTopicName + " успешно добавлено" + "|";
+                        } else {
+                            outMess = "Y|"+"Задание " + iWriteTopicName + " уже добавлено" + "|";
+                        }
                     } else {
-                        outMess = "N|"+"Задание " + iWriteTopicName + " уже добавлено" + "|";
+                        outMess = "N|"+"Задание " + iWriteTopicName + " не добавлено. Сервера не существует" + "|";
                     }
 
                 } else {
-                    if (TaskIndx != -1) {
-                        PublisherTask ic1 = Main.PublisherTaskList.get(TaskIndx);
-                        Main.PublisherTaskList.remove(TaskIndx);
-                        ic1 = null;
-                        System.gc();
+                    if (changeServer.deleteServerTask(iWriteTopicName)) {
                         outMess = "Y|"+"Задание " + iWriteTopicName + " успешно удалёно" + "|";
                     } else {
                         outMess = "N|"+"Задание " + iWriteTopicName + " не найдено" + "|";
@@ -633,61 +632,51 @@ public class MessageHandling {
         return outMess;
     }
 
-    public static void createPublisherTaskList(){
-        try {
-            Class.forName(JDBC_DRIVER);
-            Connection Con = DriverManager.getConnection(
-                    DB_URL
-                    , USER
-                    , PASS
-            );
+//    public static void createPublisherTaskList(){
+//        try {
+//            Class.forName(JDBC_DRIVER);
+//            Connection Con = DriverManager.getConnection(
+//                    DB_URL
+//                    , USER
+//                    , PASS
+//            );
+//
+//            String DataSql = "select 'add' act_type\n" +
+//                    ",u.user_log\n" +
+//                    ",tas.user_device_task_id\n" +
+//                    "from user_device_task tas\n" +
+//                    "join user_device ud on ud.user_device_id=tas.user_device_id\n" +
+//                    "join users u on u.user_id=ud.user_id";
+//
+//            PreparedStatement DataStmt = Con.prepareStatement(DataSql);
+//
+//
+//            ResultSet DataRs = DataStmt.executeQuery();
+//
+//            while (DataRs.next()) {
+//
+//                System.out.println(
+//
+//                        DataRs.getString(1)
+//                                +DataRs.getString(2)
+//                                +String.valueOf(DataRs.getInt(3))
+//                                + " : "
+//                                + dTaskListUpdate(DataRs.getString(1),DataRs.getString(2),String.valueOf(DataRs.getInt(3)))
+//                );
+//            }
+//
+//
+//            Con.close();
+//
+//        } catch (SQLException se3) {
+//            //Handle errors for JDBC
+//            se3.printStackTrace();
+//        } catch (Exception e13) {
+//            //Handle errors for Class.forName
+//            e13.printStackTrace();
+//        }
+//    }
 
-            String DataSql = "select 'add' act_type\n" +
-                    ",u.user_log\n" +
-                    ",tas.user_device_task_id\n" +
-                    "from user_device_task tas\n" +
-                    "join user_device ud on ud.user_device_id=tas.user_device_id\n" +
-                    "join users u on u.user_id=ud.user_id";
-
-            PreparedStatement DataStmt = Con.prepareStatement(DataSql);
-
-
-            ResultSet DataRs = DataStmt.executeQuery();
-
-            while (DataRs.next()) {
-
-                System.out.println(
-
-                        DataRs.getString(1)
-                                +DataRs.getString(2)
-                                +String.valueOf(DataRs.getInt(3))
-                                + " : "
-                                + dTaskListUpdate(DataRs.getString(1),DataRs.getString(2),String.valueOf(DataRs.getInt(3)))
-                );
-            }
-
-
-            Con.close();
-
-        } catch (SQLException se3) {
-            //Handle errors for JDBC
-            se3.printStackTrace();
-        } catch (Exception e13) {
-            //Handle errors for Class.forName
-            e13.printStackTrace();
-        }
-    }
-
-    public static void addControllerPassWord(String ControlName, String ControlPassSha){
-        try {
-            String filename = Main.AbsPath + "password_file.conf";
-            FileWriter fw = new FileWriter(filename, true); //the true will append the new data
-            fw.append("\n" + ControlName + ":" + ControlPassSha);//appends the string to the file
-            fw.close();
-        }  catch (Exception e){
-            e.printStackTrace();
-        }
-    }
 
 //    public static void changeControllerPassWord(
 //            String ControlName
@@ -709,151 +698,125 @@ public class MessageHandling {
 //        }
 //    }
 
-    public static void deleteControllerPassWord (
-            String ControlName
-            , String ControlPassSha
-    ){
-            try {
 
-                String filename = Main.AbsPath + "password_file.conf";
-                Charset charset = StandardCharsets.UTF_8;
+//    public static void rebootMqttServer() throws InterruptedException, IOException, MqttException, Throwable {
+//
+//        //Stoping Subscribers
+//        for (SubscriberLogger iLog : Main.SubscriberLoggerList) {
+//            SubscriberLogger delLog = iLog;
+//            delLog.client.disconnect();
+//            delLog = null;
+//        }
+//        Main.SubscriberLoggerList.clear();
+//
+//        //Stoping Rules
+//        for (DtransitionCondition iRule : Main.DtransitionConditionList) {
+//            DtransitionCondition delRule = iRule;
+//            delRule.disconnectVarList();
+//            delRule = null;
+//        }
+//        Main.DtransitionConditionList.clear();
+//
+//        //Stoping Rules
+//        for (PublisherTask iTask : Main.PublisherTaskList) {
+//            PublisherTask delTask = iTask;
+//            delTask = null;
+//        }
+//        Main.PublisherTaskList.clear();
+//        Main.iServ.stopServer();
+//        System.gc();
+//
+//        Main.iServ.startServer(Main.iServ.configProps);
+//        for (int i=0; i<Main.iServ.userHandlers.size(); i++) {
+//            Main.iServ.addInterceptHandler(Main.iServ.userHandlers.get(0));
+//        }
+//        Thread.sleep(2000);
+//        System.out.println("Сервер перезагружен...");
+//        System.out.println("Создание подписчиков для датчиков...");
+//        MessageHandling.createSubscriberLoggerList();
+//        System.out.println("Создание заданий...");
+//        MessageHandling.createPublisherTaskList();
+//        System.out.println("Подписка завершена");
+//
+//    }
 
-                filename = filename.replaceFirst("^/(.:/)", "$1");
-                System.out.println("filename.replaceFirst : " + filename);
-
-                byte[] encoded = Files.readAllBytes(Paths.get(filename));
-                String fileContent = new String(encoded, charset);
-
-
-                String trimFileContent = fileContent.replace("\n" + ControlName + ":" + ControlPassSha,"");
-                FileWriter fw = new FileWriter(filename);
-                fw.write(trimFileContent);
-                fw.close();
-
-            } catch (IOException e) {
-            //Simple exception handling, replace with what's necessary for your use case!
-            e.printStackTrace();
-            }
-    }
-
-    public static void rebootMqttServer() throws InterruptedException, IOException, MqttException, Throwable {
-
-        //Stoping Subscribers
-        for (SubscriberLogger iLog : Main.SubscriberLoggerList) {
-            SubscriberLogger delLog = iLog;
-            delLog.client.disconnect();
-            delLog = null;
-        }
-        Main.SubscriberLoggerList.clear();
-
-        //Stoping Rules
-        for (DtransitionCondition iRule : Main.DtransitionConditionList) {
-            DtransitionCondition delRule = iRule;
-            delRule.disconnectVarList();
-            delRule = null;
-        }
-        Main.DtransitionConditionList.clear();
-
-        //Stoping Rules
-        for (PublisherTask iTask : Main.PublisherTaskList) {
-            PublisherTask delTask = iTask;
-            delTask = null;
-        }
-        Main.PublisherTaskList.clear();
-        Main.iServ.stopServer();
-        System.gc();
-
-        Main.iServ.startServer(Main.iServ.configProps);
-        for (int i=0; i<Main.iServ.userHandlers.size(); i++) {
-            Main.iServ.addInterceptHandler(Main.iServ.userHandlers.get(0));
-        }
-        Thread.sleep(2000);
-        System.out.println("Сервер перезагружен...");
-        System.out.println("Создание подписчиков для датчиков...");
-        MessageHandling.createSubscriberLoggerList();
-        System.out.println("Создание заданий...");
-        MessageHandling.createPublisherTaskList();
-        System.out.println("Подписка завершена");
-
-    }
-
-    public static String folderListUpdate(
-            String qActionType
-            ,String qUserLog
-            ,String qUserLeafId
-    ){
-        String outMess;
-        int iLeafId = Integer.parseInt(qUserLeafId);
-        String ControlLogin = "";
-        String ControlPassSha = "";
-
-        try {
-
-            Class.forName(JDBC_DRIVER);
-            Connection Con = DriverManager.getConnection(
-                    DB_URL
-                    , USER
-                    , PASS
-            );
-
-            String DataSql = "select udt.control_log\n" +
-                    ",udt.control_pass_sha\n" +
-                    "from user_devices_tree udt\n" +
-                    "join users u on u.user_id=udt.user_id\n" +
-                    "where u.user_log=?\n" +
-                    "and udt.leaf_id=?";
-
-            PreparedStatement DataStmt = Con.prepareStatement(DataSql);
-            DataStmt.setString(1,qUserLog);
-            DataStmt.setInt(2,iLeafId);
-
-            ResultSet DataRs = DataStmt.executeQuery();
-
-            while (DataRs.next()) {
-                ControlLogin = DataRs.getString(1);
-                ControlPassSha = DataRs.getString(2);
-            }
-
-            Con.close();
-
-        }catch(SQLException se){
-            //Handle errors for JDBC
-            se.printStackTrace();
-        }catch(Exception e) {
-            //Handle errors for Class.forName
-            e.printStackTrace();
-        }
-
-        if (ControlLogin == null) {
-            ControlLogin = "";
-        }
-
-        if (!ControlLogin.equals("")) {
-
-            try {
-                if (qActionType.equals("add")) {
-
-                    addControllerPassWord(ControlLogin,ControlPassSha);
-                    rebootMqttServer();
-                    outMess = "Y|"+"Контроллер " + ControlLogin + " успешно добавлен" + "|";
-
-                } else {
-
-                    deleteControllerPassWord(ControlLogin,ControlPassSha);
-                    rebootMqttServer();
-                    outMess = "Y|"+"Контроллер " + ControlLogin + " успешно удалён" + "|";
-
-                }
-            } catch (Throwable e) {
-                e.printStackTrace();
-                outMess = "N|Ошибка подключения к mqtt-серверу;|";
-            }
-        } else {
-            outMess = "N|Ошибка инициализации устройства из базы данных;|";
-        }
-
-        return outMess;
-    }
+//    public static String folderListUpdate(
+//            String qActionType
+//            ,String qUserLog
+//            ,String qUserLeafId
+//    ){
+//        String outMess;
+//        int iLeafId = Integer.parseInt(qUserLeafId);
+//        String ControlLogin = "";
+//        String ControlPassSha = "";
+//
+//        try {
+//
+//            Class.forName(JDBC_DRIVER);
+//            Connection Con = DriverManager.getConnection(
+//                    DB_URL
+//                    , USER
+//                    , PASS
+//            );
+//
+//            String DataSql = "select udt.control_log\n" +
+//                    ",udt.control_pass_sha\n" +
+//                    "from user_devices_tree udt\n" +
+//                    "join users u on u.user_id=udt.user_id\n" +
+//                    "where u.user_log=?\n" +
+//                    "and udt.leaf_id=?";
+//
+//            PreparedStatement DataStmt = Con.prepareStatement(DataSql);
+//            DataStmt.setString(1,qUserLog);
+//            DataStmt.setInt(2,iLeafId);
+//
+//            ResultSet DataRs = DataStmt.executeQuery();
+//
+//            while (DataRs.next()) {
+//                ControlLogin = DataRs.getString(1);
+//                ControlPassSha = DataRs.getString(2);
+//            }
+//
+//            Con.close();
+//
+//        }catch(SQLException se){
+//            //Handle errors for JDBC
+//            se.printStackTrace();
+//        }catch(Exception e) {
+//            //Handle errors for Class.forName
+//            e.printStackTrace();
+//        }
+//
+//        if (ControlLogin == null) {
+//            ControlLogin = "";
+//        }
+//
+//        if (!ControlLogin.equals("")) {
+//
+//            try {
+//                if (qActionType.equals("add")) {
+//
+//                    addControllerPassWord(ControlLogin,ControlPassSha);
+//                    rebootMqttServer();
+//                    outMess = "Y|"+"Контроллер " + ControlLogin + " успешно добавлен" + "|";
+//
+//                } else {
+//
+//                    deleteControllerPassWord(ControlLogin,ControlPassSha);
+//                    rebootMqttServer();
+//                    outMess = "Y|"+"Контроллер " + ControlLogin + " успешно удалён" + "|";
+//
+//                }
+//            } catch (Throwable e) {
+//                e.printStackTrace();
+//                outMess = "N|Ошибка подключения к mqtt-серверу;|";
+//            }
+//        } else {
+//            outMess = "N|Ошибка инициализации устройства из базы данных;|";
+//        }
+//
+//        return outMess;
+//    }
 
 
     public static SSLSocketFactory configureSSLSocketFactory() throws KeyManagementException, NoSuchAlgorithmException,
