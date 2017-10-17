@@ -7,11 +7,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6527b389-cdbd-482e-a02b-cfd0bcb699b8" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/mqttch/Main.class" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/target/classes/mqttch/SubscriberServer.class" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/mqttch/Main.java" afterPath="$PROJECT_DIR$/src/main/java/mqttch/Main.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/mqttch/MessageHandling.java" afterPath="$PROJECT_DIR$/src/main/java/mqttch/MessageHandling.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/mqttch/internalMqttServer.java" afterPath="$PROJECT_DIR$/src/main/java/mqttch/internalMqttServer.java" />
     </list>
     <ignored path="SubscriberServer.iws" />
@@ -36,25 +32,36 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="Main.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Main.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.6122449">
-              <caret line="62" column="20" selection-start-line="62" selection-start-column="20" selection-end-line="62" selection-end-column="20" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="65" column="20" selection-start-line="65" selection-start-column="20" selection-end-line="65" selection-end-column="20" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="internalMqttServer.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="internalMqttServer.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/internalMqttServer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="132" column="0" selection-start-line="132" selection-start-column="0" selection-end-line="132" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.15204678">
+              <caret line="31" column="19" selection-start-line="31" selection-start-column="19" selection-end-line="31" selection-end-column="19" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <marker date="1508256113634" expanded="true" signature="4769:5909" placeholder="select tt.ta... user_device_task" />
+                <marker date="1508277771027" expanded="true" signature="1143:1340" placeholder="..." />
+                <marker date="1508277771027" expanded="true" signature="4929:6069" placeholder="select tt.ta... user_device_task" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SubscriberLogger.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/SubscriberLogger.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="114" column="23" selection-start-line="114" selection-start-column="23" selection-end-line="114" selection-end-column="23" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -63,13 +70,11 @@
         <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/MessageHandling.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="206" column="0" selection-start-line="206" selection-start-column="0" selection-end-line="206" selection-end-column="0" />
+              <caret line="313" column="40" selection-start-line="313" selection-start-column="40" selection-end-line="313" selection-end-column="40" />
               <folding>
-                <marker date="1508256113625" expanded="true" signature="12541:12887" placeholder="select 'add'... user_device" />
-                <marker date="1508256113625" expanded="true" signature="14361:15048" placeholder="select ud.mq... user_actuator_state_condition" />
-                <marker date="1508256113625" expanded="true" signature="18482:19481" placeholder="select tt.ta... user_device_task" />
-                <marker date="1508256113625" expanded="true" signature="22700:23021" placeholder="select 'add'... user_device_task" />
-                <marker date="1508256113625" expanded="true" signature="26913:27199" placeholder="select udt.c... user_devices_tree" />
+                <marker date="1508264307532" expanded="true" signature="12541:12887" placeholder="select 'add'... user_device" />
+                <marker date="1508264307532" expanded="true" signature="14361:15048" placeholder="select ud.mq... user_actuator_state_condition" />
+                <marker date="1508264307532" expanded="true" signature="18482:19481" placeholder="select tt.ta... user_device_task" />
               </folding>
             </state>
           </provider>
@@ -121,9 +126,9 @@
         <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/src/main/java/mqttch/SubscriberLogger.java" />
         <option value="$PROJECT_DIR$/src/main/java/mqttch/PublisherTask.java" />
-        <option value="$PROJECT_DIR$/src/main/java/mqttch/internalMqttServer.java" />
         <option value="$PROJECT_DIR$/src/main/java/mqttch/MessageHandling.java" />
         <option value="$PROJECT_DIR$/src/main/java/mqttch/Main.java" />
+        <option value="$PROJECT_DIR$/src/main/java/mqttch/internalMqttServer.java" />
       </list>
     </option>
   </component>
@@ -188,8 +193,8 @@
   <component name="ProjectFrameBounds">
     <option name="x" value="-8" />
     <option name="y" value="-8" />
-    <option name="width" value="1168" />
-    <option name="height" value="696" />
+    <option name="width" value="1296" />
+    <option name="height" value="1000" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
     <OptionsSetting value="true" id="Add" />
@@ -795,23 +800,24 @@
       <workItem from="1506612958169" duration="7444000" />
       <workItem from="1506680164663" duration="1010000" />
       <workItem from="1508234354824" duration="11294000" />
+      <workItem from="1508266291557" duration="3556000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="154244000" />
+    <option name="totallyTimeSpent" value="157800000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1168" height="696" extended-state="6" />
+    <frame x="-8" y="-8" width="1296" height="1000" extended-state="6" />
     <editor active="false" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1328125" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="true" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1328125" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.20102215" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.20089787" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -855,11 +861,9 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <marker date="1508256113625" expanded="true" signature="12541:12887" placeholder="select 'add'... user_device" />
-            <marker date="1508256113625" expanded="true" signature="14361:15048" placeholder="select ud.mq... user_actuator_state_condition" />
-            <marker date="1508256113625" expanded="true" signature="18482:19481" placeholder="select tt.ta... user_device_task" />
-            <marker date="1508256113625" expanded="true" signature="22700:23021" placeholder="select 'add'... user_device_task" />
-            <marker date="1508256113625" expanded="true" signature="26913:27199" placeholder="select udt.c... user_devices_tree" />
+            <marker date="1508264307532" expanded="true" signature="12541:12887" placeholder="select 'add'... user_device" />
+            <marker date="1508264307532" expanded="true" signature="14361:15048" placeholder="select ud.mq... user_actuator_state_condition" />
+            <marker date="1508264307532" expanded="true" signature="18482:19481" placeholder="select tt.ta... user_device_task" />
           </folding>
         </state>
       </provider>
@@ -893,11 +897,9 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <marker date="1508256113625" expanded="true" signature="12541:12887" placeholder="select 'add'... user_device" />
-            <marker date="1508256113625" expanded="true" signature="14361:15048" placeholder="select ud.mq... user_actuator_state_condition" />
-            <marker date="1508256113625" expanded="true" signature="18482:19481" placeholder="select tt.ta... user_device_task" />
-            <marker date="1508256113625" expanded="true" signature="22700:23021" placeholder="select 'add'... user_device_task" />
-            <marker date="1508256113625" expanded="true" signature="26913:27199" placeholder="select udt.c... user_devices_tree" />
+            <marker date="1508264307532" expanded="true" signature="12541:12887" placeholder="select 'add'... user_device" />
+            <marker date="1508264307532" expanded="true" signature="14361:15048" placeholder="select ud.mq... user_actuator_state_condition" />
+            <marker date="1508264307532" expanded="true" signature="18482:19481" placeholder="select tt.ta... user_device_task" />
           </folding>
         </state>
       </provider>
@@ -931,11 +933,9 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="121" column="22" selection-start-line="121" selection-start-column="22" selection-end-line="121" selection-end-column="22" />
           <folding>
-            <marker date="1508256113625" expanded="true" signature="12541:12887" placeholder="select 'add'... user_device" />
-            <marker date="1508256113625" expanded="true" signature="14361:15048" placeholder="select ud.mq... user_actuator_state_condition" />
-            <marker date="1508256113625" expanded="true" signature="18482:19481" placeholder="select tt.ta... user_device_task" />
-            <marker date="1508256113625" expanded="true" signature="22700:23021" placeholder="select 'add'... user_device_task" />
-            <marker date="1508256113625" expanded="true" signature="26913:27199" placeholder="select udt.c... user_devices_tree" />
+            <marker date="1508264307532" expanded="true" signature="12541:12887" placeholder="select 'add'... user_device" />
+            <marker date="1508264307532" expanded="true" signature="14361:15048" placeholder="select ud.mq... user_actuator_state_condition" />
+            <marker date="1508264307532" expanded="true" signature="18482:19481" placeholder="select tt.ta... user_device_task" />
           </folding>
         </state>
       </provider>
@@ -969,11 +969,9 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <marker date="1508256113625" expanded="true" signature="12541:12887" placeholder="select 'add'... user_device" />
-            <marker date="1508256113625" expanded="true" signature="14361:15048" placeholder="select ud.mq... user_actuator_state_condition" />
-            <marker date="1508256113625" expanded="true" signature="18482:19481" placeholder="select tt.ta... user_device_task" />
-            <marker date="1508256113625" expanded="true" signature="22700:23021" placeholder="select 'add'... user_device_task" />
-            <marker date="1508256113625" expanded="true" signature="26913:27199" placeholder="select udt.c... user_devices_tree" />
+            <marker date="1508264307532" expanded="true" signature="12541:12887" placeholder="select 'add'... user_device" />
+            <marker date="1508264307532" expanded="true" signature="14361:15048" placeholder="select ud.mq... user_actuator_state_condition" />
+            <marker date="1508264307532" expanded="true" signature="18482:19481" placeholder="select tt.ta... user_device_task" />
           </folding>
         </state>
       </provider>
@@ -1007,11 +1005,9 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="28" column="36" selection-start-line="28" selection-start-column="25" selection-end-line="28" selection-end-column="36" />
           <folding>
-            <marker date="1508256113625" expanded="true" signature="12541:12887" placeholder="select 'add'... user_device" />
-            <marker date="1508256113625" expanded="true" signature="14361:15048" placeholder="select ud.mq... user_actuator_state_condition" />
-            <marker date="1508256113625" expanded="true" signature="18482:19481" placeholder="select tt.ta... user_device_task" />
-            <marker date="1508256113625" expanded="true" signature="22700:23021" placeholder="select 'add'... user_device_task" />
-            <marker date="1508256113625" expanded="true" signature="26913:27199" placeholder="select udt.c... user_devices_tree" />
+            <marker date="1508264307532" expanded="true" signature="12541:12887" placeholder="select 'add'... user_device" />
+            <marker date="1508264307532" expanded="true" signature="14361:15048" placeholder="select ud.mq... user_actuator_state_condition" />
+            <marker date="1508264307532" expanded="true" signature="18482:19481" placeholder="select tt.ta... user_device_task" />
           </folding>
         </state>
       </provider>
@@ -1045,11 +1041,9 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <marker date="1508256113625" expanded="true" signature="12541:12887" placeholder="select 'add'... user_device" />
-            <marker date="1508256113625" expanded="true" signature="14361:15048" placeholder="select ud.mq... user_actuator_state_condition" />
-            <marker date="1508256113625" expanded="true" signature="18482:19481" placeholder="select tt.ta... user_device_task" />
-            <marker date="1508256113625" expanded="true" signature="22700:23021" placeholder="select 'add'... user_device_task" />
-            <marker date="1508256113625" expanded="true" signature="26913:27199" placeholder="select udt.c... user_devices_tree" />
+            <marker date="1508264307532" expanded="true" signature="12541:12887" placeholder="select 'add'... user_device" />
+            <marker date="1508264307532" expanded="true" signature="14361:15048" placeholder="select ud.mq... user_actuator_state_condition" />
+            <marker date="1508264307532" expanded="true" signature="18482:19481" placeholder="select tt.ta... user_device_task" />
           </folding>
         </state>
       </provider>
@@ -1091,11 +1085,9 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
-            <marker date="1508256113625" expanded="true" signature="12541:12887" placeholder="select 'add'... user_device" />
-            <marker date="1508256113625" expanded="true" signature="14361:15048" placeholder="select ud.mq... user_actuator_state_condition" />
-            <marker date="1508256113625" expanded="true" signature="18482:19481" placeholder="select tt.ta... user_device_task" />
-            <marker date="1508256113625" expanded="true" signature="22700:23021" placeholder="select 'add'... user_device_task" />
-            <marker date="1508256113625" expanded="true" signature="26913:27199" placeholder="select udt.c... user_devices_tree" />
+            <marker date="1508264307532" expanded="true" signature="12541:12887" placeholder="select 'add'... user_device" />
+            <marker date="1508264307532" expanded="true" signature="14361:15048" placeholder="select ud.mq... user_actuator_state_condition" />
+            <marker date="1508264307532" expanded="true" signature="18482:19481" placeholder="select tt.ta... user_device_task" />
           </folding>
         </state>
       </provider>
@@ -1129,11 +1121,9 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="59" column="22" selection-start-line="59" selection-start-column="22" selection-end-line="59" selection-end-column="22" />
           <folding>
-            <marker date="1508256113625" expanded="true" signature="12541:12887" placeholder="select 'add'... user_device" />
-            <marker date="1508256113625" expanded="true" signature="14361:15048" placeholder="select ud.mq... user_actuator_state_condition" />
-            <marker date="1508256113625" expanded="true" signature="18482:19481" placeholder="select tt.ta... user_device_task" />
-            <marker date="1508256113625" expanded="true" signature="22700:23021" placeholder="select 'add'... user_device_task" />
-            <marker date="1508256113625" expanded="true" signature="26913:27199" placeholder="select udt.c... user_devices_tree" />
+            <marker date="1508264307532" expanded="true" signature="12541:12887" placeholder="select 'add'... user_device" />
+            <marker date="1508264307532" expanded="true" signature="14361:15048" placeholder="select ud.mq... user_actuator_state_condition" />
+            <marker date="1508264307532" expanded="true" signature="18482:19481" placeholder="select tt.ta... user_device_task" />
           </folding>
         </state>
       </provider>
@@ -1167,11 +1157,9 @@
         <state vertical-scroll-proportion="0.0">
           <caret line="17" column="10" selection-start-line="17" selection-start-column="10" selection-end-line="17" selection-end-column="10" />
           <folding>
-            <marker date="1508256113625" expanded="true" signature="12541:12887" placeholder="select 'add'... user_device" />
-            <marker date="1508256113625" expanded="true" signature="14361:15048" placeholder="select ud.mq... user_actuator_state_condition" />
-            <marker date="1508256113625" expanded="true" signature="18482:19481" placeholder="select tt.ta... user_device_task" />
-            <marker date="1508256113625" expanded="true" signature="22700:23021" placeholder="select 'add'... user_device_task" />
-            <marker date="1508256113625" expanded="true" signature="26913:27199" placeholder="select udt.c... user_devices_tree" />
+            <marker date="1508264307532" expanded="true" signature="12541:12887" placeholder="select 'add'... user_device" />
+            <marker date="1508264307532" expanded="true" signature="14361:15048" placeholder="select ud.mq... user_actuator_state_condition" />
+            <marker date="1508264307532" expanded="true" signature="18482:19481" placeholder="select tt.ta... user_device_task" />
           </folding>
         </state>
       </provider>
@@ -1251,19 +1239,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/SubscriberLogger.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="54" column="0" selection-start-line="54" selection-start-column="0" selection-end-line="54" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/ConditionVariable.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="21" column="25" selection-start-line="21" selection-start-column="25" selection-end-line="21" selection-end-column="25" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1287,36 +1266,43 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/internalMqttServer.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/Main.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="132" column="0" selection-start-line="132" selection-start-column="0" selection-end-line="132" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <marker date="1508256113634" expanded="true" signature="4769:5909" placeholder="select tt.ta... user_device_task" />
-          </folding>
+          <caret line="65" column="20" selection-start-line="65" selection-start-column="20" selection-end-line="65" selection-end-column="20" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/SubscriberLogger.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="114" column="23" selection-start-line="114" selection-start-column="23" selection-end-line="114" selection-end-column="23" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/MessageHandling.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="206" column="0" selection-start-line="206" selection-start-column="0" selection-end-line="206" selection-end-column="0" />
+          <caret line="313" column="40" selection-start-line="313" selection-start-column="40" selection-end-line="313" selection-end-column="40" />
           <folding>
-            <marker date="1508256113625" expanded="true" signature="12541:12887" placeholder="select 'add'... user_device" />
-            <marker date="1508256113625" expanded="true" signature="14361:15048" placeholder="select ud.mq... user_actuator_state_condition" />
-            <marker date="1508256113625" expanded="true" signature="18482:19481" placeholder="select tt.ta... user_device_task" />
-            <marker date="1508256113625" expanded="true" signature="22700:23021" placeholder="select 'add'... user_device_task" />
-            <marker date="1508256113625" expanded="true" signature="26913:27199" placeholder="select udt.c... user_devices_tree" />
+            <marker date="1508264307532" expanded="true" signature="12541:12887" placeholder="select 'add'... user_device" />
+            <marker date="1508264307532" expanded="true" signature="14361:15048" placeholder="select ud.mq... user_actuator_state_condition" />
+            <marker date="1508264307532" expanded="true" signature="18482:19481" placeholder="select tt.ta... user_device_task" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/Main.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/internalMqttServer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.6122449">
-          <caret line="62" column="20" selection-start-line="62" selection-start-column="20" selection-end-line="62" selection-end-column="20" />
-          <folding />
+        <state vertical-scroll-proportion="0.15204678">
+          <caret line="31" column="19" selection-start-line="31" selection-start-column="19" selection-end-line="31" selection-end-column="19" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <marker date="1508277771027" expanded="true" signature="1143:1340" placeholder="..." />
+            <marker date="1508277771027" expanded="true" signature="4929:6069" placeholder="select tt.ta... user_device_task" />
+          </folding>
         </state>
       </provider>
     </entry>

@@ -29,7 +29,7 @@ public class internalMqttServer extends Server {
     List<PublisherTask> PublisherTaskList;
     String iUserLog;
 
-    static class PublisherListener extends AbstractInterceptHandler {
+    class PublisherListener extends AbstractInterceptHandler {
 
         @Override
         public String getID() {
@@ -38,8 +38,14 @@ public class internalMqttServer extends Server {
 
         @Override
         public void onPublish(InterceptPublishMessage msg) {
-            System.out.println(
-                    "Received on topic: " + msg.getTopicName().toString() + " content: " + StandardCharsets.UTF_8.decode(msg.getPayload().nioBuffer()).toString());
+
+//            System.out.println(
+//                    "Received on topic: " + msg.getTopicName().toString() + " content: " + StandardCharsets.UTF_8.decode(msg.getPayload().nioBuffer()).toString());
+
+            String topic = msg.getTopicName().toString();
+            String message = StandardCharsets.UTF_8.decode(msg.getPayload().nioBuffer()).toString();
+
+
         }
     }
 
