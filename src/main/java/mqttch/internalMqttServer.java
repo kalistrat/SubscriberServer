@@ -5,8 +5,14 @@ import io.moquette.interception.InterceptHandler;
 import io.moquette.interception.messages.InterceptPublishMessage;
 import io.moquette.server.Server;
 import org.eclipse.paho.client.mqttv3.MqttException;
+import org.w3c.dom.Document;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathFactory;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -44,6 +50,10 @@ public class internalMqttServer extends Server {
 
             String topic = msg.getTopicName().toString();
             String message = StandardCharsets.UTF_8.decode(msg.getPayload().nioBuffer()).toString();
+
+            if (message.length()<200) {
+                addMessageIntoDB(topic,message,iUserLog);
+            }
 
 
         }
@@ -261,6 +271,137 @@ public class internalMqttServer extends Server {
         System.out.println("Создание заданий...");
         createPublisherTaskList();
         System.out.println("Подписка завершена");
+
+    }
+
+    public void addMessageIntoDB(String qTopicName
+        ,String qMessAge
+        ,String QUserLog
+    ){
+        try {
+
+            Class.forName(MessageHandling.JDBC_DRIVER);
+            Connection Con = DriverManager.getConnection(
+                    MessageHandling.DB_URL
+                    , MessageHandling.USER
+                    , MessageHandling.PASS
+            );
+
+            CallableStatement Stmt = Con.prepareCall("{call s_message_recerve(?, ?, ?)}");
+            Stmt.setString(1, qTopicName);
+            Stmt.setString(2, qMessAge);
+            Stmt.setString(3, QUserLog);
+            Stmt.execute();
+            Con.close();
+
+        }catch(SQLException se){
+            //Handle errors for JDBC
+            se.printStackTrace();
+        }catch(Exception e) {
+            //Handle errors for Class.forName
+            e.printStackTrace();
+        }
+
+    }
+
+    public boolean addServerCondition(String qConditionId) throws Throwable {
+
+        Document xmlDocument = MessageHandling
+                .loadXMLFromString(getConditionData(Integer.parseInt(qConditionId)));
+
+        String ReadTopicName = XPathFactory.newInstance().newXPath()
+                .compile("/condition_rule/mqtt_topic_write").evaluate(xmlDocument);
+        String MqttServerHost = XPathFactory.newInstance().newXPath()
+                .compile("/condition_rule/server_ip").evaluate(xmlDocument);
+        String leftExpr = XPathFactory.newInstance().newXPath()
+                .compile("/condition_rule/left_part_expression").evaluate(xmlDocument);
+        String rightExpr = XPathFactory.newInstance().newXPath()
+                .compile("/condition_rule/right_part_expression").evaluate(xmlDocument);
+        String signExpr = XPathFactory.newInstance().newXPath()
+                .compile("/condition_rule/sign_expression").evaluate(xmlDocument);
+        Integer TimeInt = Integer.parseInt(XPathFactory.newInstance().newXPath()
+                .compile("/condition_rule/condition_interval").evaluate(xmlDocument));
+
+
+        int indx = -1;
+        for (DtransitionCondition iObj : this.ConditionList) {
+            if (iObj.ReadTopicName.equals(ReadTopicName)) {
+                indx = this.ConditionList.indexOf(iObj);
+            }
+        }
+
+        if (indx != -1) {
+            this.ConditionList.add(new DtransitionCondition(
+                    ReadTopicName
+                    ,MqttServerHost
+                    ,leftExpr
+                    ,rightExpr
+                    ,signExpr
+                    ,TimeInt
+                    ,Integer.parseInt(qConditionId)
+            ));
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public String getConditionData(int qConditionId){
+        try {
+
+            Class.forName(MessageHandling.JDBC_DRIVER);
+            Connection Con = DriverManager.getConnection(
+                    MessageHandling.DB_URL
+                    , MessageHandling.USER
+                    , MessageHandling.PASS
+            );
+
+            CallableStatement Stmt = Con.prepareCall("{? = call s_message_recerve(?)}");
+            Stmt.registerOutParameter(1,Types.BLOB);
+            Stmt.setInt(1, qConditionId);
+            Stmt.execute();
+            Blob CondValue = Stmt.getBlob(1);
+            String resultStr = new String(CondValue.getBytes(1l, (int) CondValue.length()));
+            Con.close();
+            return resultStr;
+
+        }catch(SQLException se){
+            //Handle errors for JDBC
+            se.printStackTrace();
+            return null;
+        }catch(Exception e) {
+            //Handle errors for Class.forName
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
+    public boolean deleteServerCondition(
+            String oServerConditionId
+    ) throws Throwable {
+
+        Document xmlDocument = MessageHandling
+                .loadXMLFromString(getConditionData(Integer.parseInt(oServerConditionId)));
+        String ReadTopicName = XPathFactory.newInstance().newXPath()
+                .compile("/condition_rule/mqtt_topic_write").evaluate(xmlDocument);
+
+        int indx = -1;
+        for (DtransitionCondition iObj : this.ConditionList) {
+            if (iObj.ReadTopicName.equals(ReadTopicName)) {
+                indx = this.ConditionList.indexOf(iObj);
+            }
+        }
+
+        if (indx != -1) {
+            DtransitionCondition remCondition = this.ConditionList.get(indx);
+            remCondition = null;
+            this.ConditionList.remove(indx);
+            System.gc();
+            return true;
+        } else {
+            return false;
+        }
 
     }
 

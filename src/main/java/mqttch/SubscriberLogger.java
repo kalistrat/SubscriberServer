@@ -127,7 +127,7 @@ public class SubscriberLogger implements MqttCallback {
             //System.out.println("messDoubleValue : " + messDoubleValue);
 
             MessageHandling.logAction("Сообщение " + iStringMessage + " от устройства передано обработчику");
-            MessageHandling.topicDataLog(topic, MeasureDate, messArrivedValue ,messDoubleValue, MeasureDateValue);
+            //MessageHandling.topicDataLog(topic, MeasureDate, messArrivedValue ,messDoubleValue, MeasureDateValue);
 
             //System.out.println("topic : " + topic);
             //System.out.println("messUnixTime : " + Long.valueOf(messUnixTime));

@@ -2,8 +2,12 @@ package mqttch;
 
 
 import org.eclipse.paho.client.mqttv3.MqttException;
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
 
 import javax.net.ssl.*;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.*;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -30,6 +34,14 @@ public class MessageHandling {
     static final String PASS = "045813";
 
     //public static List<SubscriberLogger> SubscriberLoggerList = new ArrayList<SubscriberLogger>();
+
+    public static Document loadXMLFromString(String xml) throws Exception
+    {
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        InputSource is = new InputSource(new StringReader(xml));
+        return builder.parse(is);
+    }
 
     public static int getSubsriberIndexByName(String sName){
         int indx = -1;
@@ -224,288 +236,220 @@ public class MessageHandling {
         }
     }
 
-    public static String sensorListUpdate(
-            String qActionType
-            ,String qUserLog
-            ,String qDeviceId
-    ){
-        String outMess;
-        String TopicName = "";
-        String MqttServerHost = "";
-        String DeviceLog = "";
-        String DevicePass = "";
-        String MesDataType = "";
-        int iDeviceId = Integer.parseInt(qDeviceId);
+//    public static String sensorListUpdate(
+//            String qActionType
+//            ,String qUserLog
+//            ,String qDeviceId
+//    ){
+//        String outMess;
+//        String TopicName = "";
+//        String MqttServerHost = "";
+//        String DeviceLog = "";
+//        String DevicePass = "";
+//        String MesDataType = "";
+//        int iDeviceId = Integer.parseInt(qDeviceId);
+//
+//        try {
+//
+//            Class.forName(JDBC_DRIVER);
+//            Connection Con = DriverManager.getConnection(
+//                    DB_URL
+//                    , USER
+//                    , PASS
+//            );
+//
+//            CallableStatement Stmt = Con.prepareCall("{call s_p_sensor_initial(?, ?, ?, ?, ?, ?, ?)}");
+//            Stmt.setString(1, qUserLog);
+//            Stmt.setInt(2, iDeviceId);
+//            Stmt.registerOutParameter(3, Types.VARCHAR);
+//            Stmt.registerOutParameter(4, Types.VARCHAR);
+//            Stmt.registerOutParameter(5, Types.VARCHAR);
+//            Stmt.registerOutParameter(6, Types.VARCHAR);
+//            Stmt.registerOutParameter(7, Types.VARCHAR);
+//
+//            Stmt.execute();
+//
+//            TopicName = Stmt.getString(3);
+//            MqttServerHost = Stmt.getString(4);
+//            DeviceLog = Stmt.getString(5);
+//            DevicePass = Stmt.getString(6);
+//            MesDataType = Stmt.getString(7);
+//
+//            Con.close();
+//
+//        }catch(SQLException se){
+//            //Handle errors for JDBC
+//            se.printStackTrace();
+//        }catch(Exception e) {
+//            //Handle errors for Class.forName
+//            e.printStackTrace();
+//        }
+//
+//        if (TopicName == null) {
+//            TopicName = "";
+//        }
+//
+//        if (!TopicName.equals("")) {
+//
+//            int SubscriberIndx = MessageHandling.getSubsriberIndexByName(TopicName);
+//            try {
+//                if (qActionType.equals("add")) {
+//                    if (SubscriberIndx == -1) {
+//                        Main.SubscriberLoggerList.add(new SubscriberLogger(TopicName,MqttServerHost,DeviceLog,DevicePass,MesDataType));
+//                        outMess = "Y|"+"Подписчик " + TopicName + " успешно добавлен" + "|";
+//                    } else {
+//                        outMess = "N|"+"Подписчик " + TopicName + " уже добавлен" + "|";
+//                    }
+//
+//                } else {
+//                    if (SubscriberIndx != -1) {
+//                        SubscriberLogger s1 = Main.SubscriberLoggerList.get(SubscriberIndx);
+//                        s1.client.disconnect();
+//                        Main.SubscriberLoggerList.remove(SubscriberIndx);
+//                        s1 = null;
+//                        System.gc();
+//                        outMess = "Y|"+"Подписчик " + TopicName + " успешно удалён" + "|";
+//                    } else {
+//                        outMess = "N|"+"Подписчик " + TopicName + " не найден" + "|";
+//                    }
+//                }
+//            } catch (Throwable e) {
+//                outMess = "N|Ошибка подключения к mqtt-серверу;|";
+//            }
+//        } else {
+//            outMess = "N|Ошибка инициализации устройства из базы данных;|";
+//        }
+//
+//        return outMess;
+//    }
 
-        try {
+//    public static void topicDataLog(String qTopicName
+//                                    ,java.sql.Timestamp qMessDate
+//            ,String StringValue
+//            ,Double doubleValue
+//                                    ,java.sql.Timestamp qMeasDateValue
+//    ){
+//        try {
+//
+//            Class.forName(JDBC_DRIVER);
+//            Connection Con = DriverManager.getConnection(
+//                    DB_URL
+//                    , USER
+//                    , PASS
+//            );
+//
+//            CallableStatement Stmt = Con.prepareCall("{call s_p_topic_data_log(?, ?, ?, ?, ?)}");
+//            Stmt.setString(1, qTopicName);
+//            Stmt.setTimestamp(2, qMessDate);
+//            Stmt.setString(3,StringValue);
+//            if (doubleValue != null) {
+//                Stmt.setDouble(4, doubleValue);
+//            } else {
+//                Stmt.setNull(4, Types.DECIMAL);
+//            }
+//
+//            if (qMeasDateValue != null) {
+//                Stmt.setTimestamp(5, qMeasDateValue);
+//            } else {
+//                Stmt.setNull(5, Types.TIMESTAMP);
+//            }
+//            Stmt.execute();
+//
+//            Con.close();
+//            MessageHandling.logAction("Сообщение " + StringValue + " записано в базу данных");
+//
+//
+//        }catch(SQLException se){
+//            //Handle errors for JDBC
+//            se.printStackTrace();
+//        }catch(Exception e) {
+//            //Handle errors for Class.forName
+//            e.printStackTrace();
+//        }
+//
+//    }
 
-            Class.forName(JDBC_DRIVER);
-            Connection Con = DriverManager.getConnection(
-                    DB_URL
-                    , USER
-                    , PASS
-            );
-
-            CallableStatement Stmt = Con.prepareCall("{call s_p_sensor_initial(?, ?, ?, ?, ?, ?, ?)}");
-            Stmt.setString(1, qUserLog);
-            Stmt.setInt(2, iDeviceId);
-            Stmt.registerOutParameter(3, Types.VARCHAR);
-            Stmt.registerOutParameter(4, Types.VARCHAR);
-            Stmt.registerOutParameter(5, Types.VARCHAR);
-            Stmt.registerOutParameter(6, Types.VARCHAR);
-            Stmt.registerOutParameter(7, Types.VARCHAR);
-
-            Stmt.execute();
-
-            TopicName = Stmt.getString(3);
-            MqttServerHost = Stmt.getString(4);
-            DeviceLog = Stmt.getString(5);
-            DevicePass = Stmt.getString(6);
-            MesDataType = Stmt.getString(7);
-
-            Con.close();
-
-        }catch(SQLException se){
-            //Handle errors for JDBC
-            se.printStackTrace();
-        }catch(Exception e) {
-            //Handle errors for Class.forName
-            e.printStackTrace();
-        }
-
-        if (TopicName == null) {
-            TopicName = "";
-        }
-
-        if (!TopicName.equals("")) {
-
-            int SubscriberIndx = MessageHandling.getSubsriberIndexByName(TopicName);
-            try {
-                if (qActionType.equals("add")) {
-                    if (SubscriberIndx == -1) {
-                        Main.SubscriberLoggerList.add(new SubscriberLogger(TopicName,MqttServerHost,DeviceLog,DevicePass,MesDataType));
-                        outMess = "Y|"+"Подписчик " + TopicName + " успешно добавлен" + "|";
-                    } else {
-                        outMess = "N|"+"Подписчик " + TopicName + " уже добавлен" + "|";
-                    }
-
-                } else {
-                    if (SubscriberIndx != -1) {
-                        SubscriberLogger s1 = Main.SubscriberLoggerList.get(SubscriberIndx);
-                        s1.client.disconnect();
-                        Main.SubscriberLoggerList.remove(SubscriberIndx);
-                        s1 = null;
-                        System.gc();
-                        outMess = "Y|"+"Подписчик " + TopicName + " успешно удалён" + "|";
-                    } else {
-                        outMess = "N|"+"Подписчик " + TopicName + " не найден" + "|";
-                    }
-                }
-            } catch (Throwable e) {
-                outMess = "N|Ошибка подключения к mqtt-серверу;|";
-            }
-        } else {
-            outMess = "N|Ошибка инициализации устройства из базы данных;|";
-        }
-
-        return outMess;
-    }
-
-    public static void topicDataLog(String qTopicName
-                                    ,java.sql.Timestamp qMessDate
-            ,String StringValue
-            ,Double doubleValue
-                                    ,java.sql.Timestamp qMeasDateValue
-    ){
-        try {
-
-            Class.forName(JDBC_DRIVER);
-            Connection Con = DriverManager.getConnection(
-                    DB_URL
-                    , USER
-                    , PASS
-            );
-
-            CallableStatement Stmt = Con.prepareCall("{call s_p_topic_data_log(?, ?, ?, ?, ?)}");
-            Stmt.setString(1, qTopicName);
-            Stmt.setTimestamp(2, qMessDate);
-            Stmt.setString(3,StringValue);
-            if (doubleValue != null) {
-                Stmt.setDouble(4, doubleValue);
-            } else {
-                Stmt.setNull(4, Types.DECIMAL);
-            }
-
-            if (qMeasDateValue != null) {
-                Stmt.setTimestamp(5, qMeasDateValue);
-            } else {
-                Stmt.setNull(5, Types.TIMESTAMP);
-            }
-            Stmt.execute();
-
-            Con.close();
-            MessageHandling.logAction("Сообщение " + StringValue + " записано в базу данных");
-
-
-        }catch(SQLException se){
-            //Handle errors for JDBC
-            se.printStackTrace();
-        }catch(Exception e) {
-            //Handle errors for Class.forName
-            e.printStackTrace();
-        }
-
-    }
-
-    public static void createSubscriberLoggerList(){
-        try {
-            Class.forName(JDBC_DRIVER);
-            Connection Con = DriverManager.getConnection(
-                    DB_URL
-                    , USER
-                    , PASS
-            );
-
-            String DataSql = "select 'add'\n" +
-                    ",u.user_log\n" +
-                    ",ud.user_device_id\n" +
-                    "from user_device ud\n" +
-                    "join action_type aty on aty.action_type_id=ud.action_type_id\n" +
-                    "join users u on u.user_id=ud.user_id\n" +
-                    "where aty.action_type_id = 1";
-
-            PreparedStatement DataStmt = Con.prepareStatement(DataSql);
-
-
-            ResultSet DataRs = DataStmt.executeQuery();
-
-            while (DataRs.next()) {
-
-                System.out.println(
-
-                        DataRs.getString(1)
-                        +DataRs.getString(2)
-                        +String.valueOf(DataRs.getInt(3))
-                        + " : "
-                        + sensorListUpdate(DataRs.getString(1),DataRs.getString(2),String.valueOf(DataRs.getInt(3)))
-                );
-            }
-
-
-            Con.close();
-
-        } catch (SQLException se3) {
-            //Handle errors for JDBC
-            se3.printStackTrace();
-        } catch (Exception e13) {
-            //Handle errors for Class.forName
-            e13.printStackTrace();
-        }
-    }
+//    public static void createSubscriberLoggerList(){
+//        try {
+//            Class.forName(JDBC_DRIVER);
+//            Connection Con = DriverManager.getConnection(
+//                    DB_URL
+//                    , USER
+//                    , PASS
+//            );
+//
+//            String DataSql = "select 'add'\n" +
+//                    ",u.user_log\n" +
+//                    ",ud.user_device_id\n" +
+//                    "from user_device ud\n" +
+//                    "join action_type aty on aty.action_type_id=ud.action_type_id\n" +
+//                    "join users u on u.user_id=ud.user_id\n" +
+//                    "where aty.action_type_id = 1";
+//
+//            PreparedStatement DataStmt = Con.prepareStatement(DataSql);
+//
+//
+//            ResultSet DataRs = DataStmt.executeQuery();
+//
+//            while (DataRs.next()) {
+//
+//                System.out.println(
+//
+//                        DataRs.getString(1)
+//                        +DataRs.getString(2)
+//                        +String.valueOf(DataRs.getInt(3))
+//                        + " : "
+//                        + sensorListUpdate(DataRs.getString(1),DataRs.getString(2),String.valueOf(DataRs.getInt(3)))
+//                );
+//            }
+//
+//
+//            Con.close();
+//
+//        } catch (SQLException se3) {
+//            //Handle errors for JDBC
+//            se3.printStackTrace();
+//        } catch (Exception e13) {
+//            //Handle errors for Class.forName
+//            e13.printStackTrace();
+//        }
+//    }
 
     public static String dTransitionListUpdate(
             String qActionType
             ,String qUserLog
             ,String qConditionId
     ){
-        String outMess;
-        String ReadTopicName = "";
-        String MqttServerHost = "";
-        String leftExpr = "";
-        String rightExpr = "";
-        String signExpr = "";
-        Integer TimeInt = null;
 
-        int iConditionId = Integer.parseInt(qConditionId);
+        String outMess;
+        internalMqttServer changeServer = null;
+        for (internalMqttServer iServ: Main.mqttServersList) {
+            if (iServ.iUserLog.equals(qUserLog)){
+                changeServer = iServ;
+            }
+        }
 
         try {
-
-            Class.forName(JDBC_DRIVER);
-            Connection Con = DriverManager.getConnection(
-                    DB_URL
-                    , USER
-                    , PASS
-            );
-
-            String DataSql = "select ud.mqtt_topic_write\n" +
-                    ",ms.server_ip\n" +
-                    ",uasc.left_part_expression\n" +
-                    ",uasc.right_part_expression\n" +
-                    ",uasc.sign_expression\n" +
-                    ",uasc.condition_interval\n" +
-                    "from user_actuator_state_condition uasc\n" +
-                    "join user_actuator_state uas on uas.user_actuator_state_id=uasc.user_actuator_state_id\n" +
-                    "join user_device ud on ud.user_device_id=uas.user_device_id\n" +
-                    "join mqtt_servers ms on ms.server_id=ud.mqqt_server_id\n" +
-                    "where uasc.actuator_state_condition_id = ?";
-
-            PreparedStatement DataStmt = Con.prepareStatement(DataSql);
-            DataStmt.setInt(1, iConditionId);
-
-
-            ResultSet DataRs = DataStmt.executeQuery();
-
-            while (DataRs.next()) {
-                ReadTopicName = DataRs.getString(1);
-                MqttServerHost = DataRs.getString(2);
-                leftExpr = DataRs.getString(3);
-                rightExpr = DataRs.getString(4);
-                signExpr = DataRs.getString(5);
-                TimeInt = DataRs.getInt(6);
-            }
-
-            Con.close();
-
-        }catch(SQLException se){
-            //Handle errors for JDBC
-            se.printStackTrace();
-        }catch(Exception e) {
-            //Handle errors for Class.forName
-            e.printStackTrace();
-        }
-
-        if (ReadTopicName == null) {
-            ReadTopicName = "";
-        }
-
-        if (!ReadTopicName.equals("")) {
-
-            int ConditionIndx = MessageHandling.getItransitionConditionIndexByName(ReadTopicName);
-            try {
-                if (qActionType.equals("add")) {
-                    if (ConditionIndx == -1) {
-                        Main.DtransitionConditionList.add(new DtransitionCondition(
-                                ReadTopicName
-                                ,MqttServerHost
-                                ,leftExpr
-                                ,rightExpr
-                                ,signExpr
-                                ,TimeInt
-                                ,iConditionId
-                            )
-                        );
-                        outMess = "Y|"+"Зависимый переход " + ReadTopicName + " успешно добавлен" + "|";
+            if (qActionType.equals("add")) {
+                if (changeServer != null) {
+                    if (changeServer.addServerCondition(qConditionId)) {
+                        outMess = "Y|"+"Условие " + qConditionId + " успешно добавлено" + "|";
                     } else {
-                        outMess = "N|"+"Зависимый переход " + ReadTopicName + " уже добавлен" + "|";
+                        outMess = "Y|"+"Условие " + qConditionId + " уже добавлено" + "|";
                     }
-
                 } else {
-                    if (ConditionIndx != -1) {
-                        DtransitionCondition ic1 = Main.DtransitionConditionList.get(ConditionIndx);
-                        ic1.disconnectVarList();
-                        Main.DtransitionConditionList.remove(ConditionIndx);
-                        ic1 = null;
-                        System.gc();
-                        outMess = "Y|"+"Зависимый переход " + ReadTopicName + " успешно удалён" + "|";
-                    } else {
-                        outMess = "N|"+"Зависимый переход " + ReadTopicName + " не найден" + "|";
-                    }
+                    outMess = "N|"+"Условие " + qConditionId + " не добавлено. Сервера не существует" + "|";
                 }
-            } catch (Throwable e) {
-                outMess = "N|Ошибка подключения к mqtt-серверу;|";
+
+            } else {
+                if (changeServer.deleteServerCondition(qConditionId)) {
+                    outMess = "Y|"+"Условие " + qConditionId + " успешно удалёно" + "|";
+                } else {
+                    outMess = "N|"+"Условие " + qConditionId + " не найдено" + "|";
+                }
             }
-        } else {
-            outMess = "N|Ошибка инициализации условия из базы данных;|";
+        } catch (Throwable e) {
+            outMess = "N|Ошибка подключения к mqtt-серверу;|";
         }
 
         return outMess;
