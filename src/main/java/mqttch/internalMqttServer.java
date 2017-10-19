@@ -95,16 +95,29 @@ public class internalMqttServer extends Server {
     }
 
     public boolean addServerTask(
-            String oTaskTypeName
-            ,int oTaskInterval
-            ,String oIntervalType
-            ,String oWriteTopicName
-            ,String oServerIp
-            ,String oControlLog
-            ,String oControlPass
-            ,String oMessageValue
+            String qTaskId
     ) throws Throwable {
 
+
+        Document xmlDocument = MessageHandling
+                .loadXMLFromString(getTaskData(Integer.parseInt(qTaskId)));
+
+        String oTaskTypeName = XPathFactory.newInstance().newXPath()
+                .compile("/task_data/task_type_name").evaluate(xmlDocument);
+        Integer oTaskInterval = Integer.parseInt(XPathFactory.newInstance().newXPath()
+                .compile("/task_data/task_interval").evaluate(xmlDocument));
+        String oIntervalType = XPathFactory.newInstance().newXPath()
+                .compile("/task_data/interval_type").evaluate(xmlDocument);
+        String oWriteTopicName = XPathFactory.newInstance().newXPath()
+                .compile("/task_data/write_topic_name").evaluate(xmlDocument);
+        String oServerIp = XPathFactory.newInstance().newXPath()
+                .compile("/task_data/server_ip").evaluate(xmlDocument);
+        String oControlLog = XPathFactory.newInstance().newXPath()
+                .compile("/task_data/control_log").evaluate(xmlDocument);
+        String oControlPass = XPathFactory.newInstance().newXPath()
+                .compile("/task_data/control_pass").evaluate(xmlDocument);
+        String oMessageValue = XPathFactory.newInstance().newXPath()
+                .compile("/task_data/message_value").evaluate(xmlDocument);
 
         int indx = -1;
         for (PublisherTask iObj : this.PublisherTaskList) {
@@ -132,8 +145,13 @@ public class internalMqttServer extends Server {
     }
 
     public boolean deleteServerTask(
-            String oWriteTopicName
+            String qTaskId
     ) throws Throwable {
+
+        Document xmlDocument = MessageHandling
+                .loadXMLFromString(getTaskData(Integer.parseInt(qTaskId)));
+        String oWriteTopicName = XPathFactory.newInstance().newXPath()
+                .compile("/task_data/write_topic_name").evaluate(xmlDocument);
 
         int indx = -1;
         for (PublisherTask iObj : this.PublisherTaskList) {
@@ -403,6 +421,37 @@ public class internalMqttServer extends Server {
             return false;
         }
 
+    }
+
+
+    public String getTaskData(int qTaskId){
+        try {
+
+            Class.forName(MessageHandling.JDBC_DRIVER);
+            Connection Con = DriverManager.getConnection(
+                    MessageHandling.DB_URL
+                    , MessageHandling.USER
+                    , MessageHandling.PASS
+            );
+
+            CallableStatement Stmt = Con.prepareCall("{? = call s_get_task_data(?)}");
+            Stmt.registerOutParameter(1,Types.BLOB);
+            Stmt.setInt(1, qTaskId);
+            Stmt.execute();
+            Blob CondValue = Stmt.getBlob(1);
+            String resultStr = new String(CondValue.getBytes(1l, (int) CondValue.length()));
+            Con.close();
+            return resultStr;
+
+        }catch(SQLException se){
+            //Handle errors for JDBC
+            se.printStackTrace();
+            return null;
+        }catch(Exception e) {
+            //Handle errors for Class.forName
+            e.printStackTrace();
+            return null;
+        }
     }
 
 }
