@@ -12,6 +12,8 @@ import java.security.cert.CertificateException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Date;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by kalistrat on 02.05.2017.
@@ -139,6 +141,7 @@ public class MessageHandling {
                 if (!(
                         ActionType.equals("add")
                                 || ActionType.equals("delete")
+                                || ActionType.equals("change")
                 )) {
                     OutMessage = "Неизвестный тип операции;";
                 }
@@ -147,26 +150,35 @@ public class MessageHandling {
                         SubcriberType.equals("d_transion")
                                 || SubcriberType.equals("task")
                                 || SubcriberType.equals("server")
+                                || SubcriberType.equals("folder")
+
                 )) {
                     OutMessage = OutMessage + "Неизвестный тип подписчика;";
                 }
 
                 if (OutMessage.equals("")) {
 
-                    if (SubcriberType.equals("i_transion")) {
-                        OutMessage = "добавление\\удаление независимых переходов не поддерживается;";
-                    }
 
                     if (SubcriberType.equals("d_transion")) {
+
                         OutMessage = dTransitionListUpdate(ActionType,UserLog,EntityId);
-                    }
 
-                    if (SubcriberType.equals("task")) {
+                    } else if (SubcriberType.equals("task")) {
+
                         OutMessage = dTaskListUpdate(ActionType,UserLog,EntityId);
-                    }
 
-                    if (SubcriberType.equals("server")) {
+                    } else if (SubcriberType.equals("server")) {
+
+                        OutMessage = dServerListUpdate(ActionType,UserLog);
+
+                    } else if (SubcriberType.equals("folder")) {
+
                         OutMessage = "добавление\\удаление независимых переходов не поддерживается;";
+
+                    } else {
+
+                        OutMessage = "Неподдерживаемый тип подписчика;";
+
                     }
 
                     //itransitionListUpdate
@@ -259,6 +271,80 @@ public class MessageHandling {
                 } else {
                     outMess = "N|"+"Задание " + qTaskId + " не найдено" + "|";
                 }
+            }
+        } catch (Throwable e) {
+            outMess = "N|Ошибка подключения к mqtt-серверу;|";
+        }
+
+        return outMess;
+    }
+
+    public static String dServerListUpdate(
+            String qActionType
+            ,String qUserLog
+    ){
+        String outMess;
+        internalMqttServer changeServer = null;
+        for (internalMqttServer iServ: Main.mqttServersList) {
+            if (iServ.iUserLog.equals(qUserLog)){
+                changeServer = iServ;
+            }
+        }
+
+        try {
+            if (qActionType.equals("add")) {
+                if (changeServer == null) {
+                    Main.mqttServersList.add(new internalMqttServer(qUserLog));
+                    outMess = "N|"+"Сервер для" + qUserLog + " успешно добавлен" + "|";
+                } else {
+                    outMess = "N|"+"Сервер для" + qUserLog + " уже существует" + "|";
+                }
+            } else if (qActionType.equals("change") && changeServer != null) {
+                changeServer.rebootMqttServer();
+                outMess = "N|"+"Сервер для" + qUserLog + " перезагружен" + "|";
+            } else {
+                outMess = "N|"+"Неподдерживаемый тип операции для сервера;|";
+            }
+        } catch (Throwable e) {
+            outMess = "N|Ошибка подключения к mqtt-серверу;|";
+        }
+
+        return outMess;
+    }
+
+    public static String dFolderListUpdate(
+            String qActionType
+            ,String qUserLog
+            ,String qMessage
+    ){
+        String outMess;
+        internalMqttServer changeServer = null;
+        for (internalMqttServer iServ: Main.mqttServersList) {
+            if (iServ.iUserLog.equals(qUserLog)){
+                changeServer = iServ;
+            }
+        }
+
+        Matcher insideBrackets = Pattern.compile("\\((.*?)\\)").matcher(qMessage);
+        Matcher outsideBrackets = Pattern.compile("(.*)\\(.*?\\)").matcher(qMessage);
+        insideBrackets.find();
+        outsideBrackets.find();
+        String folderLogIn = insideBrackets.group(1);
+        String folderPassWord = outsideBrackets.group(1);
+
+        try {
+            if (qActionType.equals("add")) {
+                if (changeServer != null && folderLogIn != null && folderPassWord != null) {
+                    changeServer.addControllerPassWord(folderLogIn,folderPassWord);
+                    outMess = "N|"+"Новый контроллер" + folderLogIn + "для" + qUserLog + " успешно добавлен" + "|";
+                } else {
+                    outMess = "N|"+"Не определён сервер или логин и пароль для контроллера" + qUserLog + "|";
+                }
+            } else if (qActionType.equals("change") && changeServer != null) {
+                changeServer.rebootMqttServer();
+                outMess = "N|"+"Пароль изменён и mqtt-сервер для" + qUserLog + " перезагружен" + "|";
+            } else {
+                outMess = "N|"+"Неподдерживаемый тип операции для сервера;|";
             }
         } catch (Throwable e) {
             outMess = "N|Ошибка подключения к mqtt-серверу;|";

@@ -6,10 +6,13 @@ import io.moquette.interception.messages.InterceptPublishMessage;
 import io.moquette.server.Server;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 import java.io.File;
 import java.io.FileInputStream;
@@ -21,10 +24,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.*;
 import java.text.SimpleDateFormat;
-import java.util.Collections;
+import java.util.*;
 import java.util.Date;
-import java.util.List;
-import java.util.Properties;
 
 /**
  * Created by kalistrat on 27.09.2017.
@@ -34,6 +35,43 @@ public class internalMqttServer extends Server {
     List<DtransitionCondition> ConditionList;
     List<PublisherTask> PublisherTaskList;
     String iUserLog;
+    String RegularPort;
+    String SecurePort;
+    //List<serverTypePort> serverTypePorts;
+
+    class serverTypePort{
+        public String serverPortNum;
+        public String serverPortType;
+
+        serverTypePort(){
+            serverPortNum = null;
+            serverPortType = null;
+        }
+        public void setPortNum(String pNum){
+            serverPortNum = pNum;
+        }
+        public void setPortType(String pType){
+            serverPortType = pType;
+        }
+
+    }
+
+    class serverFolderPassword{
+        public String folderLogIn;
+        public String folderPassWord;
+
+        serverFolderPassword(){
+            folderLogIn = null;
+            folderPassWord = null;
+        }
+        public void setFolderLogIn(String sLog){
+            folderLogIn = sLog;
+        }
+        public void setfolderPassWord(String sPass){
+            folderPassWord = sPass;
+        }
+
+    }
 
     class PublisherListener extends AbstractInterceptHandler {
 
@@ -62,13 +100,15 @@ public class internalMqttServer extends Server {
     List<? extends InterceptHandler> userHandlers;
     Properties configProps;
 
-    public internalMqttServer(String UserLog
-    ,String RegularPort
-    ,String SecurePort
-    ) throws InterruptedException, IOException {
+    public internalMqttServer(String UserLog) throws InterruptedException, IOException, Exception {
 
         configProps = new Properties();
         iUserLog = UserLog;
+
+        Document xmlDocument = MessageHandling
+                .loadXMLFromString(getServerDataList(iUserLog));
+
+        setServerPorts();
 
         passWordFilePath = Main.AbsPath +"passwords/"+iUserLog+".conf";
         File passFile = new File(passWordFilePath);
@@ -277,18 +317,14 @@ public class internalMqttServer extends Server {
         this.PublisherTaskList.clear();
         stopServer();
         System.gc();
+        setPassWordFile();
 
-        this.startServer(configProps);
+        startServer(configProps);
+
         for (int i=0; i<this.userHandlers.size(); i++) {
             this.addInterceptHandler(this.userHandlers.get(0));
         }
-        //Thread.sleep(2000);
-        System.out.println("Сервер перезагружен...");
-        System.out.println("Создание подписчиков для датчиков...");
-        //MessageHandling.createSubscriberLoggerList();
-        System.out.println("Создание заданий...");
         createPublisherTaskList();
-        System.out.println("Подписка завершена");
 
     }
 
@@ -451,6 +487,128 @@ public class internalMqttServer extends Server {
             //Handle errors for Class.forName
             e.printStackTrace();
             return null;
+        }
+    }
+
+    public String getServerDataList(String qUserLog){
+        try {
+
+            Class.forName(MessageHandling.JDBC_DRIVER);
+            Connection Con = DriverManager.getConnection(
+                    MessageHandling.DB_URL
+                    , MessageHandling.USER
+                    , MessageHandling.PASS
+            );
+
+            CallableStatement Stmt = Con.prepareCall("{? = call s_get_server_data(?)}");
+            Stmt.registerOutParameter(1,Types.BLOB);
+            Stmt.setString(1, qUserLog);
+            Stmt.execute();
+            Blob CondValue = Stmt.getBlob(1);
+            String resultStr = new String(CondValue.getBytes(1l, (int) CondValue.length()));
+            Con.close();
+            return resultStr;
+
+        }catch(SQLException se){
+            //Handle errors for JDBC
+            se.printStackTrace();
+            return null;
+        }catch(Exception e) {
+            //Handle errors for Class.forName
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private String getServerPasswordsList(String qUserLog){
+        try {
+
+            Class.forName(MessageHandling.JDBC_DRIVER);
+            Connection Con = DriverManager.getConnection(
+                    MessageHandling.DB_URL
+                    , MessageHandling.USER
+                    , MessageHandling.PASS
+            );
+
+            CallableStatement Stmt = Con.prepareCall("{? = call s_get_folder_data(?)}");
+            Stmt.registerOutParameter(1,Types.BLOB);
+            Stmt.setString(1, qUserLog);
+            Stmt.execute();
+            Blob CondValue = Stmt.getBlob(1);
+            String resultStr = new String(CondValue.getBytes(1l, (int) CondValue.length()));
+            Con.close();
+            return resultStr;
+
+        }catch(SQLException se){
+            //Handle errors for JDBC
+            se.printStackTrace();
+            return null;
+        }catch(Exception e) {
+            //Handle errors for Class.forName
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
+    private void setServerPorts() throws Exception {
+        List<serverTypePort> serverTypePorts = new ArrayList<>();
+        Document xmlDocument = MessageHandling
+                .loadXMLFromString(getServerDataList(iUserLog));
+
+        Node serverListNode = (Node) XPathFactory.newInstance().newXPath()
+                .compile("/server_list").evaluate(xmlDocument, XPathConstants.NODE);
+
+        NodeList nodeList = serverListNode.getChildNodes();
+
+        for (int i=0; i<nodeList.getLength(); i++){
+            NodeList childNodeList = nodeList.item(i).getChildNodes();
+            serverTypePort serverTypePortObj = new serverTypePort();
+            for (int j=0; j<childNodeList.getLength();j++) {
+                if (childNodeList.item(j).getNodeName().equals("server_port")) {
+                    serverTypePortObj.setPortNum(childNodeList.item(j).getTextContent());
+                } else if (childNodeList.item(j).getNodeName().equals("server_type")) {
+                    serverTypePortObj.setPortType(childNodeList.item(j).getTextContent());
+                }
+            }
+            serverTypePorts.add(serverTypePortObj);
+        }
+
+        for (serverTypePort iObj : serverTypePorts) {
+            if (iObj.serverPortType.equals("ssl")) {
+                SecurePort = iObj.serverPortNum;
+            } else {
+                RegularPort = iObj.serverPortNum;
+            }
+        }
+
+    }
+
+    private void setPassWordFile()throws Exception {
+        List<serverFolderPassword> serverPasswords = new ArrayList<>();
+        Document xmlDocument = MessageHandling
+                .loadXMLFromString(getServerPasswordsList(iUserLog));
+
+        Node serverListNode = (Node) XPathFactory.newInstance().newXPath()
+                .compile("/folder_list").evaluate(xmlDocument, XPathConstants.NODE);
+
+        NodeList nodeList = serverListNode.getChildNodes();
+
+        for (int i=0; i<nodeList.getLength(); i++){
+            NodeList childNodeList = nodeList.item(i).getChildNodes();
+            serverFolderPassword serverFolderPasswordObj = new serverFolderPassword();
+            for (int j=0; j<childNodeList.getLength();j++) {
+                if (childNodeList.item(j).getNodeName().equals("folder_login")) {
+                    serverFolderPasswordObj.setFolderLogIn(childNodeList.item(j).getTextContent());
+                } else if (childNodeList.item(j).getNodeName().equals("folder_password")) {
+                    serverFolderPasswordObj.setfolderPassWord(childNodeList.item(j).getTextContent());
+                }
+            }
+            serverPasswords.add(serverFolderPasswordObj);
+        }
+
+        for (serverFolderPassword iObj : serverPasswords) {
+
         }
     }
 
