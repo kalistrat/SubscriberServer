@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * Created by kalistrat on 07.06.2017.
  */
-public class ConditionVariable implements MqttCallback,Listenable {
+public class ConditionVariable implements MqttCallback, VarChangeListenable {
 
     String TopicName;
     MqttClient client;
@@ -68,7 +68,8 @@ public class ConditionVariable implements MqttCallback,Listenable {
         VarDate = new Date();
     }
 
-    public void setListener(VarListener listener) {
+    public void setVarListener(VarListener listener) {
         this.varListener = listener;
     }
+
 }

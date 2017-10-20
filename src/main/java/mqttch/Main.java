@@ -8,13 +8,9 @@ import java.util.List;
 
 public class Main {
 
-    public static List<DtransitionCondition> DtransitionConditionList;
-    public static List<PublisherTask> PublisherTaskList;
-
     public static List<internalMqttServer> mqttServersList;
 
     public static String AbsPath;
-    public static internalMqttServer iServ;
 
     public static void main(String[] args) {
 
@@ -34,20 +30,14 @@ public class Main {
 
             System.out.println("AbsPath : " + AbsPath);
 
-            iServ = new internalMqttServer("k","1883","1884");
-
             MessageHandling.logAction("Начинаю логирование");
 
             ServerSocket server = new ServerSocket(3128, 0,
                     InetAddress.getByName("localhost"));
 
             System.out.println("Сервер стартовал...");
-            System.out.println("Создание подписчиков для датчиков...");
-            //MessageHandling.createSubscriberLoggerList();
-            System.out.println("Создание заданий...");
-            //MessageHandling.createPublisherTaskList();
-
-            System.out.println("Подписка завершена");
+            System.out.println("Создание mqtt-серверов...");
+            MessageHandling.createMqttServerList();
 
             // слушаем порт
             while(true) {
@@ -57,7 +47,10 @@ public class Main {
             }
         }
         catch(Exception e) {
-            System.out.println("init error: "+e);
+            e.printStackTrace();
+        } // вывод исключений
+        catch(Throwable th) {
+            th.printStackTrace();
         } // вывод исключений
     }
 }

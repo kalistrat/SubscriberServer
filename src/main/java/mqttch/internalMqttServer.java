@@ -607,9 +607,11 @@ public class internalMqttServer extends Server {
             serverPasswords.add(serverFolderPasswordObj);
         }
 
-        for (serverFolderPassword iObj : serverPasswords) {
-
+        FileWriter fw = new FileWriter(passWordFilePath, false);
+        for (serverFolderPassword iObj: serverPasswords) {
+            fw.append("\n" + iObj.folderLogIn + ":" + iObj.folderPassWord);
         }
+        fw.close();
     }
 
 }

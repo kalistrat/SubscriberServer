@@ -8,9 +8,13 @@ import java.util.List;
 /**
  * Created by kalistrat on 07.06.2017.
  */
-public class DtransitionCondition {
+public class DtransitionCondition implements StateChangeListenable {
     List<ConditionVariable> VarsList;
     String ReadTopicName;
+    StateListener stateListener;
+    Integer iConditionId;
+    boolean isPerforming;
+
     public DtransitionCondition(String readTopicName
             , String mqttHostName
             , String leftPartExpression
@@ -26,12 +30,15 @@ public class DtransitionCondition {
             VarsList = new ArrayList<ConditionVariable>();
             setVarsList(conditionId);
             ReadTopicName = readTopicName;
+            iConditionId = conditionId;
+            isPerforming = false;
 
             for (ConditionVariable iO : VarsList) {
 
-                iO.setListener(new VarListener() {
+                iO.setVarListener(new VarListener() {
                     public void afterValueChange(String ChangedVarName) {
                         System.out.println("Изменена переменная : " + ChangedVarName);
+                        stateListener.afterConditionPerformed(iConditionId);
                     }
                 });
             }
@@ -108,5 +115,9 @@ public class DtransitionCondition {
             //e.printStackTrace();
             throw  e;
         }
+    }
+
+    public void setStateListener(StateListener listener){
+        this.stateListener = listener;
     }
 }

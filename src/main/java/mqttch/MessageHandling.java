@@ -2,13 +2,18 @@ package mqttch;
 
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import javax.net.ssl.*;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathFactory;
 import java.io.*;
 import java.security.*;
 import java.security.cert.CertificateException;
+import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Date;
@@ -150,7 +155,6 @@ public class MessageHandling {
                         SubcriberType.equals("d_transion")
                                 || SubcriberType.equals("task")
                                 || SubcriberType.equals("server")
-                                || SubcriberType.equals("folder")
 
                 )) {
                     OutMessage = OutMessage + "Неизвестный тип подписчика;";
@@ -170,10 +174,6 @@ public class MessageHandling {
                     } else if (SubcriberType.equals("server")) {
 
                         OutMessage = dServerListUpdate(ActionType,UserLog);
-
-                    } else if (SubcriberType.equals("folder")) {
-
-                        OutMessage = "добавление\\удаление независимых переходов не поддерживается;";
 
                     } else {
 
@@ -336,6 +336,7 @@ public class MessageHandling {
             if (qActionType.equals("add")) {
                 if (changeServer != null && folderLogIn != null && folderPassWord != null) {
                     changeServer.addControllerPassWord(folderLogIn,folderPassWord);
+                    changeServer.rebootMqttServer();
                     outMess = "N|"+"Новый контроллер" + folderLogIn + "для" + qUserLog + " успешно добавлен" + "|";
                 } else {
                     outMess = "N|"+"Не определён сервер или логин и пароль для контроллера" + qUserLog + "|";
@@ -347,7 +348,7 @@ public class MessageHandling {
                 outMess = "N|"+"Неподдерживаемый тип операции для сервера;|";
             }
         } catch (Throwable e) {
-            outMess = "N|Ошибка подключения к mqtt-серверу;|";
+            outMess = "N|Ошибка добавления контроллера для" + qUserLog + ";|";
         }
 
         return outMess;
@@ -372,5 +373,60 @@ public class MessageHandling {
 
         SSLSocketFactory ssf = sc.getSocketFactory();
         return ssf;
+    }
+
+    public static String getUsersList(){
+        try {
+
+            Class.forName(MessageHandling.JDBC_DRIVER);
+            Connection Con = DriverManager.getConnection(
+                    MessageHandling.DB_URL
+                    , MessageHandling.USER
+                    , MessageHandling.PASS
+            );
+
+            CallableStatement Stmt = Con.prepareCall("{? = call s_get_user_list()}");
+            Stmt.registerOutParameter(1, Types.BLOB);
+            Stmt.execute();
+            Blob CondValue = Stmt.getBlob(1);
+            String resultStr = new String(CondValue.getBytes(1l, (int) CondValue.length()));
+            Con.close();
+            return resultStr;
+
+        }catch(SQLException se){
+            //Handle errors for JDBC
+            se.printStackTrace();
+            return null;
+        }catch(Exception e) {
+            //Handle errors for Class.forName
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static void createMqttServerList() throws Throwable {
+        List<String> usersList = new ArrayList<>();
+        Document xmlDocument = MessageHandling
+                .loadXMLFromString(getUsersList());
+
+        Node serverListNode = (Node) XPathFactory.newInstance().newXPath()
+                .compile("/server_list").evaluate(xmlDocument, XPathConstants.NODE);
+
+        NodeList nodeList = serverListNode.getChildNodes();
+
+        for (int i=0; i<nodeList.getLength(); i++){
+            NodeList childNodeList = nodeList.item(i).getChildNodes();
+            for (int j=0; j<childNodeList.getLength();j++) {
+                if (childNodeList.item(j).getNodeName().equals("user_log")) {
+                    usersList.add(childNodeList.item(j).getTextContent());
+                }
+            }
+        }
+
+        for (String iObj : usersList) {
+            internalMqttServer newServ = new internalMqttServer(iObj);
+            newServ.createPublisherTaskList();
+            Main.mqttServersList.add(newServ);
+        }
     }
 }
