@@ -8,7 +8,7 @@ import java.util.List;
 
 public class Main {
 
-    public static List<internalMqttServer> mqttServersList;
+    public static List<internalMqttServer> mqttServersList = new ArrayList<>();
 
     public static String AbsPath;
 

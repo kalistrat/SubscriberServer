@@ -390,6 +390,7 @@ public class MessageHandling {
             Stmt.execute();
             Blob CondValue = Stmt.getBlob(1);
             String resultStr = new String(CondValue.getBytes(1l, (int) CondValue.length()));
+            System.out.println("getUsersList resultStr :" + resultStr);
             Con.close();
             return resultStr;
 
@@ -410,7 +411,7 @@ public class MessageHandling {
                 .loadXMLFromString(getUsersList());
 
         Node serverListNode = (Node) XPathFactory.newInstance().newXPath()
-                .compile("/server_list").evaluate(xmlDocument, XPathConstants.NODE);
+                .compile("/user_list").evaluate(xmlDocument, XPathConstants.NODE);
 
         NodeList nodeList = serverListNode.getChildNodes();
 

@@ -98,7 +98,7 @@ public class PublisherTask {
 
             Date syncDate = MessageHandling.redefineSyncDate(wMessageValue);
             long unixSyncDate = syncDate.getTime() / 1000L;
-            String MessCode = String.valueOf(unixSyncDate) + " : " + String.valueOf(unixSyncDate);
+            String MessCode = String.valueOf(unixSyncDate);
             MqttClient client = new MqttClient(wServerIp, wControlLog, null);
             MqttConnectOptions options = new MqttConnectOptions();
             options.setUserName(wControlLog);

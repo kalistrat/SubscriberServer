@@ -83,8 +83,8 @@ public class internalMqttServer extends Server {
         @Override
         public void onPublish(InterceptPublishMessage msg) {
 
-//            System.out.println(
-//                    "Received on topic: " + msg.getTopicName().toString() + " content: " + StandardCharsets.UTF_8.decode(msg.getPayload().nioBuffer()).toString());
+            System.out.println(
+                    "Received on topic: " + msg.getTopicName().toString() + " content: " + StandardCharsets.UTF_8.decode(msg.getPayload().nioBuffer()).toString());
 
             String topic = msg.getTopicName().toString();
             String message = StandardCharsets.UTF_8.decode(msg.getPayload().nioBuffer()).toString();
@@ -104,7 +104,8 @@ public class internalMqttServer extends Server {
 
         configProps = new Properties();
         iUserLog = UserLog;
-
+        PublisherTaskList = new ArrayList<>();
+        ConditionList = new ArrayList<>();
         Document xmlDocument = MessageHandling
                 .loadXMLFromString(getServerDataList(iUserLog));
 
@@ -112,9 +113,11 @@ public class internalMqttServer extends Server {
 
         passWordFilePath = Main.AbsPath +"passwords/"+iUserLog+".conf";
         File passFile = new File(passWordFilePath);
-        passFile.mkdirs();
+        passFile.createNewFile();
 
         System.out.println("passfilename : " + passWordFilePath);
+
+        setPassWordFile();
 
         configProps.setProperty("port", RegularPort);
         configProps.setProperty("host", "0.0.0.0");
@@ -244,6 +247,7 @@ public class internalMqttServer extends Server {
             DataStmt.setString(1,iUserLog);
             ResultSet DataRs = DataStmt.executeQuery();
             while (DataRs.next()) {
+
                 this.PublisherTaskList.add(new PublisherTask(
                         DataRs.getString(1)
                         , DataRs.getInt(2)
@@ -472,7 +476,7 @@ public class internalMqttServer extends Server {
 
             CallableStatement Stmt = Con.prepareCall("{? = call s_get_task_data(?)}");
             Stmt.registerOutParameter(1,Types.BLOB);
-            Stmt.setInt(1, qTaskId);
+            Stmt.setInt(2, qTaskId);
             Stmt.execute();
             Blob CondValue = Stmt.getBlob(1);
             String resultStr = new String(CondValue.getBytes(1l, (int) CondValue.length()));
@@ -502,7 +506,7 @@ public class internalMqttServer extends Server {
 
             CallableStatement Stmt = Con.prepareCall("{? = call s_get_server_data(?)}");
             Stmt.registerOutParameter(1,Types.BLOB);
-            Stmt.setString(1, qUserLog);
+            Stmt.setString(2, qUserLog);
             Stmt.execute();
             Blob CondValue = Stmt.getBlob(1);
             String resultStr = new String(CondValue.getBytes(1l, (int) CondValue.length()));
@@ -530,9 +534,11 @@ public class internalMqttServer extends Server {
                     , MessageHandling.PASS
             );
 
+            //System.out.println("getServerPasswordsList qUserLog : " + qUserLog);
+
             CallableStatement Stmt = Con.prepareCall("{? = call s_get_folder_data(?)}");
             Stmt.registerOutParameter(1,Types.BLOB);
-            Stmt.setString(1, qUserLog);
+            Stmt.setString(2, qUserLog);
             Stmt.execute();
             Blob CondValue = Stmt.getBlob(1);
             String resultStr = new String(CondValue.getBytes(1l, (int) CondValue.length()));
