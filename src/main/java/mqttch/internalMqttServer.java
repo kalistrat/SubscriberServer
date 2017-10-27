@@ -163,13 +163,15 @@ public class internalMqttServer extends Server {
                 .compile("/task_data/message_value").evaluate(xmlDocument);
 
         int indx = -1;
+
         for (PublisherTask iObj : this.PublisherTaskList) {
+
             if (iObj.iWriteTopicName.equals(oWriteTopicName)) {
                 indx = this.PublisherTaskList.indexOf(iObj);
             }
         }
 
-        if (indx != -1) {
+        if (indx == -1) {
             this.PublisherTaskList.add(new PublisherTask(
                     oTaskTypeName
                     , oTaskInterval
@@ -205,6 +207,7 @@ public class internalMqttServer extends Server {
 
         if (indx != -1) {
             PublisherTask remTask = this.PublisherTaskList.get(indx);
+            remTask.ses.shutdown();
             remTask = null;
             this.PublisherTaskList.remove(indx);
             System.gc();
@@ -316,6 +319,7 @@ public class internalMqttServer extends Server {
 
         for (PublisherTask iTask : this.PublisherTaskList) {
             PublisherTask delTask = iTask;
+            delTask.ses.shutdown();
             delTask = null;
         }
         this.PublisherTaskList.clear();
@@ -388,7 +392,7 @@ public class internalMqttServer extends Server {
             }
         }
 
-        if (indx != -1) {
+        if (indx == -1) {
             this.ConditionList.add(new DtransitionCondition(
                     ReadTopicName
                     ,MqttServerHost
@@ -416,7 +420,7 @@ public class internalMqttServer extends Server {
 
             CallableStatement Stmt = Con.prepareCall("{? = call s_message_recerve(?)}");
             Stmt.registerOutParameter(1,Types.BLOB);
-            Stmt.setInt(1, qConditionId);
+            Stmt.setInt(2, qConditionId);
             Stmt.execute();
             Blob CondValue = Stmt.getBlob(1);
             String resultStr = new String(CondValue.getBytes(1l, (int) CondValue.length()));

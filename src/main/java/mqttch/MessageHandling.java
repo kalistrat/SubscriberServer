@@ -38,6 +38,14 @@ public class MessageHandling {
         return builder.parse(is);
     }
 
+    public static int safeLongToInt(long l) {
+        if (l < Integer.MIN_VALUE || l > Integer.MAX_VALUE) {
+            throw new IllegalArgumentException
+                    (l + " cannot be cast to int without changing its value.");
+        }
+        return (int) l;
+    }
+
 
     public static void logAction(String strLog){
         try {
@@ -273,7 +281,7 @@ public class MessageHandling {
                 }
             }
         } catch (Throwable e) {
-            outMess = "N|Ошибка подключения к mqtt-серверу;|";
+            outMess = "N|Ошибка выполнения операции на mqtt-сервере;|";
         }
 
         return outMess;
@@ -295,18 +303,18 @@ public class MessageHandling {
             if (qActionType.equals("add")) {
                 if (changeServer == null) {
                     Main.mqttServersList.add(new internalMqttServer(qUserLog));
-                    outMess = "N|"+"Сервер для" + qUserLog + " успешно добавлен" + "|";
+                    outMess = "N|"+"Сервер для " + qUserLog + " успешно добавлен" + "|";
                 } else {
-                    outMess = "N|"+"Сервер для" + qUserLog + " уже существует" + "|";
+                    outMess = "N|"+"Сервер для " + qUserLog + " уже существует" + "|";
                 }
             } else if (qActionType.equals("change") && changeServer != null) {
                 changeServer.rebootMqttServer();
-                outMess = "N|"+"Сервер для" + qUserLog + " перезагружен" + "|";
+                outMess = "N|"+"Сервер для " + qUserLog + " перезагружен" + "|";
             } else {
                 outMess = "N|"+"Неподдерживаемый тип операции для сервера;|";
             }
         } catch (Throwable e) {
-            outMess = "N|Ошибка подключения к mqtt-серверу;|";
+            outMess = "N|Ошибка выполнения операции на mqtt-сервере;|";
         }
 
         return outMess;

@@ -2,6 +2,7 @@ package mqttch;
 
 import org.eclipse.paho.client.mqttv3.*;
 
+import javax.net.ssl.SSLSocketFactory;
 import java.util.Date;
 import java.util.List;
 
@@ -14,14 +15,19 @@ public class ConditionVariable implements MqttCallback, VarChangeListenable {
     MqttClient client;
     String MqttHostName;
     Double VarValue;
-    Date VarDate;
+    java.util.Date VarDate;
     String VarName;
     VarListener varListener;
+    Integer deltaTimeSec;
 
     public ConditionVariable(int conditionId
-            ,String topicName
-            ,String mqttServerHost
-            , String varName) throws Throwable {
+    ,String topicName
+    ,String mqttServerHost
+    ,String varName
+    ,String wControlLog
+    ,String wControlPass
+                             ,int eConditonId
+    ) throws Throwable {
 
         try {
             TopicName = topicName;
@@ -29,11 +35,19 @@ public class ConditionVariable implements MqttCallback, VarChangeListenable {
             VarName = varName;
             VarDate = null;
             VarValue = null;
-            List<String> topicValues = MessageHandling.GetListFromString(topicName);
-            System.out.println("topicValues.get(0) : " + topicValues.get(0));
+            deltaTimeSec = null;
+
+
+            client = new MqttClient(mqttServerHost, String.valueOf(eConditonId) + varName, null);
             MqttConnectOptions options = new MqttConnectOptions();
-            options.setConnectionTimeout(0);
-            client = new MqttClient("tcp://" + MqttHostName, topicValues.get(0) + "/" +String.valueOf(conditionId) + "/" +VarName + "/", null);
+            options.setUserName(wControlLog);
+            options.setPassword(wControlPass.toCharArray());
+
+            if (mqttServerHost.contains("ssl://")) {
+                SSLSocketFactory ssf = MessageHandling.configureSSLSocketFactory();
+                options.setSocketFactory(ssf);
+            }
+
             client.connect(options);
             client.setCallback(this);
             client.subscribe(TopicName);
@@ -53,7 +67,7 @@ public class ConditionVariable implements MqttCallback, VarChangeListenable {
     public void messageArrived(String topic, MqttMessage message)
             throws Exception {
         setVariableValue(message.toString());
-        varListener.afterValueChange(VarName);
+        varListener.afterValueChange(this);
         //System.out.println("topic : " + topic);
     }
 
@@ -65,6 +79,7 @@ public class ConditionVariable implements MqttCallback, VarChangeListenable {
 
     public void setVariableValue(String newVal){
         VarValue = MessageHandling.StrToDouble(newVal);
+        deltaTimeSec = MessageHandling.safeLongToInt(((new Date()).getTime()-VarDate.getTime())/1000);
         VarDate = new Date();
     }
 

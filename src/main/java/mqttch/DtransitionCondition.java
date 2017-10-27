@@ -3,6 +3,7 @@ package mqttch;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 /**
@@ -14,6 +15,10 @@ public class DtransitionCondition implements StateChangeListenable {
     StateListener stateListener;
     Integer iConditionId;
     boolean isPerforming;
+    MathParser mathParser;
+    String rightExpr;
+    String leftExpr;
+    String signExpr;
 
     public DtransitionCondition(String readTopicName
             , String mqttHostName
@@ -21,7 +26,7 @@ public class DtransitionCondition implements StateChangeListenable {
             , String rightPartExpression
             , String signExpression
             , Integer timeInterval
-            , int conditionId
+            , final int conditionId
     ) throws Throwable {
 
         try {
@@ -32,13 +37,23 @@ public class DtransitionCondition implements StateChangeListenable {
             ReadTopicName = readTopicName;
             iConditionId = conditionId;
             isPerforming = false;
+            rightExpr = rightPartExpression;
+            leftExpr = leftPartExpression;
+            signExpr = signExpression;
 
             for (ConditionVariable iO : VarsList) {
 
+
                 iO.setVarListener(new VarListener() {
-                    public void afterValueChange(String ChangedVarName) {
-                        System.out.println("Изменена переменная : " + ChangedVarName);
-                        stateListener.afterConditionPerformed(iConditionId);
+                    @Override
+                    public void afterValueChange(ConditionVariable varChanged) {
+                        System.out.println("Изменена переменная : " + varChanged.VarName);
+                        if (isConditionPerformed(varChanged)) {
+                            isPerforming = true;
+                            stateListener.afterConditionPerformed(getObjectCondition());
+                        } else {
+                            isPerforming = false;
+                        }
                     }
                 });
             }
@@ -54,6 +69,10 @@ public class DtransitionCondition implements StateChangeListenable {
 
     }
 
+    public DtransitionCondition getObjectCondition(){
+        return this;
+    }
+
     public void setVarsList(int qConditionId) throws Throwable {
         try {
 
@@ -66,9 +85,12 @@ public class DtransitionCondition implements StateChangeListenable {
 
             String DataSql = "select cv.var_code\n" +
                     ",ud.mqtt_topic_write\n" +
-                    ",concat(ms.server_ip,concat(':',ms.server_port))\n" +
+                    ",ms.server_ip\n" +
+                    ",udt.control_log\n" +
+                    ",udt.control_pass\n" +
                     "from user_state_condition_vars cv\n" +
                     "join user_device ud on ud.user_device_id=cv.user_device_id\n" +
+                    "join user_devices_tree udt on udt.user_device_id=ud.user_device_id\n" +
                     "join mqtt_servers ms on ms.server_id=ud.mqqt_server_id\n" +
                     "where cv.actuator_state_condition_id = ?";
 
@@ -85,6 +107,9 @@ public class DtransitionCondition implements StateChangeListenable {
                         ,DataRs.getString(2)//String topicName
                         ,DataRs.getString(3)//String mqttServerHost
                         ,DataRs.getString(1)//String varName
+                        ,DataRs.getString(4)//Логин
+                        ,DataRs.getString(5)//Пароль
+                        ,qConditionId
                 ));
 
 
@@ -120,4 +145,124 @@ public class DtransitionCondition implements StateChangeListenable {
     public void setStateListener(StateListener listener){
         this.stateListener = listener;
     }
+
+    private Integer calcDeltaTimeValue(){
+        int curValue = 0;
+        for (ConditionVariable iVar : VarsList){
+
+            if (iVar.deltaTimeSec == null) {
+                curValue = -1;
+                break;
+            } else {
+                if (iVar.deltaTimeSec.intValue() > curValue) {
+                    curValue = iVar.deltaTimeSec;
+                }
+            }
+        }
+        if (curValue != -1) {
+            return curValue;
+        } else {
+            return null;
+        }
+    }
+
+    private boolean isMeasuredDateDefine(java.util.Date varChangedDate,Integer cInterval){
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(varChangedDate);
+        cal.add(Calendar.SECOND, cInterval * (-1));
+
+        java.util.Date leftBorderDate = cal.getTime();
+        java.util.Date rightBorderDate = varChangedDate;
+        int iCnt = 0;
+
+        for (ConditionVariable iVar : VarsList) {
+            if (iVar.VarDate == null) {
+                break;
+            } else {
+                if (leftBorderDate.compareTo(iVar.VarDate) * iVar.VarDate.compareTo(rightBorderDate) >= 0) {
+                    iCnt = iCnt + 1;
+                }
+            }
+        }
+
+        if (VarsList.size() == iCnt) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private Double getExpressionValue(String strExpr){
+        mathParser.VarList.clear();
+        mathParser.var.clear();
+        for (ConditionVariable iVariable : VarsList) {
+            mathParser.setVariable(iVariable.VarName,iVariable.VarValue);
+        }
+        try {
+            return mathParser.Parse(strExpr);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private boolean isConditionPerformed(ConditionVariable qVarChanged){
+        Integer deltaT = calcDeltaTimeValue();
+        if (deltaT != null) {
+            if (isMeasuredDateDefine(qVarChanged.VarDate,deltaT)) {
+                Double rightExprValue = getExpressionValue(rightExpr);
+                Double leftExprValue = getExpressionValue(leftExpr);
+
+                if (rightExprValue!=null && leftExprValue!=null) {
+
+                    if (signExpr.equals(">")) {
+                        if (leftExprValue.doubleValue() > rightExprValue.doubleValue()) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    } else if (signExpr.equals("<")) {
+                        if (leftExprValue.doubleValue() < rightExprValue.doubleValue()) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    } else if (signExpr.equals("<=")) {
+                        if (leftExprValue.doubleValue() <= rightExprValue.doubleValue()) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    } else if (signExpr.equals(">=")) {
+                        if (leftExprValue.doubleValue() >= rightExprValue.doubleValue()) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    } else if (signExpr.equals("=")) {
+                        if (leftExprValue.doubleValue() == rightExprValue.doubleValue()) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    } else {
+                        System.out.println("can't parse sign : condition_id " + iConditionId);
+                        return false;
+                    }
+                } else {
+                    System.out.println("can't parse expression : condition_id " + iConditionId);
+                    return false;
+                }
+
+            } else {
+                System.out.println("no entry in the date range: condition_id " + iConditionId);
+                return false;
+            }
+        } else {
+            System.out.println("deltaT = null : condition_id " + iConditionId);
+            return false;
+        }
+
+    }
+
 }

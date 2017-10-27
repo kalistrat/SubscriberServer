@@ -16,7 +16,7 @@ public class actuatorState {
         for (DtransitionCondition iCondition : iConditionList) {
             iCondition.setStateListener(new StateListener() {
                 @Override
-                public void afterConditionPerformed(Integer conditionId) {
+                public void afterConditionPerformed(DtransitionCondition conditionPerformed) {
 
                 }
             });

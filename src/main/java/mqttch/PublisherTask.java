@@ -24,6 +24,7 @@ public class PublisherTask {
         final String iTaskTypeName;
         int iIntervalValue;
         String iWriteTopicName;
+        ScheduledExecutorService ses;
 
     public PublisherTask(
             String qTaskTypeName
@@ -49,7 +50,7 @@ public class PublisherTask {
         );
 
 
-        ScheduledExecutorService ses =
+        ses =
                 Executors.newScheduledThreadPool(1);
         Runnable pinger = new Runnable() {
             public void run() {
@@ -99,6 +100,8 @@ public class PublisherTask {
             Date syncDate = MessageHandling.redefineSyncDate(wMessageValue);
             long unixSyncDate = syncDate.getTime() / 1000L;
             String MessCode = String.valueOf(unixSyncDate);
+
+
             MqttClient client = new MqttClient(wServerIp, wControlLog, null);
             MqttConnectOptions options = new MqttConnectOptions();
             options.setUserName(wControlLog);
