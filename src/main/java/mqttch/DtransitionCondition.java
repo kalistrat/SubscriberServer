@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class DtransitionCondition implements StateChangeListenable {
     List<ConditionVariable> VarsList;
-    String ReadTopicName;
+    //String ReadTopicName;
     StateListener stateListener;
     Integer iConditionId;
     boolean isPerforming;
@@ -19,6 +19,7 @@ public class DtransitionCondition implements StateChangeListenable {
     String rightExpr;
     String leftExpr;
     String signExpr;
+    //Integer iStateId;
 
     public DtransitionCondition(String readTopicName
             , String mqttHostName
@@ -33,30 +34,14 @@ public class DtransitionCondition implements StateChangeListenable {
 
 
             VarsList = new ArrayList<ConditionVariable>();
-            setVarsList(conditionId);
-            ReadTopicName = readTopicName;
+            //ReadTopicName = readTopicName;
             iConditionId = conditionId;
             isPerforming = false;
             rightExpr = rightPartExpression;
             leftExpr = leftPartExpression;
             signExpr = signExpression;
-
-            for (ConditionVariable iO : VarsList) {
-
-
-                iO.setVarListener(new VarListener() {
-                    @Override
-                    public void afterValueChange(ConditionVariable varChanged) {
-                        System.out.println("Изменена переменная : " + varChanged.VarName);
-                        if (isConditionPerformed(varChanged)) {
-                            isPerforming = true;
-                            stateListener.afterConditionPerformed(getObjectCondition());
-                        } else {
-                            isPerforming = false;
-                        }
-                    }
-                });
-            }
+            //iStateId = null;
+            setVarsList();
 
         } catch (Throwable e0){
         //e0.printStackTrace();
@@ -65,15 +50,55 @@ public class DtransitionCondition implements StateChangeListenable {
 
         }
 
+    }
+
+    public DtransitionCondition(){
+        VarsList = new ArrayList<ConditionVariable>();
+        isPerforming = false;
+    }
+
+    public void setConditionId(int conditionId){
+        this.iConditionId = conditionId;
+    }
+
+    public void setRightExpr(String rightExpr){
+        this.rightExpr = rightExpr;
+    }
+
+    public void setLeftExpr(String qleftExpr){
+        this.leftExpr = qleftExpr;
+    }
+
+    public void setSignExpr(String qsignExpr){
+        this.signExpr = qsignExpr;
+    }
 
 
+    public void setVarsList() throws Throwable {
+        addVarsList(iConditionId);
+        for (ConditionVariable iO : VarsList) {
+
+
+            iO.setVarListener(new VarListener() {
+                @Override
+                public void afterValueChange(ConditionVariable varChanged) {
+                    //System.out.println("Изменена переменная : " + varChanged.VarName);
+                    if (isConditionPerformed(varChanged)) {
+                        isPerforming = true;
+                        stateListener.afterConditionPerformed(getObjectCondition());
+                    } else {
+                        isPerforming = false;
+                    }
+                }
+            });
+        }
     }
 
     public DtransitionCondition getObjectCondition(){
         return this;
     }
 
-    public void setVarsList(int qConditionId) throws Throwable {
+    public void addVarsList(int qConditionId) throws Throwable {
         try {
 
             Class.forName(MessageHandling.JDBC_DRIVER);
@@ -207,9 +232,9 @@ public class DtransitionCondition implements StateChangeListenable {
     }
 
     private boolean isConditionPerformed(ConditionVariable qVarChanged){
-        Integer deltaT = calcDeltaTimeValue();
-        if (deltaT != null) {
-            if (isMeasuredDateDefine(qVarChanged.VarDate,deltaT)) {
+//        Integer deltaT = calcDeltaTimeValue();
+//        if (deltaT != null) {
+//            if (isMeasuredDateDefine(qVarChanged.VarDate,deltaT)) {
                 Double rightExprValue = getExpressionValue(rightExpr);
                 Double leftExprValue = getExpressionValue(leftExpr);
 
@@ -254,14 +279,14 @@ public class DtransitionCondition implements StateChangeListenable {
                     return false;
                 }
 
-            } else {
-                System.out.println("no entry in the date range: condition_id " + iConditionId);
-                return false;
-            }
-        } else {
-            System.out.println("deltaT = null : condition_id " + iConditionId);
-            return false;
-        }
+//            } else {
+//                System.out.println("no entry in the date range: condition_id " + iConditionId);
+//                return false;
+//            }
+//        } else {
+//            System.out.println("deltaT = null : condition_id " + iConditionId);
+//            return false;
+//        }
 
     }
 
