@@ -19,36 +19,64 @@ public class actuatorState {
     Integer iStateDeltaT;
     List<DtransitionCondition> iConditionList;
     actuatorStateTimer stateTimer;
+    String iWriteTopicName;
+    String iActionType;
+    String iStateMessageCode;
+    String iUserMail;
+    String iUserPhone;
+    List<String> iNotificationList;
+    String iServerIp;
+    String iDeviceLog;
+    String iDevicePass;
 
     public actuatorState(int qStateId) throws Throwable {
         iStateId = qStateId;
-        iStateDeltaT = 5;
         stateTimer = new actuatorStateTimer();
         iConditionList = new ArrayList<>();
+        iNotificationList = new ArrayList<>();
         setConditionList();
 
-        for (DtransitionCondition iCondition : iConditionList) {
-            iCondition.setStateListener(new StateListener() {
-                @Override
-                public void afterConditionPerformed(DtransitionCondition conditionPerformed) {
-                    if (isPerformedAllConditions()) {
-                        if (stateTimer.commitedTime.intValue() == 0) {
-                            stateTimer.startExecution();
-                        } else {
-                            if (stateTimer.commitedTime.intValue() >= iStateDeltaT.intValue()) {
-                                //releaseThisState
-                            }
-                        }
-                    } else {
-                        if (stateTimer.commitedTime.intValue() != 0) {
-                            stateTimer.stopExecution();
-                        }
+        Document xmlState = MessageHandling
+                .loadXMLFromString(getXMLStateData());
+
+        if (xmlState!=null) {
+            iWriteTopicName = XPathFactory.newInstance().newXPath()
+                    .compile("/state_data/mqtt_topic_write").evaluate(xmlState);
+            iActionType = XPathFactory.newInstance().newXPath()
+                    .compile("/state_data/action_type_code").evaluate(xmlState);
+            iStateMessageCode = XPathFactory.newInstance().newXPath()
+                    .compile("/state_data/actuator_message_code").evaluate(xmlState);
+            iUserMail = XPathFactory.newInstance().newXPath()
+                    .compile("/state_data/user_mail").evaluate(xmlState);
+            iUserPhone = XPathFactory.newInstance().newXPath()
+                    .compile("/state_data/user_phone").evaluate(xmlState);
+            iStateDeltaT = Integer.parseInt(XPathFactory.newInstance().newXPath()
+                    .compile("/state_data/transition_time").evaluate(xmlState));
+
+            iServerIp = XPathFactory.newInstance().newXPath()
+                    .compile("/state_data/server_ip").evaluate(xmlState);
+            iDeviceLog = XPathFactory.newInstance().newXPath()
+                    .compile("/state_data/control_log").evaluate(xmlState);
+            iDevicePass = XPathFactory.newInstance().newXPath()
+                    .compile("/state_data/control_pass").evaluate(xmlState);
+
+            Node node = (Node) XPathFactory.newInstance().newXPath()
+                    .compile("/state_data/notification_list").evaluate(xmlState, XPathConstants.NODE);
+
+            NodeList nodeList = node.getChildNodes();
+
+            for (int i=0; i<nodeList.getLength(); i++){
+                NodeList childNodeList = nodeList.item(i).getChildNodes();
+                for (int j=0; j<childNodeList.getLength();j++) {
+                    if (childNodeList.item(j).getNodeName().equals("notification_code")) {
+                        iNotificationList.add(childNodeList.item(j).getTextContent());
                     }
                 }
-            });
+            }
         }
 
     }
+
 
     private boolean isPerformedAllConditions(){
         int iCnt = 0;
@@ -94,14 +122,37 @@ public class actuatorState {
         }
     }
 
-    public void setConditionList() throws Throwable {
+    private String getXMLStateData(){
+        try {
 
-        for (DtransitionCondition iDc : iConditionList) {
-            iDc.disconnectVarList();
-            iDc = null;
+            Class.forName(MessageHandling.JDBC_DRIVER);
+            Connection Con = DriverManager.getConnection(
+                    MessageHandling.DB_URL
+                    , MessageHandling.USER
+                    , MessageHandling.PASS
+            );
+
+            CallableStatement Stmt = Con.prepareCall("{? = call s_get_state_data(?)}");
+            Stmt.registerOutParameter(1, Types.BLOB);
+            Stmt.setInt(2,iStateId);
+            Stmt.execute();
+            Blob CondValue = Stmt.getBlob(1);
+            String resultStr = new String(CondValue.getBytes(1l, (int) CondValue.length()));
+            Con.close();
+            return resultStr;
+
+        }catch(SQLException se){
+            //Handle errors for JDBC
+            se.printStackTrace();
+            return null;
+        }catch(Exception e) {
+            //Handle errors for Class.forName
+            e.printStackTrace();
+            return null;
         }
-        iConditionList.clear();
-        System.gc();
+    }
+
+    public void setConditionList() throws Throwable {
 
         Document xmlDocument = MessageHandling
                 .loadXMLFromString(getXMLConditionList());
@@ -128,5 +179,65 @@ public class actuatorState {
             }
             iConditionList.add(iCondRule);
         }
+
+        for (DtransitionCondition iCondition : iConditionList) {
+            iCondition.setStateListener(new StateListener() {
+                @Override
+                public void afterConditionPerformed(DtransitionCondition conditionPerformed) {
+                    if (isPerformedAllConditions()) {
+                        if (stateTimer.commitedTime.intValue() == 0) {
+                            stateTimer.startExecution();
+                        } else {
+                            if (stateTimer.commitedTime.intValue() >= iStateDeltaT.intValue()) {
+
+                                MessageHandling.publishMqttMessage(
+                                        iWriteTopicName
+                                        ,iServerIp
+                                        ,iDeviceLog
+                                        ,iDevicePass
+                                        ,iStateMessageCode
+                                );
+
+                                for (String iNotObj : iNotificationList) {
+
+                                    if (iNotObj.equals("MAIL")) {
+                                        MessageHandling.sendEmailMessage(
+                                                iUserMail
+                                                ,iStateMessageCode
+                                        );
+                                    } else if (iNotObj.equals("WHATSUP")){
+                                        MessageHandling.sendWhatsUpMessage(
+                                                iUserPhone
+                                                ,iStateMessageCode
+                                        );
+                                    } else if (iNotObj.equals("SMS")){
+                                        MessageHandling.sendSMSMessage(
+                                                iUserPhone
+                                                ,iStateMessageCode
+                                        );
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        if (stateTimer.commitedTime.intValue() != 0) {
+                            stateTimer.stopExecution();
+                        }
+                    }
+                }
+            });
+        }
     }
+
+    public void resetState() throws Throwable {
+        for (DtransitionCondition iRule : this.iConditionList) {
+            iRule.disconnectVarList();
+            iRule = null;
+        }
+        this.iConditionList.clear();
+        stateTimer.stopExecution();
+        System.gc();
+    }
+
+
 }

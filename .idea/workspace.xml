@@ -7,9 +7,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6527b389-cdbd-482e-a02b-cfd0bcb699b8" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/mqttch/DtransitionCondition.java" afterPath="$PROJECT_DIR$/src/main/java/mqttch/DtransitionCondition.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/mqttch/MessageHandling.java" afterPath="$PROJECT_DIR$/src/main/java/mqttch/MessageHandling.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/mqttch/PublisherTask.java" afterPath="$PROJECT_DIR$/src/main/java/mqttch/PublisherTask.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/mqttch/actuatorState.java" afterPath="$PROJECT_DIR$/src/main/java/mqttch/actuatorState.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/mqttch/internalMqttServer.java" afterPath="$PROJECT_DIR$/src/main/java/mqttch/internalMqttServer.java" />
     </list>
     <ignored path="SubscriberServer.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -33,13 +34,13 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="internalMqttServer.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="internalMqttServer.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/internalMqttServer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="3.7578216">
-              <caret line="620" column="45" selection-start-line="620" selection-start-column="45" selection-end-line="620" selection-end-column="45" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="459" column="9" selection-start-line="459" selection-start-column="9" selection-end-line="459" selection-end-column="9" />
               <folding>
-                <marker date="1509130225504" expanded="true" signature="7776:8916" placeholder="select tt.ta... user_device_task" />
+                <marker date="1509381255818" expanded="true" signature="7703:8843" placeholder="select tt.ta... user_device_task" />
               </folding>
             </state>
           </provider>
@@ -49,44 +50,35 @@
         <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/actuatorState.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="46" column="17" selection-start-line="46" selection-start-column="17" selection-end-line="46" selection-end-column="17" />
+              <caret line="36" column="8" selection-start-line="36" selection-start-column="8" selection-end-line="36" selection-end-column="8" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#794#1591#0" expanded="true" />
+                <element signature="e#7035#9245#0" expanded="true" />
+                <element signature="e#9244#9245#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MessageHandling.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="MessageHandling.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/MessageHandling.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="385" column="0" selection-start-line="385" selection-start-column="0" selection-end-line="413" selection-end-column="5" />
+            <state vertical-scroll-proportion="0.18067978">
+              <caret line="34" column="40" selection-start-line="34" selection-start-column="40" selection-end-line="34" selection-end-column="40" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="DtransitionCondition.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/DtransitionCondition.java">
+      <file leaf-file-name="PublisherTask.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/PublisherTask.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="58" column="0" selection-start-line="58" selection-start-column="0" selection-end-line="58" selection-end-column="0" />
+              <caret line="90" column="0" selection-start-line="90" selection-start-column="0" selection-end-line="125" selection-end-column="5" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#1529#1530#0" expanded="true" />
-                <element signature="e#1576#1577#0" expanded="true" />
-                <element signature="e#1625#1626#0" expanded="true" />
-                <element signature="e#1667#1668#0" expanded="true" />
-                <element signature="e#1715#1716#0" expanded="true" />
-                <element signature="e#1756#1757#0" expanded="true" />
-                <element signature="e#1804#1805#0" expanded="true" />
-                <element signature="e#1845#1846#0" expanded="true" />
-                <element signature="e#2013#2543#0" expanded="true" />
-                <element signature="e#2542#2543#0" expanded="true" />
-                <marker date="1509289632145" expanded="true" signature="3014:3592" placeholder="select cv.va... user_state_condition_vars" />
-                <marker date="1509289632145" expanded="true" signature="9018:9325" placeholder="..." />
+                <element signature="e#1482#2188#0" expanded="true" />
+                <element signature="e#2187#2188#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -96,10 +88,8 @@
         <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/actuatorStateTimer.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="50" column="5" selection-start-line="50" selection-start-column="5" selection-end-line="50" selection-end-column="5" />
-              <folding>
-                <element signature="imports" expanded="true" />
-              </folding>
+              <caret line="40" column="16" selection-start-line="40" selection-start-column="16" selection-end-line="40" selection-end-column="16" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -139,15 +129,15 @@
         <option value="$PROJECT_DIR$/src/main/java/mqttch/VarChangeListenable.java" />
         <option value="$PROJECT_DIR$/src/main/java/mqttch/StateChangeListenable.java" />
         <option value="$PROJECT_DIR$/src/main/java/mqttch/Main.java" />
-        <option value="$PROJECT_DIR$/src/main/java/mqttch/PublisherTask.java" />
         <option value="$PROJECT_DIR$/src/main/java/mqttch/VarListener.java" />
         <option value="$PROJECT_DIR$/src/main/java/mqttch/ConditionVariable.java" />
         <option value="$PROJECT_DIR$/src/main/java/mqttch/StateListener.java" />
-        <option value="$PROJECT_DIR$/src/main/java/mqttch/internalMqttServer.java" />
         <option value="$PROJECT_DIR$/src/main/java/mqttch/actuatorStateTimer.java" />
-        <option value="$PROJECT_DIR$/src/main/java/mqttch/MessageHandling.java" />
         <option value="$PROJECT_DIR$/src/main/java/mqttch/DtransitionCondition.java" />
+        <option value="$PROJECT_DIR$/src/main/java/mqttch/PublisherTask.java" />
         <option value="$PROJECT_DIR$/src/main/java/mqttch/actuatorState.java" />
+        <option value="$PROJECT_DIR$/src/main/java/mqttch/internalMqttServer.java" />
+        <option value="$PROJECT_DIR$/src/main/java/mqttch/MessageHandling.java" />
       </list>
     </option>
   </component>
@@ -212,8 +202,8 @@
   <component name="ProjectFrameBounds">
     <option name="x" value="-8" />
     <option name="y" value="-8" />
-    <option name="width" value="1296" />
-    <option name="height" value="1000" />
+    <option name="width" value="1168" />
+    <option name="height" value="696" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
     <OptionsSetting value="true" id="Add" />
@@ -240,8 +230,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
-      <pane id="PackagesPane" />
+      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -314,13 +303,14 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scratches" />
+      <pane id="Scope" />
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="aspect.path.notification.shown" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="D:/dev/XpathXMLTest" />
     <property name="project.structure.last.edited" value="Artifacts" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
@@ -828,15 +818,16 @@
       <workItem from="1509104098947" duration="3798000" />
       <workItem from="1509111275116" duration="16891000" />
       <workItem from="1509282840093" duration="7127000" />
+      <workItem from="1509356899322" duration="13204000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="229665000" />
+    <option name="totallyTimeSpent" value="242869000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1296" height="1000" extended-state="6" />
-    <editor active="false" />
+    <frame x="-8" y="-8" width="1168" height="696" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -1274,10 +1265,20 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/DtransitionCondition.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="102" column="0" selection-start-line="102" selection-start-column="0" selection-end-line="102" selection-end-column="0" />
+          <folding>
+            <marker date="1509354971968" expanded="true" signature="3014:3592" placeholder="select cv.va... user_state_condition_vars" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/PublisherTask.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="86" column="22" selection-start-line="86" selection-start-column="22" selection-end-line="86" selection-end-column="22" />
+          <caret line="90" column="0" selection-start-line="90" selection-start-column="0" selection-end-line="125" selection-end-column="5" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#1482#2188#0" expanded="true" />
@@ -1289,61 +1290,38 @@
     <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/actuatorStateTimer.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="50" column="5" selection-start-line="50" selection-start-column="5" selection-end-line="50" selection-end-column="5" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/MessageHandling.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="385" column="0" selection-start-line="385" selection-start-column="0" selection-end-line="413" selection-end-column="5" />
+          <caret line="40" column="16" selection-start-line="40" selection-start-column="16" selection-end-line="40" selection-end-column="16" />
           <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/DtransitionCondition.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="58" column="0" selection-start-line="58" selection-start-column="0" selection-end-line="58" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#1529#1530#0" expanded="true" />
-            <element signature="e#1576#1577#0" expanded="true" />
-            <element signature="e#1625#1626#0" expanded="true" />
-            <element signature="e#1667#1668#0" expanded="true" />
-            <element signature="e#1715#1716#0" expanded="true" />
-            <element signature="e#1756#1757#0" expanded="true" />
-            <element signature="e#1804#1805#0" expanded="true" />
-            <element signature="e#1845#1846#0" expanded="true" />
-            <element signature="e#2013#2543#0" expanded="true" />
-            <element signature="e#2542#2543#0" expanded="true" />
-            <marker date="1509289632145" expanded="true" signature="3014:3592" placeholder="select cv.va... user_state_condition_vars" />
-            <marker date="1509289632145" expanded="true" signature="9018:9325" placeholder="..." />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/actuatorState.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="46" column="17" selection-start-line="46" selection-start-column="17" selection-end-line="46" selection-end-column="17" />
+          <caret line="36" column="8" selection-start-line="36" selection-start-column="8" selection-end-line="36" selection-end-column="8" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#794#1591#0" expanded="true" />
+            <element signature="e#7035#9245#0" expanded="true" />
+            <element signature="e#9244#9245#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/internalMqttServer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="3.7578216">
-          <caret line="620" column="45" selection-start-line="620" selection-start-column="45" selection-end-line="620" selection-end-column="45" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="459" column="9" selection-start-line="459" selection-start-column="9" selection-end-line="459" selection-end-column="9" />
           <folding>
-            <marker date="1509130225504" expanded="true" signature="7776:8916" placeholder="select tt.ta... user_device_task" />
+            <marker date="1509381255818" expanded="true" signature="7703:8843" placeholder="select tt.ta... user_device_task" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/MessageHandling.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.18067978">
+          <caret line="34" column="40" selection-start-line="34" selection-start-column="40" selection-end-line="34" selection-end-column="40" />
+          <folding />
         </state>
       </provider>
     </entry>

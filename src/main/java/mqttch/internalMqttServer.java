@@ -32,7 +32,7 @@ import java.util.Date;
  */
 public class internalMqttServer extends Server {
     String passWordFilePath;
-    List<DtransitionCondition> ConditionList;
+    List<actuatorState> actuatorStateList;
     List<PublisherTask> PublisherTaskList;
     String iUserLog;
     String RegularPort;
@@ -105,10 +105,7 @@ public class internalMqttServer extends Server {
         configProps = new Properties();
         iUserLog = UserLog;
         PublisherTaskList = new ArrayList<>();
-        ConditionList = new ArrayList<>();
-        Document xmlDocument = MessageHandling
-                .loadXMLFromString(getServerDataList(iUserLog));
-
+        actuatorStateList = new ArrayList<>();
         setServerPorts();
 
         passWordFilePath = Main.AbsPath +"passwords/"+iUserLog+".conf";
@@ -135,6 +132,10 @@ public class internalMqttServer extends Server {
         for (int i=0; i<userHandlers.size(); i++) {
             this.addInterceptHandler(userHandlers.get(0));
         }
+    }
+
+    public void setUserData(){
+
     }
 
     public boolean addServerTask(
@@ -310,12 +311,12 @@ public class internalMqttServer extends Server {
 
     public void rebootMqttServer() throws InterruptedException, IOException, MqttException, Throwable {
 
-        for (DtransitionCondition iRule : this.ConditionList) {
-            DtransitionCondition delRule = iRule;
-            delRule.disconnectVarList();
-            delRule = null;
+        for (actuatorState iStateRules : this.actuatorStateList) {
+            actuatorState delStateRule = iStateRules;
+            iStateRules.resetState();
+            delStateRule = null;
         }
-        this.ConditionList.clear();
+        this.actuatorStateList.clear();
 
         for (PublisherTask iTask : this.PublisherTaskList) {
             PublisherTask delTask = iTask;
@@ -366,46 +367,24 @@ public class internalMqttServer extends Server {
 
     }
 
-    public boolean addServerCondition(String qConditionId) throws Throwable {
-
-        Document xmlDocument = MessageHandling
-                .loadXMLFromString(getConditionData(Integer.parseInt(qConditionId)));
-
-        String ReadTopicName = XPathFactory.newInstance().newXPath()
-                .compile("/condition_rule/mqtt_topic_write").evaluate(xmlDocument);
-        String MqttServerHost = XPathFactory.newInstance().newXPath()
-                .compile("/condition_rule/server_ip").evaluate(xmlDocument);
-        String leftExpr = XPathFactory.newInstance().newXPath()
-                .compile("/condition_rule/left_part_expression").evaluate(xmlDocument);
-        String rightExpr = XPathFactory.newInstance().newXPath()
-                .compile("/condition_rule/right_part_expression").evaluate(xmlDocument);
-        String signExpr = XPathFactory.newInstance().newXPath()
-                .compile("/condition_rule/sign_expression").evaluate(xmlDocument);
-        Integer TimeInt = Integer.parseInt(XPathFactory.newInstance().newXPath()
-                .compile("/condition_rule/condition_interval").evaluate(xmlDocument));
-
+    public boolean addServerDeviceState(String qDeviceStateId) throws Throwable {
 
         int indx = -1;
-        for (DtransitionCondition iObj : this.ConditionList) {
-            if (iObj.ReadTopicName.equals(ReadTopicName)) {
-                indx = this.ConditionList.indexOf(iObj);
+        int loc_StateId = Integer.parseInt(qDeviceStateId);
+
+        for (actuatorState iObj : this.actuatorStateList) {
+            if (iObj.iStateId == loc_StateId) {
+                indx = this.actuatorStateList.indexOf(iObj);
             }
         }
 
         if (indx == -1) {
-            this.ConditionList.add(new DtransitionCondition(
-                    ReadTopicName
-                    ,MqttServerHost
-                    ,leftExpr
-                    ,rightExpr
-                    ,signExpr
-                    ,TimeInt
-                    ,Integer.parseInt(qConditionId)
-            ));
+            this.actuatorStateList.add(new actuatorState(loc_StateId));
             return true;
         } else {
             return false;
         }
+
     }
 
     public String getConditionData(int qConditionId){
@@ -439,27 +418,51 @@ public class internalMqttServer extends Server {
     }
 
 
-    public boolean deleteServerCondition(
-            String oServerConditionId
+    public boolean deleteServerDeviceState(
+            String oServerStateId
     ) throws Throwable {
 
-        Document xmlDocument = MessageHandling
-                .loadXMLFromString(getConditionData(Integer.parseInt(oServerConditionId)));
-        String ReadTopicName = XPathFactory.newInstance().newXPath()
-                .compile("/condition_rule/mqtt_topic_write").evaluate(xmlDocument);
 
         int indx = -1;
-        for (DtransitionCondition iObj : this.ConditionList) {
-            if (iObj.ReadTopicName.equals(ReadTopicName)) {
-                indx = this.ConditionList.indexOf(iObj);
+        int loc_StateId = Integer.parseInt(oServerStateId);
+
+        for (actuatorState iObj : this.actuatorStateList) {
+            if (iObj.iStateId == loc_StateId) {
+                indx = this.actuatorStateList.indexOf(iObj);
             }
         }
 
         if (indx != -1) {
-            DtransitionCondition remCondition = this.ConditionList.get(indx);
-            remCondition = null;
-            this.ConditionList.remove(indx);
+            actuatorState remState = this.actuatorStateList.get(indx);
+            remState.resetState();
+            remState = null;
+            this.actuatorStateList.remove(indx);
             System.gc();
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+
+    public boolean changeServerDeviceState(
+            String oServerStateId
+    ) throws Throwable {
+
+
+        int indx = -1;
+        int loc_StateId = Integer.parseInt(oServerStateId);
+
+        for (actuatorState iObj : this.actuatorStateList) {
+            if (iObj.iStateId == loc_StateId) {
+                indx = this.actuatorStateList.indexOf(iObj);
+            }
+        }
+
+        if (indx != -1) {
+            actuatorState changeState = this.actuatorStateList.get(indx);
+            changeState.resetState();
+            changeState.setConditionList();
             return true;
         } else {
             return false;

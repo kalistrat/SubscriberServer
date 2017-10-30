@@ -74,13 +74,13 @@ public class PublisherTask {
             }
         };
         if (qIntervalType.equals("DAYS")) {
-            ses.scheduleAtFixedRate(pinger, iIntervalValue, iIntervalValue, TimeUnit.DAYS);
+            ses.scheduleAtFixedRate(pinger, 0, iIntervalValue, TimeUnit.DAYS);
         } else if (qIntervalType.equals("HOURS")){
-            ses.scheduleAtFixedRate(pinger, iIntervalValue, iIntervalValue, TimeUnit.HOURS);
+            ses.scheduleAtFixedRate(pinger, 0, iIntervalValue, TimeUnit.HOURS);
         } else if (qIntervalType.equals("MINUTES")){
-            ses.scheduleAtFixedRate(pinger, iIntervalValue, iIntervalValue, TimeUnit.MINUTES);
+            ses.scheduleAtFixedRate(pinger, 0, iIntervalValue, TimeUnit.MINUTES);
         } else if (qIntervalType.equals("SECONDS")){
-            ses.scheduleAtFixedRate(pinger, iIntervalValue, iIntervalValue, TimeUnit.SECONDS);
+            ses.scheduleAtFixedRate(pinger, 0, iIntervalValue, TimeUnit.SECONDS);
         }
         } catch (Throwable e1) {
             //e1.printStackTrace();

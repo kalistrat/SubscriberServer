@@ -1,6 +1,10 @@
 package mqttch;
 
 
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -145,11 +149,6 @@ public class MessageHandling {
                 String SubcriberType = MessageList.get(2);
                 String EntityId = MessageList.get(3);
 
-//                System.out.println("ActionType :" + ActionType);
-//                System.out.println("UserLog :" + UserLog);
-//                System.out.println("SubcriberType :" + SubcriberType);
-//                System.out.println("SubscriberId :" + SubscriberId);
-
 
                 if (!(
                         ActionType.equals("add")
@@ -160,41 +159,26 @@ public class MessageHandling {
                 }
 
                 if (!(
-                        SubcriberType.equals("d_transion")
+                        SubcriberType.equals("state")
                                 || SubcriberType.equals("task")
                                 || SubcriberType.equals("server")
-
                 )) {
                     OutMessage = OutMessage + "Неизвестный тип подписчика;";
                 }
 
                 if (OutMessage.equals("")) {
-
-
-                    if (SubcriberType.equals("d_transion")) {
-
-                        OutMessage = dTransitionListUpdate(ActionType,UserLog,EntityId);
-
+                    if (SubcriberType.equals("state")) {
+                        OutMessage = deviceStateListUpdate(ActionType,UserLog,EntityId);
                     } else if (SubcriberType.equals("task")) {
-
                         OutMessage = dTaskListUpdate(ActionType,UserLog,EntityId);
-
                     } else if (SubcriberType.equals("server")) {
-
                         OutMessage = dServerListUpdate(ActionType,UserLog);
-
                     } else {
-
                         OutMessage = "Неподдерживаемый тип подписчика;";
-
                     }
-
-                    //itransitionListUpdate
-                    //dtransitionListUpdate
                 } else {
                     OutMessage = "N|" + OutMessage + "|";
                 }
-
             } else {
                 OutMessage = "N|Неподдерживаемый тип сообщения;|";
             }
@@ -208,10 +192,10 @@ public class MessageHandling {
         }
     }
 
-    public static String dTransitionListUpdate(
+    public static String deviceStateListUpdate(
             String qActionType
             ,String qUserLog
-            ,String qConditionId
+            ,String qStateId
     ){
 
         String outMess;
@@ -225,21 +209,29 @@ public class MessageHandling {
         try {
             if (qActionType.equals("add")) {
                 if (changeServer != null) {
-                    if (changeServer.addServerCondition(qConditionId)) {
-                        outMess = "Y|"+"Условие " + qConditionId + " успешно добавлено" + "|";
+                    if (changeServer.addServerDeviceState(qStateId)) {
+                        outMess = "Y|"+"Состояние " + qStateId + " успешно добавлено" + "|";
                     } else {
-                        outMess = "Y|"+"Условие " + qConditionId + " уже добавлено" + "|";
+                        outMess = "Y|"+"Состояние " + qStateId + " уже добавлено" + "|";
                     }
                 } else {
-                    outMess = "N|"+"Условие " + qConditionId + " не добавлено. Сервера не существует" + "|";
+                    outMess = "N|"+"Состояние " + qStateId + " не добавлено. Сервера не существует" + "|";
                 }
 
-            } else {
-                if (changeServer.deleteServerCondition(qConditionId)) {
-                    outMess = "Y|"+"Условие " + qConditionId + " успешно удалёно" + "|";
+            } else if (qActionType.equals("delete")) {
+                if (changeServer.deleteServerDeviceState(qStateId)) {
+                    outMess = "Y|"+"Состояние " + qStateId + " успешно удалёно" + "|";
                 } else {
-                    outMess = "N|"+"Условие " + qConditionId + " не найдено" + "|";
+                    outMess = "N|"+"Состояние " + qStateId + " не найдено" + "|";
                 }
+            } else if (qActionType.equals("change")) {
+                if (changeServer.changeServerDeviceState(qStateId)) {
+                    outMess = "Y|"+"Состояние " + qStateId + " успешно изменено" + "|";
+                } else {
+                    outMess = "N|"+"Состояние " + qStateId + " не найдено" + "|";
+                }
+            } else {
+                outMess = "N|"+"Неподдерживаемый тип операции для состояния" + "|";
             }
         } catch (Throwable e) {
             outMess = "N|Ошибка подключения к mqtt-серверу;|";
@@ -263,6 +255,7 @@ public class MessageHandling {
 
         try {
             if (qActionType.equals("add")) {
+
                 if (changeServer != null) {
                     if (changeServer.addServerTask(qTaskId)) {
                         outMess = "Y|"+"Задание " + qTaskId + " успешно добавлено" + "|";
@@ -273,12 +266,16 @@ public class MessageHandling {
                     outMess = "N|"+"Задание " + qTaskId + " не добавлено. Сервера не существует" + "|";
                 }
 
-            } else {
+            } else if (qActionType.equals("delete")) {
+
                 if (changeServer.deleteServerTask(qTaskId)) {
                     outMess = "Y|"+"Задание " + qTaskId + " успешно удалёно" + "|";
                 } else {
                     outMess = "N|"+"Задание " + qTaskId + " не найдено" + "|";
                 }
+
+            } else {
+                outMess = "N|"+"Непподерживаемый тип операций для заданий" + "|";
             }
         } catch (Throwable e) {
             outMess = "N|Ошибка выполнения операции на mqtt-сервере;|";
@@ -437,6 +434,55 @@ public class MessageHandling {
             newServ.createPublisherTaskList();
             Main.mqttServersList.add(newServ);
         }
+    }
+
+
+    public static void publishMqttMessage(
+            String wWriteTopicName
+            ,String wServerIp
+            ,String wControlLog
+            ,String wControlPass
+            ,String wMessageValue
+    ) {
+        try {
+
+            MqttClient client = new MqttClient(wServerIp, wControlLog + String.valueOf(((new Date()).getTime()) / 1000L), null);
+            MqttConnectOptions options = new MqttConnectOptions();
+            options.setUserName(wControlLog);
+            options.setPassword(wControlPass.toCharArray());
+            if (wServerIp.contains("ssl://")) {
+                SSLSocketFactory ssf = MessageHandling.configureSSLSocketFactory();
+                options.setSocketFactory(ssf);
+            }
+            MqttMessage message = new MqttMessage(wMessageValue.getBytes());
+            client.connect(options);
+            client.publish(wWriteTopicName, message);
+            client.disconnect();
+        } catch(MqttException | GeneralSecurityException | IOException me) {
+            me.printStackTrace();
+        }
+
+    }
+
+    public static void sendEmailMessage(
+            String recipientEmail
+            ,String message
+    ){
+        System.out.println("sending mail");
+    }
+
+    public static void sendWhatsUpMessage(
+            String recipientPhoneNum
+            ,String message
+    ){
+        System.out.println("sending what's up message");
+    }
+
+    public static void sendSMSMessage(
+            String recipientPhoneNum
+            ,String message
+    ){
+        System.out.println("sending sms");
     }
 
 
