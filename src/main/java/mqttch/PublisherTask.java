@@ -4,13 +4,13 @@ import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.w3c.dom.Document;
 
 import javax.net.ssl.*;
-import java.io.FileInputStream;
+import javax.xml.xpath.XPathFactory;
 import java.io.IOException;
-import java.io.InputStream;
 import java.security.*;
-import java.security.cert.CertificateException;
+import java.sql.*;
 import java.util.Date;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -21,33 +21,42 @@ import java.util.concurrent.TimeUnit;
  */
 public class PublisherTask {
 
-        final String iTaskTypeName;
-        int iIntervalValue;
-        String iWriteTopicName;
-        ScheduledExecutorService ses;
+    String iTaskTypeName;
+    int iIntervalValue;
+    String iIntervalType;
+    String iWriteTopicName;
+    String iServerIp;
+    String iControlLog;
+    String iControlPass;
+    String iMessageValue;
+    ScheduledExecutorService ses;
+    Integer iTaskId;
 
-    public PublisherTask(
-            String qTaskTypeName
-            ,int qTaskInterval
-            ,String qIntervalType
-            ,String qWriteTopicName
-            ,final String qServerIp
-            ,final String qControlLog
-            ,final String qControlPass
-            ,final String qMessageValue
-    )throws Throwable {
+
+    public PublisherTask(int qTaskId)throws Throwable {
 
         try {
+            iTaskId = qTaskId;
 
-        iTaskTypeName = qTaskTypeName;
-        iIntervalValue = qTaskInterval;
-        iWriteTopicName = qWriteTopicName;
+            Document xmlDocument = MessageHandling
+                    .loadXMLFromString(getTaskData(qTaskId));
 
-        mqttServerConnectionTest(
-                qServerIp
-                ,qControlLog
-                ,qControlPass
-        );
+            iTaskTypeName = XPathFactory.newInstance().newXPath()
+                    .compile("/task_data/task_type_name").evaluate(xmlDocument);
+            iIntervalValue = Integer.parseInt(XPathFactory.newInstance().newXPath()
+                    .compile("/task_data/task_interval").evaluate(xmlDocument));
+            iIntervalType = XPathFactory.newInstance().newXPath()
+                    .compile("/task_data/interval_type").evaluate(xmlDocument);
+            iWriteTopicName = XPathFactory.newInstance().newXPath()
+                    .compile("/task_data/write_topic_name").evaluate(xmlDocument);
+            iServerIp = XPathFactory.newInstance().newXPath()
+                    .compile("/task_data/server_ip").evaluate(xmlDocument);
+            iControlLog = XPathFactory.newInstance().newXPath()
+                    .compile("/task_data/control_log").evaluate(xmlDocument);
+            iControlPass = XPathFactory.newInstance().newXPath()
+                    .compile("/task_data/control_pass").evaluate(xmlDocument);
+            iMessageValue = XPathFactory.newInstance().newXPath()
+                    .compile("/task_data/message_value").evaluate(xmlDocument);
 
 
         ses =
@@ -57,13 +66,7 @@ public class PublisherTask {
                 //System.out.println("PING!");
                 if (iTaskTypeName.equals("SYNCTIME")) {
                     try {
-                    publishTimeValue(
-                            iWriteTopicName
-                            ,qServerIp
-                            ,qControlLog
-                            ,qControlPass
-                            ,qMessageValue
-                    );
+                    publishTimeValue();
                     } catch (Throwable e3) {
                         //e3.printStackTrace();
                         //System.out.println("pinger running..");
@@ -73,13 +76,13 @@ public class PublisherTask {
                 }
             }
         };
-        if (qIntervalType.equals("DAYS")) {
+        if (iIntervalType.equals("DAYS")) {
             ses.scheduleAtFixedRate(pinger, 0, iIntervalValue, TimeUnit.DAYS);
-        } else if (qIntervalType.equals("HOURS")){
+        } else if (iIntervalType.equals("HOURS")){
             ses.scheduleAtFixedRate(pinger, 0, iIntervalValue, TimeUnit.HOURS);
-        } else if (qIntervalType.equals("MINUTES")){
+        } else if (iIntervalType.equals("MINUTES")){
             ses.scheduleAtFixedRate(pinger, 0, iIntervalValue, TimeUnit.MINUTES);
-        } else if (qIntervalType.equals("SECONDS")){
+        } else if (iIntervalType.equals("SECONDS")){
             ses.scheduleAtFixedRate(pinger, 0, iIntervalValue, TimeUnit.SECONDS);
         }
         } catch (Throwable e1) {
@@ -88,35 +91,58 @@ public class PublisherTask {
         }
     }
 
-    public void publishTimeValue(
-            String wWriteTopicName
-            ,String wServerIp
-            ,String wControlLog
-            ,String wControlPass
-            ,String wMessageValue
-    ) {
+    private String getTaskData(int qTaskId){
         try {
 
-            Date syncDate = MessageHandling.redefineSyncDate(wMessageValue);
+            Class.forName(MessageHandling.JDBC_DRIVER);
+            Connection Con = DriverManager.getConnection(
+                    MessageHandling.DB_URL
+                    , MessageHandling.USER
+                    , MessageHandling.PASS
+            );
+
+            CallableStatement Stmt = Con.prepareCall("{? = call s_get_task_data(?)}");
+            Stmt.registerOutParameter(1, Types.BLOB);
+            Stmt.setInt(2, qTaskId);
+            Stmt.execute();
+            Blob CondValue = Stmt.getBlob(1);
+            System.out.println("qTaskId :" + qTaskId);
+            System.out.println("CondValue" + CondValue);
+
+            String resultStr = new String(CondValue.getBytes(1l, (int) CondValue.length()));
+            Con.close();
+            return resultStr;
+
+        }catch(SQLException se){
+            //Handle errors for JDBC
+            se.printStackTrace();
+            return null;
+        }catch(Exception e) {
+            //Handle errors for Class.forName
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private void publishTimeValue() {
+        try {
+
+            Date syncDate = MessageHandling.redefineSyncDate(iMessageValue);
             long unixSyncDate = syncDate.getTime() / 1000L;
             String MessCode = String.valueOf(unixSyncDate);
-
-
-            MqttClient client = new MqttClient(wServerIp, wControlLog, null);
+            String clientIdPostFix = String.valueOf((new Date()).getTime() / 1000L);
+            MqttClient client = new MqttClient(iServerIp, iControlLog + clientIdPostFix, null);
             MqttConnectOptions options = new MqttConnectOptions();
-            options.setUserName(wControlLog);
-            options.setPassword(wControlPass.toCharArray());
+            options.setUserName(iControlLog);
+            options.setPassword(iControlPass.toCharArray());
 
-            if (wServerIp.contains("ssl://")) {
+            if (iServerIp.contains("ssl://")) {
                 SSLSocketFactory ssf = MessageHandling.configureSSLSocketFactory();
                 options.setSocketFactory(ssf);
             }
-
-
             MqttMessage message = new MqttMessage(MessCode.getBytes());
-
             client.connect(options);
-            client.publish(wWriteTopicName, message);
+            client.publish(iWriteTopicName, message);
             client.disconnect();
         } catch(MqttException | GeneralSecurityException | IOException me) {
             me.printStackTrace();
@@ -125,37 +151,4 @@ public class PublisherTask {
 
     }
 
-
-
-    public void mqttServerConnectionTest(
-           String wServerIp
-            ,String wControlLog
-            ,String wControlPass
-    ) throws Throwable {
-        try {
-
-            String MessCode = "try connection";
-            MqttClient client = new MqttClient(wServerIp, wControlLog, null);
-            MqttConnectOptions options = new MqttConnectOptions();
-            options.setUserName(wControlLog);
-            options.setPassword(wControlPass.toCharArray());
-
-            if (wServerIp.contains("ssl://")) {
-                SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
-                sslContext.init(null, null, null);
-                options.setSocketFactory(sslContext.getSocketFactory());
-            }
-
-
-            MqttMessage message = new MqttMessage(MessCode.getBytes());
-
-            client.connect(options);
-            client.publish("/taskTopic", message);
-            client.disconnect();
-        } catch(MqttException | GeneralSecurityException me) {
-            //me.printStackTrace();
-            throw  me;
-        }
-
-    }
 }

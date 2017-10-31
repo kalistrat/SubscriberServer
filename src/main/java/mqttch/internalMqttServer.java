@@ -9,23 +9,15 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.xpath.XPath;
+
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.sql.*;
-import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.Date;
 
 /**
  * Created by kalistrat on 27.09.2017.
@@ -134,55 +126,54 @@ public class internalMqttServer extends Server {
         }
     }
 
-    public void setUserData(){
+    public void setDeviceStateList() throws Throwable {
 
+        Document xmlDocument = MessageHandling
+                .loadXMLFromString(getDeviceStateList());
+
+        Node node = (Node) XPathFactory.newInstance().newXPath()
+                .compile("/actuator_state_list").evaluate(xmlDocument, XPathConstants.NODE);
+
+        NodeList nodeList = node.getChildNodes();
+
+        for (int i=0; i<nodeList.getLength(); i++){
+            this.actuatorStateList.add(new actuatorState(Integer.parseInt(nodeList.item(i).getTextContent())));
+        }
     }
+
+    public void setPublisherTaskList() throws Throwable {
+
+        Document xmlDocument = MessageHandling
+                .loadXMLFromString(getPublisherTaskList());
+
+        Node node = (Node) XPathFactory.newInstance().newXPath()
+                .compile("/user_device_task_list").evaluate(xmlDocument, XPathConstants.NODE);
+
+        NodeList nodeList = node.getChildNodes();
+
+        for (int i=0; i<nodeList.getLength(); i++){
+            //System.out.println("nodeList.item(i).getTextContent() : " + Integer.parseInt(nodeList.item(i).getTextContent()));
+            this.PublisherTaskList.add(new PublisherTask(Integer.parseInt(nodeList.item(i).getTextContent())));
+        }
+    }
+
+
 
     public boolean addServerTask(
             String qTaskId
     ) throws Throwable {
 
-
-        Document xmlDocument = MessageHandling
-                .loadXMLFromString(getTaskData(Integer.parseInt(qTaskId)));
-
-        String oTaskTypeName = XPathFactory.newInstance().newXPath()
-                .compile("/task_data/task_type_name").evaluate(xmlDocument);
-        Integer oTaskInterval = Integer.parseInt(XPathFactory.newInstance().newXPath()
-                .compile("/task_data/task_interval").evaluate(xmlDocument));
-        String oIntervalType = XPathFactory.newInstance().newXPath()
-                .compile("/task_data/interval_type").evaluate(xmlDocument);
-        String oWriteTopicName = XPathFactory.newInstance().newXPath()
-                .compile("/task_data/write_topic_name").evaluate(xmlDocument);
-        String oServerIp = XPathFactory.newInstance().newXPath()
-                .compile("/task_data/server_ip").evaluate(xmlDocument);
-        String oControlLog = XPathFactory.newInstance().newXPath()
-                .compile("/task_data/control_log").evaluate(xmlDocument);
-        String oControlPass = XPathFactory.newInstance().newXPath()
-                .compile("/task_data/control_pass").evaluate(xmlDocument);
-        String oMessageValue = XPathFactory.newInstance().newXPath()
-                .compile("/task_data/message_value").evaluate(xmlDocument);
-
+        int taskId = Integer.parseInt(qTaskId);
         int indx = -1;
 
         for (PublisherTask iObj : this.PublisherTaskList) {
-
-            if (iObj.iWriteTopicName.equals(oWriteTopicName)) {
+            if (iObj.iTaskId.intValue() == taskId) {
                 indx = this.PublisherTaskList.indexOf(iObj);
             }
         }
 
         if (indx == -1) {
-            this.PublisherTaskList.add(new PublisherTask(
-                    oTaskTypeName
-                    , oTaskInterval
-                    , oIntervalType
-                    , oWriteTopicName
-                    , oServerIp
-                    , oControlLog
-                    , oControlPass
-                    , oMessageValue
-            ));
+            this.PublisherTaskList.add(new PublisherTask(taskId));
             return true;
         } else {
             return false;
@@ -194,14 +185,11 @@ public class internalMqttServer extends Server {
             String qTaskId
     ) throws Throwable {
 
-        Document xmlDocument = MessageHandling
-                .loadXMLFromString(getTaskData(Integer.parseInt(qTaskId)));
-        String oWriteTopicName = XPathFactory.newInstance().newXPath()
-                .compile("/task_data/write_topic_name").evaluate(xmlDocument);
-
+        int taskId = Integer.parseInt(qTaskId);
         int indx = -1;
+
         for (PublisherTask iObj : this.PublisherTaskList) {
-            if (iObj.iWriteTopicName.equals(oWriteTopicName)) {
+            if (iObj.iTaskId.intValue() == taskId) {
                 indx = this.PublisherTaskList.indexOf(iObj);
             }
         }
@@ -219,60 +207,6 @@ public class internalMqttServer extends Server {
 
     }
 
-    public void createPublisherTaskList() throws Throwable {
-        try {
-            Class.forName(MessageHandling.JDBC_DRIVER);
-            Connection Con = DriverManager.getConnection(
-                    MessageHandling.DB_URL
-                    , MessageHandling.USER
-                    , MessageHandling.PASS
-            );
-
-            String DataSql = "select tt.task_type_name\n" +
-                    ",tas.task_interval\n" +
-                    ",tas.interval_type\n" +
-                    ",case when tt.task_type_name = 'SYNCTIME' then udtr.time_topic\n" +
-                    "else null end write_topic_name\n" +
-                    ",ms.server_ip\n" +
-                    ",udtr.control_log\n" +
-                    ",udtr.control_pass\n" +
-                    ",case when tt.task_type_name = 'SYNCTIME' then tz.timezone_value\n" +
-                    "else null end message_value\n" +
-                    "from user_device_task tas\n" +
-                    "join user_device ud on ud.user_device_id=tas.user_device_id\n" +
-                    "join users usr on usr.user_id=ud.user_id \n" +
-                    "join task_type tt on tt.task_type_id=tas.task_type_id\n" +
-                    "left join user_devices_tree udtr on udtr.user_device_id=tas.user_device_id\n" +
-                    "left join mqtt_servers ms on ms.server_id=udtr.mqtt_server_id\n" +
-                    "left join timezones tz on tz.timezone_id=udtr.timezone_id\n" +
-                    "where usr.user_log=?";
-
-            PreparedStatement DataStmt = Con.prepareStatement(DataSql);
-            DataStmt.setString(1,iUserLog);
-            ResultSet DataRs = DataStmt.executeQuery();
-            while (DataRs.next()) {
-
-                this.PublisherTaskList.add(new PublisherTask(
-                        DataRs.getString(1)
-                        , DataRs.getInt(2)
-                        , DataRs.getString(3)
-                        , DataRs.getString(4)
-                        , DataRs.getString(5)
-                        , DataRs.getString(6)
-                        , DataRs.getString(7)
-                        , DataRs.getString(8)
-                ));
-            }
-            Con.close();
-
-        } catch (SQLException se3) {
-            //Handle errors for JDBC
-            se3.printStackTrace();
-        } catch (Exception e13) {
-            //Handle errors for Class.forName
-            e13.printStackTrace();
-        }
-    }
 
     public void addControllerPassWord(String ControlName, String ControlPassSha){
         try {
@@ -284,30 +218,30 @@ public class internalMqttServer extends Server {
         }
     }
 
-    public void deleteControllerPassWord (
-            String ControlName
-            , String ControlPassSha
-    ){
-        try {
-
-            Charset charset = StandardCharsets.UTF_8;
-
-            String filename = passWordFilePath.replaceFirst("^/(.:/)", "$1");
-            System.out.println("filename.replaceFirst : " + filename);
-
-            byte[] encoded = Files.readAllBytes(Paths.get(filename));
-            String fileContent = new String(encoded, charset);
-
-
-            String trimFileContent = fileContent.replace("\n" + ControlName + ":" + ControlPassSha,"");
-            FileWriter fw = new FileWriter(filename);
-            fw.write(trimFileContent);
-            fw.close();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+//    public void deleteControllerPassWord (
+//            String ControlName
+//            , String ControlPassSha
+//    ){
+//        try {
+//
+//            Charset charset = StandardCharsets.UTF_8;
+//
+//            String filename = passWordFilePath.replaceFirst("^/(.:/)", "$1");
+//            System.out.println("filename.replaceFirst : " + filename);
+//
+//            byte[] encoded = Files.readAllBytes(Paths.get(filename));
+//            String fileContent = new String(encoded, charset);
+//
+//
+//            String trimFileContent = fileContent.replace("\n" + ControlName + ":" + ControlPassSha,"");
+//            FileWriter fw = new FileWriter(filename);
+//            fw.write(trimFileContent);
+//            fw.close();
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
     public void rebootMqttServer() throws InterruptedException, IOException, MqttException, Throwable {
 
@@ -333,11 +267,12 @@ public class internalMqttServer extends Server {
         for (int i=0; i<this.userHandlers.size(); i++) {
             this.addInterceptHandler(this.userHandlers.get(0));
         }
-        createPublisherTaskList();
+        setPublisherTaskList();
+        setDeviceStateList();
 
     }
 
-    public void addMessageIntoDB(String qTopicName
+    private void addMessageIntoDB(String qTopicName
         ,String qMessAge
         ,String QUserLog
     ){
@@ -387,7 +322,8 @@ public class internalMqttServer extends Server {
 
     }
 
-    public String getConditionData(int qConditionId){
+
+    private String getDeviceStateList(){
         try {
 
             Class.forName(MessageHandling.JDBC_DRIVER);
@@ -397,12 +333,53 @@ public class internalMqttServer extends Server {
                     , MessageHandling.PASS
             );
 
-            CallableStatement Stmt = Con.prepareCall("{? = call s_message_recerve(?)}");
+            CallableStatement Stmt = Con.prepareCall("{? = call s_get_user_state_list(?)}");
             Stmt.registerOutParameter(1,Types.BLOB);
-            Stmt.setInt(2, qConditionId);
+            Stmt.setString(2, iUserLog);
             Stmt.execute();
             Blob CondValue = Stmt.getBlob(1);
-            String resultStr = new String(CondValue.getBytes(1l, (int) CondValue.length()));
+            String resultStr;
+            if (CondValue != null) {
+                resultStr = new String(CondValue.getBytes(1l, (int) CondValue.length()));
+            } else {
+                resultStr = "<actuator_state_list/>";
+            }
+            Con.close();
+            return resultStr;
+
+        }catch(SQLException se){
+            //Handle errors for JDBC
+            se.printStackTrace();
+            return null;
+        }catch(Exception e) {
+            //Handle errors for Class.forName
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private String getPublisherTaskList(){
+        try {
+
+            Class.forName(MessageHandling.JDBC_DRIVER);
+            Connection Con = DriverManager.getConnection(
+                    MessageHandling.DB_URL
+                    , MessageHandling.USER
+                    , MessageHandling.PASS
+            );
+
+            CallableStatement Stmt = Con.prepareCall("{? = call s_get_user_task_list(?)}");
+            Stmt.registerOutParameter(1,Types.BLOB);
+            Stmt.setString(2, iUserLog);
+            Stmt.execute();
+            Blob CondValue = Stmt.getBlob(1);
+            String resultStr;
+            if (CondValue != null) {
+                resultStr = new String(CondValue.getBytes(1l, (int) CondValue.length()));
+            } else {
+                resultStr = "<user_device_task_list/>";
+            }
+            System.out.println("CondValue :" + iUserLog + " : " + resultStr);
             Con.close();
             return resultStr;
 
@@ -471,37 +448,7 @@ public class internalMqttServer extends Server {
     }
 
 
-    public String getTaskData(int qTaskId){
-        try {
-
-            Class.forName(MessageHandling.JDBC_DRIVER);
-            Connection Con = DriverManager.getConnection(
-                    MessageHandling.DB_URL
-                    , MessageHandling.USER
-                    , MessageHandling.PASS
-            );
-
-            CallableStatement Stmt = Con.prepareCall("{? = call s_get_task_data(?)}");
-            Stmt.registerOutParameter(1,Types.BLOB);
-            Stmt.setInt(2, qTaskId);
-            Stmt.execute();
-            Blob CondValue = Stmt.getBlob(1);
-            String resultStr = new String(CondValue.getBytes(1l, (int) CondValue.length()));
-            Con.close();
-            return resultStr;
-
-        }catch(SQLException se){
-            //Handle errors for JDBC
-            se.printStackTrace();
-            return null;
-        }catch(Exception e) {
-            //Handle errors for Class.forName
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public String getServerDataList(String qUserLog){
+    private String getServerDataList(String qUserLog){
         try {
 
             Class.forName(MessageHandling.JDBC_DRIVER);

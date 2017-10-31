@@ -190,13 +190,16 @@ public class actuatorState {
                         } else {
                             if (stateTimer.commitedTime.intValue() >= iStateDeltaT.intValue()) {
 
-                                MessageHandling.publishMqttMessage(
-                                        iWriteTopicName
-                                        ,iServerIp
-                                        ,iDeviceLog
-                                        ,iDevicePass
-                                        ,iStateMessageCode
-                                );
+                                if (iActionType.equals("ACTUATOR")) {
+
+                                    MessageHandling.publishMqttMessage(
+                                            iWriteTopicName
+                                            , iServerIp
+                                            , iDeviceLog
+                                            , iDevicePass
+                                            , iStateMessageCode
+                                    );
+                                }
 
                                 for (String iNotObj : iNotificationList) {
 

@@ -162,6 +162,8 @@ public class MessageHandling {
                         SubcriberType.equals("state")
                                 || SubcriberType.equals("task")
                                 || SubcriberType.equals("server")
+                                || SubcriberType.equals("state_message")
+
                 )) {
                     OutMessage = OutMessage + "Неизвестный тип подписчика;";
                 }
@@ -173,6 +175,8 @@ public class MessageHandling {
                         OutMessage = dTaskListUpdate(ActionType,UserLog,EntityId);
                     } else if (SubcriberType.equals("server")) {
                         OutMessage = dServerListUpdate(ActionType,UserLog);
+                    } else if (SubcriberType.equals("state_message")) {
+                        OutMessage = mqqtMessagePublish(ActionType,UserLog,EntityId);
                     } else {
                         OutMessage = "Неподдерживаемый тип подписчика;";
                     }
@@ -284,6 +288,60 @@ public class MessageHandling {
         return outMess;
     }
 
+    public static String mqqtMessagePublish(
+            String qActionType
+            ,String qUserLog
+            ,String qStateMessageId
+    ) {
+        String outMess;
+        try {
+
+
+        Document xmlDocument = MessageHandling
+                .loadXMLFromString(getStateMessageData(Integer.parseInt(qStateMessageId)));
+
+        String controlLog = XPathFactory.newInstance().newXPath()
+                .compile("/device_message_data/control_log").evaluate(xmlDocument);
+        String controlPass = XPathFactory.newInstance().newXPath()
+                .compile("/device_message_data/control_pass").evaluate(xmlDocument);
+        String topicName = XPathFactory.newInstance().newXPath()
+                .compile("/device_message_data/mqtt_topic_write").evaluate(xmlDocument);
+        String serverIp = XPathFactory.newInstance().newXPath()
+                .compile("/device_message_data/server_ip").evaluate(xmlDocument);
+        String messageCode = XPathFactory.newInstance().newXPath()
+                .compile("/device_message_data/actuator_message_code").evaluate(xmlDocument);
+
+
+
+            if (qActionType.equals("add")) {
+
+                if (messageCode!=null) {
+                    if (!messageCode.equals("")){
+                        MessageHandling.publishMqttMessage(
+                                topicName
+                                ,serverIp
+                                ,controlLog
+                                ,controlPass
+                                ,messageCode
+                        );
+                        outMess = "Y|"+"Сообщение состояния актуатора " + qStateMessageId + " успешно опубликовано" + "|";
+                    } else {
+                        outMess = "N|"+"Ошибка инициализации состояния актуатора " + qStateMessageId + "|";
+                    }
+                } else {
+                    outMess = "N|"+"Ошибка инициализации состояния актуатора " + qStateMessageId + "|";
+                }
+
+            } else {
+                outMess = "N|"+"Непподерживаемый тип операций для сообщений" + "|";
+            }
+        } catch (Throwable e) {
+            outMess = "N|Ошибка выполнения операции на mqtt-сервере;|";
+        }
+
+        return outMess;
+    }
+
     public static String dServerListUpdate(
             String qActionType
             ,String qUserLog
@@ -312,48 +370,6 @@ public class MessageHandling {
             }
         } catch (Throwable e) {
             outMess = "N|Ошибка выполнения операции на mqtt-сервере;|";
-        }
-
-        return outMess;
-    }
-
-    public static String dFolderListUpdate(
-            String qActionType
-            ,String qUserLog
-            ,String qMessage
-    ){
-        String outMess;
-        internalMqttServer changeServer = null;
-        for (internalMqttServer iServ: Main.mqttServersList) {
-            if (iServ.iUserLog.equals(qUserLog)){
-                changeServer = iServ;
-            }
-        }
-
-        Matcher insideBrackets = Pattern.compile("\\((.*?)\\)").matcher(qMessage);
-        Matcher outsideBrackets = Pattern.compile("(.*)\\(.*?\\)").matcher(qMessage);
-        insideBrackets.find();
-        outsideBrackets.find();
-        String folderLogIn = insideBrackets.group(1);
-        String folderPassWord = outsideBrackets.group(1);
-
-        try {
-            if (qActionType.equals("add")) {
-                if (changeServer != null && folderLogIn != null && folderPassWord != null) {
-                    changeServer.addControllerPassWord(folderLogIn,folderPassWord);
-                    changeServer.rebootMqttServer();
-                    outMess = "N|"+"Новый контроллер" + folderLogIn + "для" + qUserLog + " успешно добавлен" + "|";
-                } else {
-                    outMess = "N|"+"Не определён сервер или логин и пароль для контроллера" + qUserLog + "|";
-                }
-            } else if (qActionType.equals("change") && changeServer != null) {
-                changeServer.rebootMqttServer();
-                outMess = "N|"+"Пароль изменён и mqtt-сервер для" + qUserLog + " перезагружен" + "|";
-            } else {
-                outMess = "N|"+"Неподдерживаемый тип операции для сервера;|";
-            }
-        } catch (Throwable e) {
-            outMess = "N|Ошибка добавления контроллера для" + qUserLog + ";|";
         }
 
         return outMess;
@@ -410,6 +426,37 @@ public class MessageHandling {
         }
     }
 
+    private static String getStateMessageData(int actuatorStateId){
+        try {
+
+            Class.forName(MessageHandling.JDBC_DRIVER);
+            Connection Con = DriverManager.getConnection(
+                    MessageHandling.DB_URL
+                    , MessageHandling.USER
+                    , MessageHandling.PASS
+            );
+
+            CallableStatement Stmt = Con.prepareCall("{? = call s_get_state_message_data(?)}");
+            Stmt.registerOutParameter(1, Types.BLOB);
+            Stmt.setInt(2,actuatorStateId);
+            Stmt.execute();
+            Blob CondValue = Stmt.getBlob(1);
+            String resultStr = new String(CondValue.getBytes(1l, (int) CondValue.length()));
+            //System.out.println("getUsersList resultStr :" + resultStr);
+            Con.close();
+            return resultStr;
+
+        }catch(SQLException se){
+            //Handle errors for JDBC
+            se.printStackTrace();
+            return null;
+        }catch(Exception e) {
+            //Handle errors for Class.forName
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public static void createMqttServerList() throws Throwable {
         List<String> usersList = new ArrayList<>();
         Document xmlDocument = MessageHandling
@@ -431,7 +478,8 @@ public class MessageHandling {
 
         for (String iObj : usersList) {
             internalMqttServer newServ = new internalMqttServer(iObj);
-            newServ.createPublisherTaskList();
+            newServ.setPublisherTaskList();
+            newServ.setDeviceStateList();
             Main.mqttServersList.add(newServ);
         }
     }
