@@ -38,7 +38,10 @@ public class ConditionVariable implements MqttCallback, VarChangeListenable {
             deltaTimeSec = null;
 
 
-            client = new MqttClient(mqttServerHost, String.valueOf(eConditonId) + varName, null);
+            //client = new MqttClient(mqttServerHost, String.valueOf(eConditonId) + varName, null);
+
+            client = new MqttClient(mqttServerHost, MqttClient.generateClientId(), null);
+
             MqttConnectOptions options = new MqttConnectOptions();
             options.setUserName(wControlLog);
             options.setPassword(wControlPass.toCharArray());

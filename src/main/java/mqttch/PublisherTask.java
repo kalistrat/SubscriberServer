@@ -73,6 +73,14 @@ public class PublisherTask {
                         throw  e3;
                     }
 
+                } else {
+                    MessageHandling.publishMqttMessage(
+                            iWriteTopicName
+                            ,iServerIp
+                            ,iControlLog
+                            ,iControlPass
+                            ,iMessageValue
+                    );
                 }
             }
         };
@@ -106,8 +114,8 @@ public class PublisherTask {
             Stmt.setInt(2, qTaskId);
             Stmt.execute();
             Blob CondValue = Stmt.getBlob(1);
-            System.out.println("qTaskId :" + qTaskId);
-            System.out.println("CondValue" + CondValue);
+            //System.out.println("qTaskId :" + qTaskId);
+            //System.out.println("CondValue" + CondValue);
 
             String resultStr = new String(CondValue.getBytes(1l, (int) CondValue.length()));
             Con.close();
@@ -131,7 +139,9 @@ public class PublisherTask {
             long unixSyncDate = syncDate.getTime() / 1000L;
             String MessCode = String.valueOf(unixSyncDate);
             String clientIdPostFix = String.valueOf((new Date()).getTime() / 1000L);
-            MqttClient client = new MqttClient(iServerIp, iControlLog + clientIdPostFix, null);
+            //MqttClient client = new MqttClient(iServerIp, iControlLog + clientIdPostFix, null);
+            MqttClient client = new MqttClient(iServerIp, MqttClient.generateClientId(), null);
+
             MqttConnectOptions options = new MqttConnectOptions();
             options.setUserName(iControlLog);
             options.setPassword(iControlPass.toCharArray());
@@ -142,11 +152,19 @@ public class PublisherTask {
             }
             MqttMessage message = new MqttMessage(MessCode.getBytes());
             client.connect(options);
+
+            //System.out.println("publishTimeValue : iControlLog : " + iControlLog);
+            //System.out.println("publishTimeValue : iControlPass : " + iControlPass);
+            //System.out.println("publishTimeValue : iServerIp : " + iServerIp);
+            //System.out.println("publishTimeValue : message : " + message);
+            //System.out.println("publishTimeValue : iWriteTopicName : " + iWriteTopicName);
+
             client.publish(iWriteTopicName, message);
             client.disconnect();
+
         } catch(MqttException | GeneralSecurityException | IOException me) {
             me.printStackTrace();
-            //System.out.println("publishTimeValue exception");
+            //System.out.println("publishTimeValue EXCEPTION!!!!!!!!!!");
         }
 
     }

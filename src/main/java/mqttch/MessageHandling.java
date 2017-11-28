@@ -494,7 +494,9 @@ public class MessageHandling {
     ) {
         try {
 
-            MqttClient client = new MqttClient(wServerIp, wControlLog + String.valueOf(((new Date()).getTime()) / 1000L), null);
+            //MqttClient client = new MqttClient(wServerIp, wControlLog + String.valueOf(((new Date()).getTime()) / 1000L), null);
+            MqttClient client = new MqttClient(wServerIp, MqttClient.generateClientId(), null);
+
             MqttConnectOptions options = new MqttConnectOptions();
             options.setUserName(wControlLog);
             options.setPassword(wControlPass.toCharArray());
@@ -506,8 +508,10 @@ public class MessageHandling {
             client.connect(options);
             client.publish(wWriteTopicName, message);
             client.disconnect();
+
         } catch(MqttException | GeneralSecurityException | IOException me) {
             me.printStackTrace();
+            //System.out.println("publishMqttMessage EXCEPTION!!!!!!!!!!");
         }
 
     }

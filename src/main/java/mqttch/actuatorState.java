@@ -135,8 +135,10 @@ public class actuatorState {
             CallableStatement Stmt = Con.prepareCall("{? = call s_get_state_data(?)}");
             Stmt.registerOutParameter(1, Types.BLOB);
             Stmt.setInt(2,iStateId);
+            //System.out.println("getXMLStateData : iStateId : " + iStateId);
             Stmt.execute();
             Blob CondValue = Stmt.getBlob(1);
+            //System.out.println("getXMLStateData : CondValue : " + CondValue);
             String resultStr = new String(CondValue.getBytes(1l, (int) CondValue.length()));
             Con.close();
             return resultStr;

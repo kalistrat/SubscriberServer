@@ -289,6 +289,7 @@ public class internalMqttServer extends Server {
             Stmt.setString(1, qTopicName);
             Stmt.setString(2, qMessAge);
             Stmt.setString(3, QUserLog);
+
             Stmt.execute();
             Con.close();
 
