@@ -21,6 +21,7 @@ import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.Date;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -496,7 +497,9 @@ public class MessageHandling {
         try {
 
             //MqttClient client = new MqttClient(wServerIp, wControlLog + String.valueOf(((new Date()).getTime()) / 1000L), null);
-            MqttClient client = new MqttClient(wServerIp, MqttClient.generateClientId(), null);
+            int randomNum = ThreadLocalRandom.current().nextInt(0, 1000 + 1);
+            //System.out.println("randomNum : " + randomNum);
+            MqttClient client = new MqttClient(wServerIp, MqttClient.generateClientId()+ String.valueOf(randomNum), null);
 
             MqttConnectOptions options = new MqttConnectOptions();
             options.setUserName(wControlLog);

@@ -40,11 +40,12 @@ public class actuatorStateTimer {
 
     public void stopExecution(){
         ses.shutdown();
-        ses = null;
+        commitedTime = 0;
+        //ses = null;
     }
 
     public void startExecution(){
-        commitedTime = 0;
+        //commitedTime = 0;
         startedTime = new java.util.Date();
         ses = Executors.newScheduledThreadPool(1);
         ses.scheduleAtFixedRate(stepper, 0, 1, TimeUnit.SECONDS);

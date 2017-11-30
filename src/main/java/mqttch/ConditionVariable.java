@@ -19,6 +19,7 @@ public class ConditionVariable implements MqttCallback, VarChangeListenable {
     String VarName;
     VarListener varListener;
     Integer deltaTimeSec;
+    Integer iConditionId;
 
     public ConditionVariable(int conditionId
     ,String topicName
@@ -26,7 +27,7 @@ public class ConditionVariable implements MqttCallback, VarChangeListenable {
     ,String varName
     ,String wControlLog
     ,String wControlPass
-                             ,int eConditonId
+
     ) throws Throwable {
 
         try {
@@ -36,6 +37,15 @@ public class ConditionVariable implements MqttCallback, VarChangeListenable {
             VarDate = null;
             VarValue = null;
             deltaTimeSec = null;
+            iConditionId = conditionId;
+
+//            System.out.println("TopicName :" + TopicName);
+//            System.out.println("MqttHostName :" + MqttHostName);
+//            System.out.println("VarName :" + VarName);
+//            System.out.println("VarDate :" + VarDate);
+//            System.out.println("VarValue :" + VarValue);
+//            System.out.println("deltaTimeSec :" + deltaTimeSec);
+//            System.out.println("iConditionId :" + iConditionId);
 
 
             //client = new MqttClient(mqttServerHost, String.valueOf(eConditonId) + varName, null);
@@ -67,11 +77,15 @@ public class ConditionVariable implements MqttCallback, VarChangeListenable {
     }
 
 
-    public void messageArrived(String topic, MqttMessage message)
-            throws Exception {
-        setVariableValue(message.toString());
-        varListener.afterValueChange(this);
-        //System.out.println("topic : " + topic);
+    public void messageArrived(String topic, MqttMessage message) {
+         try {
+             //System.out.println("AAAAAAAAA topic : " + topic + MessageHandling.safeLongToInt(((new Date()).getTime()) / 1000));
+             setVariableValue(message.toString());
+             varListener.afterValueChange(this);
+             //System.out.println("topic : " + topic);
+         } catch (Exception e) {
+             e.printStackTrace();
+         }
     }
 
 
@@ -82,8 +96,8 @@ public class ConditionVariable implements MqttCallback, VarChangeListenable {
 
     public void setVariableValue(String newVal){
         VarValue = MessageHandling.StrToDouble(newVal);
-        deltaTimeSec = MessageHandling.safeLongToInt(((new Date()).getTime()-VarDate.getTime())/1000);
         VarDate = new Date();
+        deltaTimeSec = MessageHandling.safeLongToInt(((new Date()).getTime()-VarDate.getTime())/1000);
     }
 
     public void setVarListener(VarListener listener) {

@@ -167,6 +167,7 @@ public class actuatorState {
         for (int i=0; i<nodeList.getLength(); i++){
             NodeList childNodeList = nodeList.item(i).getChildNodes();
             DtransitionCondition iCondRule = new DtransitionCondition();
+            iCondRule.setParentState(this);
             for (int j=0; j<childNodeList.getLength();j++) {
                 if (childNodeList.item(j).getNodeName().equals("actuator_state_condition_id")) {
                     iCondRule.setConditionId(Integer.parseInt(childNodeList.item(j).getTextContent()));
@@ -189,9 +190,13 @@ public class actuatorState {
                     if (isPerformedAllConditions()) {
                         if (stateTimer.commitedTime.intValue() == 0) {
                             stateTimer.startExecution();
+                            //System.out.println("stateTimer.startExecution()");
+                            //System.out.println("stateTimer.commitedTime : " + stateTimer.commitedTime);
                         } else {
                             if (stateTimer.commitedTime.intValue() >= iStateDeltaT.intValue()) {
 
+                                //System.out.println("stateTimer.commitedTime : " + stateTimer.commitedTime);
+                                //System.out.println("iActionType : " + iActionType);
                                 if (iActionType.equals("ACTUATOR")) {
 
                                     MessageHandling.publishMqttMessage(
@@ -202,6 +207,8 @@ public class actuatorState {
                                             , iStateMessageCode
                                     );
                                 }
+
+
 
                                 for (String iNotObj : iNotificationList) {
 
@@ -226,7 +233,9 @@ public class actuatorState {
                         }
                     } else {
                         if (stateTimer.commitedTime.intValue() != 0) {
+                            //System.out.println("stateTimer.stopExecution()");
                             stateTimer.stopExecution();
+                            //System.out.println("stateTimer.stopExecution()");
                         }
                     }
                 }

@@ -14,6 +14,7 @@ import java.sql.*;
 import java.util.Date;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -140,7 +141,10 @@ public class PublisherTask {
             String MessCode = String.valueOf(unixSyncDate);
             String clientIdPostFix = String.valueOf((new Date()).getTime() / 1000L);
             //MqttClient client = new MqttClient(iServerIp, iControlLog + clientIdPostFix, null);
-            MqttClient client = new MqttClient(iServerIp, MqttClient.generateClientId(), null);
+
+            int randomNum = ThreadLocalRandom.current().nextInt(0, 1000 + 1);
+            //System.out.println("randomNum : " + randomNum);
+            MqttClient client = new MqttClient(iServerIp, MqttClient.generateClientId() + String.valueOf(randomNum), null);
 
             MqttConnectOptions options = new MqttConnectOptions();
             options.setUserName(iControlLog);

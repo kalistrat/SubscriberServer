@@ -20,6 +20,7 @@ public class DtransitionCondition implements StateChangeListenable {
     String leftExpr;
     String signExpr;
     //Integer iStateId;
+    actuatorState iActuatorState;
 
     public DtransitionCondition(String readTopicName
             , String mqttHostName
@@ -55,6 +56,11 @@ public class DtransitionCondition implements StateChangeListenable {
     public DtransitionCondition(){
         VarsList = new ArrayList<ConditionVariable>();
         isPerforming = false;
+        mathParser = new MathParser();
+    }
+
+    public void setParentState(actuatorState ActuatorState){
+        iActuatorState = ActuatorState;
     }
 
     public void setConditionId(int conditionId){
@@ -82,12 +88,14 @@ public class DtransitionCondition implements StateChangeListenable {
             iO.setVarListener(new VarListener() {
                 @Override
                 public void afterValueChange(ConditionVariable varChanged) {
-                    //System.out.println("Изменена переменная : " + varChanged.VarName);
+                    System.out.println("Изменена переменная : " + varChanged.VarName);
                     if (isConditionPerformed(varChanged)) {
                         isPerforming = true;
                         stateListener.afterConditionPerformed(getObjectCondition());
                     } else {
                         isPerforming = false;
+                        System.out.println("iActuatorState.stateTimer.commitedTime : " + iActuatorState.stateTimer.commitedTime);
+                        iActuatorState.stateTimer.stopExecution();
                     }
                 }
             });
@@ -134,10 +142,7 @@ public class DtransitionCondition implements StateChangeListenable {
                         ,DataRs.getString(1)//String varName
                         ,DataRs.getString(4)//Логин
                         ,DataRs.getString(5)//Пароль
-                        ,qConditionId
                 ));
-
-
 
             }
 
