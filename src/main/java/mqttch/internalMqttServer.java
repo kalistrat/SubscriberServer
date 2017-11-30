@@ -247,6 +247,7 @@ public class internalMqttServer extends Server {
 
         for (actuatorState iStateRules : this.actuatorStateList) {
             actuatorState delStateRule = iStateRules;
+            System.out.println("delStateRule.stateTimer.commitedTime : " + delStateRule.stateTimer.commitedTime);
             iStateRules.resetState();
             delStateRule = null;
         }

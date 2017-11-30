@@ -369,6 +369,7 @@ public class MessageHandling {
                 outMess = "N|"+"Неподдерживаемый тип операции для сервера;|";
             }
         } catch (Throwable e) {
+            e.printStackTrace();
             outMess = "N|Ошибка выполнения операции на mqtt-сервере;|";
         }
 
