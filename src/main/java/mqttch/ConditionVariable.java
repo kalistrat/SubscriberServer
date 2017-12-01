@@ -61,6 +61,8 @@ public class ConditionVariable implements MqttCallback, VarChangeListenable {
                 options.setSocketFactory(ssf);
             }
 
+            options.setConnectionTimeout(0);
+
             client.connect(options);
             client.setCallback(this);
             client.subscribe(TopicName);
