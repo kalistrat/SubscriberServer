@@ -524,7 +524,16 @@ public class MessageHandling {
             String recipientEmail
             ,String message
     ){
-        System.out.println("sending mail");
+        try {
+
+            String from = "snslog@mail.ru";
+            String subject = "Оповещение snslog.ru";
+            List<String> recipients = new ArrayList<>();
+            recipients.add(recipientEmail);
+            SpringEmailService.send(from, recipients, subject, message, null, null, null);
+        } catch (Exception e) {
+            System.out.println("Ошибка отправки письма на :" + recipientEmail);
+        }
     }
 
     public static void sendWhatsUpMessage(

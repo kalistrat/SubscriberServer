@@ -88,7 +88,7 @@ public class DtransitionCondition implements StateChangeListenable {
             iO.setVarListener(new VarListener() {
                 @Override
                 public void afterValueChange(ConditionVariable varChanged) {
-                    System.out.println("Изменена переменная : " + varChanged.VarName);
+                    //System.out.println("Изменена переменная : " + varChanged.VarName);
                     if (isConditionPerformed(varChanged)) {
                         isPerforming = true;
                         stateListener.afterConditionPerformed(getObjectCondition());

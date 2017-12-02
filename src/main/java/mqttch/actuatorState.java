@@ -7,6 +7,8 @@ import org.w3c.dom.NodeList;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 import java.sql.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +30,8 @@ public class actuatorState {
     String iServerIp;
     String iDeviceLog;
     String iDevicePass;
+    String iUserDeviceName;
+    String iStateName;
 
     public actuatorState(int qStateId) throws Throwable {
         iStateId = qStateId;
@@ -59,6 +63,10 @@ public class actuatorState {
                     .compile("/state_data/control_log").evaluate(xmlState);
             iDevicePass = XPathFactory.newInstance().newXPath()
                     .compile("/state_data/control_pass").evaluate(xmlState);
+            iUserDeviceName = XPathFactory.newInstance().newXPath()
+                    .compile("/state_data/device_user_name").evaluate(xmlState);
+            iStateName = XPathFactory.newInstance().newXPath()
+                    .compile("/state_data/actuator_state_name").evaluate(xmlState);
 
             Node node = (Node) XPathFactory.newInstance().newXPath()
                     .compile("/state_data/notification_list").evaluate(xmlState, XPathConstants.NODE);
@@ -208,6 +216,19 @@ public class actuatorState {
                                     );
                                 }
 
+                                DateFormat df = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+
+                                String notifyString =
+                                "На устройстве " + iUserDeviceName + "\n"
+                                + "выполнен критерий: "  + iStateName + ": \n"
+                                + conditionPerformed.leftExpr + conditionPerformed.signExpr + conditionPerformed.rightExpr + "\n"
+                                + "Значения переменных :" + "\n";
+
+                                for (ConditionVariable iVar : conditionPerformed.VarsList){
+                                    notifyString = notifyString + "Имя переменной: " + iVar.VarName + "\n"
+                                     + "Значение переменной: " + iVar.VarValue + "\n"
+                                            + "Дата актуализации значения: " + df.format(iVar.VarDate)+ "\n";
+                                }
 
 
                                 for (String iNotObj : iNotificationList) {
@@ -215,17 +236,17 @@ public class actuatorState {
                                     if (iNotObj.equals("MAIL")) {
                                         MessageHandling.sendEmailMessage(
                                                 iUserMail
-                                                ,iStateMessageCode
+                                                ,notifyString
                                         );
                                     } else if (iNotObj.equals("WHATSUP")){
                                         MessageHandling.sendWhatsUpMessage(
                                                 iUserPhone
-                                                ,iStateMessageCode
+                                                ,notifyString
                                         );
                                     } else if (iNotObj.equals("SMS")){
                                         MessageHandling.sendSMSMessage(
                                                 iUserPhone
-                                                ,iStateMessageCode
+                                                ,notifyString
                                         );
                                     }
                                 }

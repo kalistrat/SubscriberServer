@@ -7,10 +7,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6527b389-cdbd-482e-a02b-cfd0bcb699b8" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/passwords/k.conf" afterPath="$PROJECT_DIR$/passwords/k.conf" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_bugsnag_bugsnag_3_1_0.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_core_jackson_databind_2_8_8.xml" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/SubscriberServer.iml" afterPath="$PROJECT_DIR$/SubscriberServer.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/SubscriberServer.log" afterPath="$PROJECT_DIR$/SubscriberServer.log" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/mqttch/ConditionVariable.java" afterPath="$PROJECT_DIR$/src/main/java/mqttch/ConditionVariable.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/passwords/k.conf" afterPath="$PROJECT_DIR$/passwords/k.conf" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pom.xml" afterPath="$PROJECT_DIR$/pom.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/mqttch/DtransitionCondition.java" afterPath="$PROJECT_DIR$/src/main/java/mqttch/DtransitionCondition.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/mqttch/MessageHandling.java" afterPath="$PROJECT_DIR$/src/main/java/mqttch/MessageHandling.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/mqttch/actuatorState.java" afterPath="$PROJECT_DIR$/src/main/java/mqttch/actuatorState.java" />
     </list>
     <ignored path="SubscriberServer.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -44,11 +50,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ConditionVariable.java" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/ConditionVariable.java">
+      <file leaf-file-name="actuatorState.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/actuatorState.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.82288826">
-              <caret line="63" column="42" selection-start-line="63" selection-start-column="42" selection-end-line="63" selection-end-column="42" />
+            <state vertical-scroll-proportion="0.39028475">
+              <caret line="222" column="35" selection-start-line="222" selection-start-column="35" selection-end-line="222" selection-end-column="35" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SpringEmailService.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/SpringEmailService.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="121" column="25" selection-start-line="121" selection-start-column="25" selection-end-line="121" selection-end-column="25" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -85,7 +101,6 @@
         <option value="$PROJECT_DIR$/src/main/java/mqttch/SubscriberServer.java" />
         <option value="$PROJECT_DIR$/src/main/java/mqttch/ItransitionCondition.java" />
         <option value="$PROJECT_DIR$/src/main/java/mqttch/MathParser.java" />
-        <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/src/main/java/mqttch/SubscriberLogger.java" />
         <option value="$PROJECT_DIR$/src/main/java/mqttch/Listenable.java" />
         <option value="$PROJECT_DIR$/src/main/java/mqttch/VarChangeListenable.java" />
@@ -93,13 +108,15 @@
         <option value="$PROJECT_DIR$/src/main/java/mqttch/Main.java" />
         <option value="$PROJECT_DIR$/src/main/java/mqttch/VarListener.java" />
         <option value="$PROJECT_DIR$/src/main/java/mqttch/StateListener.java" />
-        <option value="$PROJECT_DIR$/src/main/java/mqttch/MessageHandling.java" />
         <option value="$PROJECT_DIR$/src/main/java/mqttch/PublisherTask.java" />
-        <option value="$PROJECT_DIR$/src/main/java/mqttch/DtransitionCondition.java" />
         <option value="$PROJECT_DIR$/src/main/java/mqttch/actuatorStateTimer.java" />
-        <option value="$PROJECT_DIR$/src/main/java/mqttch/actuatorState.java" />
         <option value="$PROJECT_DIR$/src/main/java/mqttch/internalMqttServer.java" />
         <option value="$PROJECT_DIR$/src/main/java/mqttch/ConditionVariable.java" />
+        <option value="$PROJECT_DIR$/src/main/java/mqttch/DtransitionCondition.java" />
+        <option value="$PROJECT_DIR$/pom.xml" />
+        <option value="$PROJECT_DIR$/src/main/java/mqttch/SpringEmailService.java" />
+        <option value="$PROJECT_DIR$/src/main/java/mqttch/MessageHandling.java" />
+        <option value="$PROJECT_DIR$/src/main/java/mqttch/actuatorState.java" />
       </list>
     </option>
   </component>
@@ -164,8 +181,8 @@
   <component name="ProjectFrameBounds">
     <option name="x" value="-8" />
     <option name="y" value="-8" />
-    <option name="width" value="1168" />
-    <option name="height" value="696" />
+    <option name="width" value="1296" />
+    <option name="height" value="1000" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
     <OptionsSetting value="true" id="Add" />
@@ -192,8 +209,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -266,6 +281,8 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scratches" />
+      <pane id="Scope" />
       <pane id="PackagesPane" />
     </panes>
   </component>
@@ -789,14 +806,15 @@
       <workItem from="1512036450359" duration="7575000" />
       <workItem from="1512065595047" duration="11060000" />
       <workItem from="1512118554075" duration="5406000" />
+      <workItem from="1512218335765" duration="5249000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="290507000" />
+    <option name="totallyTimeSpent" value="295756000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1168" height="696" extended-state="6" />
+    <frame x="-8" y="-8" width="1296" height="1000" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -804,12 +822,12 @@
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32435465" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.14440434" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.14375" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2996454" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.29854098" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.34476534" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.34453124" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -844,14 +862,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/MessageHandling.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/SubscriberServer.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -1105,13 +1115,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="2.5451977">
-          <caret line="53" column="0" selection-start-line="53" selection-start-column="0" selection-end-line="53" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/StateChangeListenable.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -1157,7 +1160,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
           <caret line="6" column="19" selection-start-line="6" selection-start-column="19" selection-end-line="6" selection-end-column="19" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1188,27 +1190,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/DtransitionCondition.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="166" column="0" selection-start-line="166" selection-start-column="0" selection-end-line="166" selection-end-column="0" />
-          <folding>
-            <marker date="1512117604222" expanded="true" signature="3390:3968" placeholder="select cv.va... user_state_condition_vars" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/actuatorState.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="247" column="0" selection-start-line="247" selection-start-column="0" selection-end-line="247" selection-end-column="0" />
-          <folding>
-            <element signature="e#7237#10129#0" expanded="true" />
-            <element signature="e#10128#10129#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/SubscriberServer.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="1.119891">
@@ -1217,10 +1198,46 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/DtransitionCondition.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="12" column="26" selection-start-line="12" selection-start-column="9" selection-end-line="12" selection-end-column="26" />
+          <folding>
+            <marker date="1512219013666" expanded="true" signature="3392:3970" placeholder="select cv.va... user_state_condition_vars" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/ConditionVariable.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-1.9045227">
+          <caret line="11" column="13" selection-start-line="11" selection-start-column="13" selection-end-line="11" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pom.xml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.5691769">
+          <caret line="57" column="21" selection-start-line="57" selection-start-column="21" selection-end-line="57" selection-end-column="21" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/SpringEmailService.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="121" column="25" selection-start-line="121" selection-start-column="25" selection-end-line="121" selection-end-column="25" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/MessageHandling.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.33242506">
-          <caret line="177" column="0" selection-start-line="177" selection-start-column="0" selection-end-line="177" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.37353435">
+          <caret line="533" column="0" selection-start-line="533" selection-start-column="0" selection-end-line="533" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -1233,13 +1250,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/ConditionVariable.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/mqttch/actuatorState.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.82288826">
-          <caret line="63" column="42" selection-start-line="63" selection-start-column="42" selection-end-line="63" selection-end-column="42" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state vertical-scroll-proportion="0.39028475">
+          <caret line="222" column="35" selection-start-line="222" selection-start-column="35" selection-end-line="222" selection-end-column="35" />
+          <folding />
         </state>
       </provider>
     </entry>
