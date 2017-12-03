@@ -220,14 +220,18 @@ public class actuatorState {
 
                                 String notifyString =
                                 "На устройстве " + iUserDeviceName + "\n"
-                                + "выполнен критерий: "  + iStateName + ": \n"
-                                + conditionPerformed.leftExpr + conditionPerformed.signExpr + conditionPerformed.rightExpr + "\n"
-                                + "Значения переменных :" + "\n";
+                                + "выполнены критерии: "  + iStateName + ": \n";
 
-                                for (ConditionVariable iVar : conditionPerformed.VarsList){
-                                    notifyString = notifyString + "Имя переменной: " + iVar.VarName + "\n"
-                                     + "Значение переменной: " + iVar.VarValue + "\n"
-                                            + "Дата актуализации значения: " + df.format(iVar.VarDate)+ "\n";
+                                for (DtransitionCondition iCond : iConditionList) {
+
+                                    notifyString = notifyString + iCond.leftExpr + iCond.signExpr + iCond.rightExpr + "\n"
+                                            + "Значения переменных :" + "\n";
+
+                                    for (ConditionVariable iVar : iCond.VarsList) {
+                                        notifyString = notifyString + "Имя переменной: " + iVar.VarName + "\n"
+                                                + "Значение переменной: " + iVar.VarValue + "\n"
+                                                + "Дата актуализации значения: " + df.format(iVar.VarDate) + "\n";
+                                    }
                                 }
 
 

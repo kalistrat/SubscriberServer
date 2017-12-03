@@ -104,7 +104,7 @@ public class internalMqttServer extends Server {
         File passFile = new File(passWordFilePath);
         passFile.createNewFile();
 
-        System.out.println("passfilename : " + passWordFilePath);
+        //System.out.println("passfilename : " + passWordFilePath);
 
         setPassWordFile();
 
@@ -381,7 +381,7 @@ public class internalMqttServer extends Server {
             } else {
                 resultStr = "<user_device_task_list/>";
             }
-            System.out.println("CondValue :" + iUserLog + " : " + resultStr);
+            //System.out.println("CondValue :" + iUserLog + " : " + resultStr);
             Con.close();
             return resultStr;
 
