@@ -514,8 +514,8 @@ public class MessageHandling {
             client.disconnect();
 
         } catch(MqttException | GeneralSecurityException | IOException me) {
-            me.printStackTrace();
-            //System.out.println("publishMqttMessage EXCEPTION!!!!!!!!!!");
+            //me.printStackTrace();
+            System.out.println("publishMqttMessage EXCEPTION!!!!!!!!!!");
         }
 
     }

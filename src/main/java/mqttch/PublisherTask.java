@@ -59,6 +59,8 @@ public class PublisherTask {
             iMessageValue = XPathFactory.newInstance().newXPath()
                     .compile("/task_data/message_value").evaluate(xmlDocument);
 
+            //System.out.println("iWriteTopicName" + iWriteTopicName);
+
 
         ses =
                 Executors.newScheduledThreadPool(1);
@@ -69,7 +71,7 @@ public class PublisherTask {
                     try {
                     publishTimeValue();
                     } catch (Throwable e3) {
-                        //e3.printStackTrace();
+                        e3.printStackTrace();
                         //System.out.println("pinger running..");
                         throw  e3;
                     }
@@ -86,6 +88,7 @@ public class PublisherTask {
             }
         };
         if (iIntervalType.equals("DAYS")) {
+            //System.out.println("iIntervalValue" + iWriteTopicName);
             ses.scheduleAtFixedRate(pinger, 0, iIntervalValue, TimeUnit.DAYS);
         } else if (iIntervalType.equals("HOURS")){
             ses.scheduleAtFixedRate(pinger, 0, iIntervalValue, TimeUnit.HOURS);
@@ -95,7 +98,7 @@ public class PublisherTask {
             ses.scheduleAtFixedRate(pinger, 0, iIntervalValue, TimeUnit.SECONDS);
         }
         } catch (Throwable e1) {
-            //e1.printStackTrace();
+            e1.printStackTrace();
             throw  e1;
         }
     }
@@ -150,25 +153,28 @@ public class PublisherTask {
             options.setUserName(iControlLog);
             options.setPassword(iControlPass.toCharArray());
 
+            //System.out.println("publishTimeValue : iControlLog : " + iControlLog);
+            //System.out.println("publishTimeValue : iControlPass : " + iControlPass);
+
             if (iServerIp.contains("ssl://")) {
                 SSLSocketFactory ssf = MessageHandling.configureSSLSocketFactory();
                 options.setSocketFactory(ssf);
             }
+            //System.out.println("publishTimeValue : iServerIp : " + iServerIp);
             MqttMessage message = new MqttMessage(MessCode.getBytes());
+            //System.out.println("publishTimeValue : message : " + message);
             client.connect(options);
 
-            //System.out.println("publishTimeValue : iControlLog : " + iControlLog);
-            //System.out.println("publishTimeValue : iControlPass : " + iControlPass);
-            //System.out.println("publishTimeValue : iServerIp : " + iServerIp);
-            //System.out.println("publishTimeValue : message : " + message);
+
             //System.out.println("publishTimeValue : iWriteTopicName : " + iWriteTopicName);
 
             client.publish(iWriteTopicName, message);
             client.disconnect();
+            //client.close();
 
         } catch(MqttException | GeneralSecurityException | IOException me) {
-            me.printStackTrace();
-            //System.out.println("publishTimeValue EXCEPTION!!!!!!!!!!");
+            //me.printStackTrace();
+            System.out.println("publishTimeValue EXCEPTION!!!!!!!!!!");
         }
 
     }
