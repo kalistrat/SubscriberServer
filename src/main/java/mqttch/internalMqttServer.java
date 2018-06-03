@@ -4,6 +4,11 @@ import io.moquette.interception.AbstractInterceptHandler;
 import io.moquette.interception.InterceptHandler;
 import io.moquette.interception.messages.InterceptPublishMessage;
 import io.moquette.server.Server;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -12,12 +17,12 @@ import org.w3c.dom.NodeList;
 
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.sql.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Created by kalistrat on 27.09.2017.
@@ -74,6 +79,13 @@ public class internalMqttServer extends Server {
 
         @Override
         public void onPublish(InterceptPublishMessage msg) {
+
+            //STATE:UID:CONNECTED:DATETIME
+            //CHARGE:UID:VALUE:DATETIME
+
+            //UID:SYNC:DATETIME
+            //UID:DROP:DATETIME
+
 
             System.out.println(
                     "Received on topic: " + msg.getTopicName().toString() + " content: " + StandardCharsets.UTF_8.decode(msg.getPayload().nioBuffer()).toString());
@@ -574,6 +586,54 @@ public class internalMqttServer extends Server {
             fw.append("\n" + iObj.folderLogIn + ":" + iObj.folderPassWord);
         }
         fw.close();
+    }
+
+    private String overAllWsSetUserDevice(
+            String UID
+            ,String userLogin
+            ,String reqStatus
+    ){
+        String respWs = null;
+
+        try {
+
+            List<String> WsArgs = MessageHandling.getOverAllWseArgs(userLogin);
+            HttpClient client = new DefaultHttpClient();
+            HttpPost post = new HttpPost(WsArgs.get(1));
+
+            post.setHeader("Content-Type", "text/xml");
+
+            String reqBody = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:com=\"http://com/\">\n" +
+                    "   <soapenv:Header/>\n" +
+                    "   <soapenv:Body>\n" +
+                    "      <com:setUserDevice>\n" +
+                    "         <!--Optional:-->\n" +
+                    "         <arg0>" + UID + "</arg0>\n" +
+                    "         <!--Optional:-->\n" +
+                    "         <arg1>" + userLogin + "</arg1>\n" +
+                    "         <!--Optional:-->\n" +
+                    "         <arg2>"+ WsArgs.get(0) +"</arg2>\n" +
+                    "         <!--Optional:-->\n" +
+                    "         <arg3>"+ reqStatus +"</arg3>\n" +
+                    "      </com:setUserDevice>\n" +
+                    "   </soapenv:Body>\n" +
+                    "</soapenv:Envelope>";
+
+            StringEntity input = new StringEntity(reqBody, Charset.forName("UTF-8"));
+            post.setEntity(input);
+            HttpResponse response = client.execute(post);
+            BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+
+            Document resXml = MessageHandling.loadXMLFromString(rd.lines().collect(Collectors.joining()));
+            respWs = XPathFactory.newInstance().newXPath()
+                    .compile("//return").evaluate(resXml);
+
+
+        } catch (Exception e){
+            //e.printStackTrace();
+
+        }
+        return respWs;
     }
 
 }

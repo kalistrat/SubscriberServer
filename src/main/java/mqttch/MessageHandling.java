@@ -550,5 +550,37 @@ public class MessageHandling {
         System.out.println("sending sms");
     }
 
+    public static List getOverAllWseArgs(String UserLog){
+        List Args = new ArrayList<String>();
+
+        try {
+
+            Class.forName(MessageHandling.JDBC_DRIVER);
+            Connection Con = DriverManager.getConnection(
+                    MessageHandling.DB_URL
+                    , MessageHandling.USER
+                    , MessageHandling.PASS
+            );
+
+            CallableStatement Stmt = Con.prepareCall("{call getOverAllWseArgs(?,?,?)}");
+            Stmt.setString(1,UserLog);
+            Stmt.registerOutParameter (2, Types.VARCHAR);
+            Stmt.registerOutParameter (3, Types.VARCHAR);
+            Stmt.execute();
+            Args.add(Stmt.getString(2));
+            Args.add(Stmt.getString(3));
+            Con.close();
+
+        }catch(SQLException se){
+            //Handle errors for JDBC
+            se.printStackTrace();
+        }catch(Exception e) {
+            //Handle errors for Class.forName
+            e.printStackTrace();
+        }
+
+        return Args;
+    }
+
 
 }
