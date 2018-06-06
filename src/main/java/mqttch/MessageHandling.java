@@ -115,19 +115,39 @@ public class MessageHandling {
         return StrPieces;
     }
 
-    public static List<String> GetListFromStringDevider(String DevidedString,String Devider){
+    public static List<String> GetListFromStringDevider(String DevidedString, String Devider){
         List<String> StrPieces = new ArrayList<String>();
-        int k = 0;
-        String iDevidedString = DevidedString;
+        try {
+            int k = 0;
+            String iDevidedString;
+            // 123|321|456|
 
-        while (!iDevidedString.equals("")) {
-            int Pos = iDevidedString.indexOf(Devider);
-            StrPieces.add(iDevidedString.substring(0, Pos));
-            iDevidedString = iDevidedString.substring(Pos + 1);
-            k = k + 1;
-            if (k > 100000) {
-                iDevidedString = "";
+            if (DevidedString.startsWith(Devider)) {
+                DevidedString = DevidedString.substring(1,DevidedString.length());
             }
+
+            if (!DevidedString.contains(Devider)) {
+                iDevidedString = DevidedString + Devider;
+            } else {
+                if (!DevidedString.endsWith(Devider)) {
+                    iDevidedString = DevidedString + Devider;
+                } else {
+                    iDevidedString = DevidedString;
+                }
+            }
+
+            while (!iDevidedString.equals("")) {
+                int Pos = iDevidedString.indexOf(Devider);
+                StrPieces.add(iDevidedString.substring(0, Pos));
+                iDevidedString = iDevidedString.substring(Pos + 1);
+                k = k + 1;
+                if (k > 100000) {
+                    iDevidedString = "";
+                }
+            }
+
+        } catch (Exception e){
+            e.printStackTrace();
         }
 
         return StrPieces;
@@ -155,6 +175,7 @@ public class MessageHandling {
                         ActionType.equals("add")
                                 || ActionType.equals("delete")
                                 || ActionType.equals("change")
+                                || ActionType.equals("call")
                 )) {
                     OutMessage = "Неизвестный тип операции;";
                 }
@@ -164,6 +185,8 @@ public class MessageHandling {
                                 || SubcriberType.equals("task")
                                 || SubcriberType.equals("server")
                                 || SubcriberType.equals("state_message")
+                                || SubcriberType.equals("drop")
+                                || SubcriberType.equals("sync")
 
                 )) {
                     OutMessage = OutMessage + "Неизвестный тип подписчика;";
@@ -178,6 +201,10 @@ public class MessageHandling {
                         OutMessage = dServerListUpdate(ActionType,UserLog);
                     } else if (SubcriberType.equals("state_message")) {
                         OutMessage = mqqtMessagePublish(ActionType,UserLog,EntityId);
+                    } else if (SubcriberType.equals("drop")) {
+                        //OutMessage = sendMessageToDrop(ActionType,UserLog,EntityId);
+                    } else if (SubcriberType.equals("sync")) {
+                        //OutMessage = sendMessageToSync(ActionType,UserLog,EntityId);
                     } else {
                         OutMessage = "Неподдерживаемый тип подписчика;";
                     }
@@ -569,6 +596,54 @@ public class MessageHandling {
             Stmt.execute();
             Args.add(Stmt.getString(2));
             Args.add(Stmt.getString(3));
+            Con.close();
+
+        }catch(SQLException se){
+            //Handle errors for JDBC
+            se.printStackTrace();
+        }catch(Exception e) {
+            //Handle errors for Class.forName
+            e.printStackTrace();
+        }
+
+        return Args;
+    }
+
+    public static String getUnixTime(String timeZone){
+        Date syncDate = MessageHandling.redefineSyncDate(timeZone);
+        long unixSyncDate = syncDate.getTime() / 1000L;
+        return String.valueOf(unixSyncDate);
+    }
+
+    public static List getMqttConnetionArgsUID(String UID){
+        List Args = new ArrayList<String>();
+
+        try {
+
+            Class.forName(MessageHandling.JDBC_DRIVER);
+            Connection Con = DriverManager.getConnection(
+                    MessageHandling.DB_URL
+                    , MessageHandling.USER
+                    , MessageHandling.PASS
+            );
+
+            CallableStatement Stmt = Con.prepareCall("{call getMqttConnetionArgsUID(?,?,?,?,?,?,?)}");
+            Stmt.setString(1,UID);
+            Stmt.registerOutParameter (2, Types.VARCHAR);
+            Stmt.registerOutParameter (3, Types.VARCHAR);
+            Stmt.registerOutParameter (4, Types.VARCHAR);
+            Stmt.registerOutParameter (5, Types.VARCHAR);
+            Stmt.registerOutParameter (6, Types.VARCHAR);
+            Stmt.registerOutParameter (7, Types.VARCHAR);
+
+            Stmt.execute();
+            Args.add(Stmt.getString(2));
+            Args.add(Stmt.getString(3));
+            Args.add(Stmt.getString(4));
+            Args.add(Stmt.getString(5));
+            Args.add(Stmt.getString(6));
+            Args.add(Stmt.getString(7));
+
             Con.close();
 
         }catch(SQLException se){
