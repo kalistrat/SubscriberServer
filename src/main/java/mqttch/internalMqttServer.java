@@ -96,17 +96,8 @@ public class internalMqttServer extends Server {
             if (message.contains("CONNECTED")){
                 List<String> messageArgs = MessageHandling.GetListFromStringDevider(message.replace(" ",""),":");
                 String sentUID = messageArgs.get(1);
-                List<String> connectionArgs = MessageHandling.getMqttConnetionArgsUID(sentUID);
-                MessageHandling.publishMqttMessage(
-                        connectionArgs.get(0)
-                        ,connectionArgs.get(3)
-                        ,connectionArgs.get(1)
-                        ,connectionArgs.get(2)
-                        ,connectionArgs.get(4) + ":SYNC:" + MessageHandling.getUnixTime(connectionArgs.get(5))
-                );
-
+                MessageHandling.sendRicochetMessage(sentUID,"SYNC");
                 overAllWsSetUserDevice(sentUID,iUserLog,"CONNECTED");
-
             } else  {
                 addMessageIntoDB(topic,message,iUserLog);
             }

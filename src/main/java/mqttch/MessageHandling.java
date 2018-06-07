@@ -657,5 +657,28 @@ public class MessageHandling {
         return Args;
     }
 
+    public static void sendRicochetMessage(String inUID,String recType){
+        List<String> connectionArgs = MessageHandling.getMqttConnetionArgsUID(inUID);
+        MessageHandling.publishMqttMessage(
+                connectionArgs.get(0)
+                ,connectionArgs.get(3)
+                ,connectionArgs.get(1)
+                ,connectionArgs.get(2)
+                ,connectionArgs.get(4) + ":"+recType+":" + MessageHandling.getUnixTime(connectionArgs.get(5))
+        );
+    }
+
+    public static String getUIDfromTopicName(){
+        String uid = null;
+        try{
+            //Mask [METBRISN]{3}-[a-zA-Z0-9]{12}
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return uid;
+    }
+
+
+
 
 }
