@@ -202,9 +202,9 @@ public class MessageHandling {
                     } else if (SubcriberType.equals("state_message")) {
                         OutMessage = mqqtMessagePublish(ActionType,UserLog,EntityId);
                     } else if (SubcriberType.equals("drop")) {
-                        //OutMessage = sendMessageToDrop(ActionType,UserLog,EntityId);
+                        OutMessage = sendTechMessage(StrToIntValue(EntityId),UserLog,"DROP");
                     } else if (SubcriberType.equals("sync")) {
-                        //OutMessage = sendMessageToSync(ActionType,UserLog,EntityId);
+                        OutMessage = sendTechMessage(StrToIntValue(EntityId),UserLog,"SYNC");
                     } else {
                         OutMessage = "Неподдерживаемый тип подписчика;";
                     }
@@ -657,27 +657,70 @@ public class MessageHandling {
         return Args;
     }
 
-    public static void sendRicochetMessage(String inUID,String recType){
-        List<String> connectionArgs = MessageHandling.getMqttConnetionArgsUID(inUID);
-        MessageHandling.publishMqttMessage(
-                connectionArgs.get(0)
-                ,connectionArgs.get(3)
-                ,connectionArgs.get(1)
-                ,connectionArgs.get(2)
-                ,connectionArgs.get(4) + ":"+recType+":" + MessageHandling.getUnixTime(connectionArgs.get(5))
-        );
-    }
 
-    public static String getUIDfromTopicName(){
-        String uid = null;
-        try{
-            //Mask [METBRISN]{3}-[a-zA-Z0-9]{12}
-        } catch (Exception e){
+    public static List getMqttConnetionArgs(int iLeafId, String iUserLogin){
+        List Args = new ArrayList<String>();
+
+        try {
+
+            Class.forName(MessageHandling.JDBC_DRIVER);
+            Connection Con = DriverManager.getConnection(
+                    MessageHandling.DB_URL
+                    , MessageHandling.USER
+                    , MessageHandling.PASS
+            );
+
+            CallableStatement Stmt = Con.prepareCall("{call getMqttConnetionArgs(?,?,?,?,?,?,?,?)}");
+            Stmt.setInt(1,iLeafId);
+            Stmt.setString(2,iUserLogin);
+
+            Stmt.registerOutParameter (3, Types.VARCHAR);
+            Stmt.registerOutParameter (4, Types.VARCHAR);
+            Stmt.registerOutParameter (5, Types.VARCHAR);
+            Stmt.registerOutParameter (6, Types.VARCHAR);
+            Stmt.registerOutParameter (7, Types.VARCHAR);
+            Stmt.registerOutParameter (8, Types.VARCHAR);
+
+            Stmt.execute();
+
+            Args.add(Stmt.getString(3));//oTopicName
+            Args.add(Stmt.getString(4));//oDeviceLogin
+            Args.add(Stmt.getString(5));//oDevicePassWord
+            Args.add(Stmt.getString(6));//oServerIp
+            Args.add(Stmt.getString(7));//oUID
+            Args.add(Stmt.getString(8));//oTimeZone
+
+            Con.close();
+
+        }catch(SQLException se){
+            //Handle errors for JDBC
+            se.printStackTrace();
+        }catch(Exception e) {
+            //Handle errors for Class.forName
             e.printStackTrace();
         }
-        return uid;
+
+        return Args;
     }
 
+    public static String sendTechMessage(int leafId, String userLogin,String messCode){
+        String res;
+        try {
+            List<String> connectionArgs = MessageHandling.getMqttConnetionArgs(leafId, userLogin);
+            MessageHandling.publishMqttMessage(
+                    connectionArgs.get(0)
+                    , connectionArgs.get(3)
+                    , connectionArgs.get(1)
+                    , connectionArgs.get(2)
+                    , connectionArgs.get(4) + ":" + messCode + ":" + MessageHandling.getUnixTime(connectionArgs.get(5))
+            );
+            res = "Y|"+"Сообщение  " + messCode+ " от пользователя " + userLogin + " опубликовано в тезнический топик" + "|";
+        } catch (Exception e) {
+            e.printStackTrace();
+            res = "N|"+"Сообщение  " + messCode+ " от пользователя " + userLogin + " завершилось ошибкой" + "|";
+        }
+        return res;
+    }
 
 
 

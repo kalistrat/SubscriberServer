@@ -22,6 +22,8 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.sql.*;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -93,15 +95,23 @@ public class internalMqttServer extends Server {
             String topic = msg.getTopicName().toString();
             String message = StandardCharsets.UTF_8.decode(msg.getPayload().nioBuffer()).toString();
 
-            if (message.contains("CONNECTED")){
-                List<String> messageArgs = MessageHandling.GetListFromStringDevider(message.replace(" ",""),":");
-                String sentUID = messageArgs.get(1);
-                MessageHandling.sendRicochetMessage(sentUID,"SYNC");
-                overAllWsSetUserDevice(sentUID,iUserLog,"CONNECTED");
-            } else  {
-                addMessageIntoDB(topic,message,iUserLog);
-            }
+            String topicUID = getUIDfromTopicName(topic);
 
+            if (isDroppedDevice(topicUID)) {
+                sendRicochetMessage(topicUID,"DROP");
+            } else {
+
+                if (message.contains("CONNECTED") && message.contains("STATE")) {
+                    List<String> messageArgs = MessageHandling.GetListFromStringDevider(message.replace(" ", ""), ":");
+                    String sentUID = messageArgs.get(1);
+                    sendRicochetMessage(sentUID, "SYNC");
+                    overAllWsSetUserDevice(sentUID, iUserLog, "CONNECTED");
+                } else if (message.contains("CHARGE")) {
+                    System.out.println(topicUID + " : data about the charge of devices are not processed");
+                } else {
+                    addMessageIntoDB(topic, message, iUserLog);
+                }
+            }
 
         }
     }
@@ -639,6 +649,64 @@ public class internalMqttServer extends Server {
 
         }
         return respWs;
+    }
+
+    private boolean isDroppedDevice(String topicUID){
+        boolean dropped = false;
+
+        try {
+
+            Class.forName(MessageHandling.JDBC_DRIVER);
+            Connection Con = DriverManager.getConnection(
+                    MessageHandling.DB_URL
+                    , MessageHandling.USER
+                    , MessageHandling.PASS
+            );
+
+            CallableStatement Stmt = Con.prepareCall("{? = call isDroppedDevice(?)}");
+            Stmt.registerOutParameter (1, Types.INTEGER);
+            Stmt.setString(2,topicUID);
+            Stmt.execute();
+            if (Stmt.getInt(1)>0){
+                dropped = true;
+            }
+            Con.close();
+
+        }catch(SQLException se){
+            //Handle errors for JDBC
+            se.printStackTrace();
+        }catch(Exception e) {
+            //Handle errors for Class.forName
+            e.printStackTrace();
+        }
+
+        return dropped;
+    }
+
+    private String getUIDfromTopicName(String stringCode){
+        String res = null;
+        try {
+            Pattern p3 = Pattern.compile("[METBRISN]{3}-[a-zA-Z0-9]{12}");
+            Matcher m3 = p3.matcher(stringCode);
+
+            while (m3.find()) {
+                res = m3.group(0);
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+        return res;
+    }
+
+    private void sendRicochetMessage(String inUID,String recType){
+        List<String> connectionArgs = MessageHandling.getMqttConnetionArgsUID(inUID);
+        MessageHandling.publishMqttMessage(
+                connectionArgs.get(0)
+                ,connectionArgs.get(3)
+                ,connectionArgs.get(1)
+                ,connectionArgs.get(2)
+                ,connectionArgs.get(4) + ":"+recType+":" + MessageHandling.getUnixTime(connectionArgs.get(5))
+        );
     }
 
 }
