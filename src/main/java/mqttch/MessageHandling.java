@@ -723,5 +723,49 @@ public class MessageHandling {
     }
 
 
+    public static List getMqttConnetionArgsDropUID(String UID,String userLog){
+        List Args = new ArrayList<String>();
+
+        try {
+
+            Class.forName(MessageHandling.JDBC_DRIVER);
+            Connection Con = DriverManager.getConnection(
+                    MessageHandling.DB_URL
+                    , MessageHandling.USER
+                    , MessageHandling.PASS
+            );
+
+            CallableStatement Stmt = Con.prepareCall("{call getMqttConnetionArgsDropUID(?,?,?,?,?,?,?,?)}");
+            Stmt.setString(1,UID);
+            Stmt.setString(2,userLog);
+            Stmt.registerOutParameter (3, Types.VARCHAR);
+            Stmt.registerOutParameter (4, Types.VARCHAR);
+            Stmt.registerOutParameter (5, Types.VARCHAR);
+            Stmt.registerOutParameter (6, Types.VARCHAR);
+            Stmt.registerOutParameter (7, Types.VARCHAR);
+            Stmt.registerOutParameter (8, Types.VARCHAR);
+
+            Stmt.execute();
+            Args.add(Stmt.getString(3));
+            Args.add(Stmt.getString(4));
+            Args.add(Stmt.getString(5));
+            Args.add(Stmt.getString(6));
+            Args.add(Stmt.getString(7));
+            Args.add(Stmt.getString(8));
+
+            Con.close();
+
+        }catch(SQLException se){
+            //Handle errors for JDBC
+            se.printStackTrace();
+        }catch(Exception e) {
+            //Handle errors for Class.forName
+            e.printStackTrace();
+        }
+
+        return Args;
+    }
+
+
 
 }
