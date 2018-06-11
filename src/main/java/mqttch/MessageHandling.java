@@ -627,7 +627,7 @@ public class MessageHandling {
                     , MessageHandling.PASS
             );
 
-            CallableStatement Stmt = Con.prepareCall("{call getMqttConnetionArgsUID(?,?,?,?,?,?,?)}");
+            CallableStatement Stmt = Con.prepareCall("{call getMqttConnetionArgsUID(?,?,?,?,?,?,?,?,?,?)}");
             Stmt.setString(1,UID);
             Stmt.registerOutParameter (2, Types.VARCHAR);
             Stmt.registerOutParameter (3, Types.VARCHAR);
@@ -635,6 +635,9 @@ public class MessageHandling {
             Stmt.registerOutParameter (5, Types.VARCHAR);
             Stmt.registerOutParameter (6, Types.VARCHAR);
             Stmt.registerOutParameter (7, Types.VARCHAR);
+            Stmt.registerOutParameter (8, Types.VARCHAR);
+            Stmt.registerOutParameter (9, Types.VARCHAR);
+            Stmt.registerOutParameter (10, Types.VARCHAR);
 
             Stmt.execute();
             Args.add(Stmt.getString(2));
@@ -643,6 +646,9 @@ public class MessageHandling {
             Args.add(Stmt.getString(5));
             Args.add(Stmt.getString(6));
             Args.add(Stmt.getString(7));
+            Args.add(Stmt.getString(8));
+            Args.add(Stmt.getString(9));
+            Args.add(Stmt.getString(10));
 
             Con.close();
 
