@@ -96,9 +96,12 @@ public class internalMqttServer extends Server {
             String message = StandardCharsets.UTF_8.decode(msg.getPayload().nioBuffer()).toString();
 
             String topicUID = getUIDfromTopicName(topic);
+            String topicPreffix = topicUID.substring(0, 3);
 
             if (isDroppedDevice(topicUID)) {
-                sendRicochetDropMessage(topicUID,iUserLog);
+                if (topicPreffix.equals("SEN")) {
+                    sendRicochetDropMessage(topicUID, iUserLog);
+                }
             } else {
 
                 if (message.contains("CONNECTED") && message.contains("STATE")) {
