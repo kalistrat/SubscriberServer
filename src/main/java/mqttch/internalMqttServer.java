@@ -7,19 +7,26 @@ import io.moquette.server.Server;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.ssl.SSLContexts;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 
+import javax.net.ssl.SSLContext;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.security.KeyStore;
 import java.sql.*;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -613,7 +620,19 @@ public class internalMqttServer extends Server {
         try {
 
             List<String> WsArgs = MessageHandling.getOverAllWseArgs(userLogin);
-            HttpClient client = new DefaultHttpClient();
+
+
+            SSLContext sslContext = SSLContexts.custom()
+                    .loadTrustMaterial((KeyStore)null, new TrustSelfSignedStrategy())
+                    //I had a trust store of my own, and this might not work!
+                    .build();
+
+            CloseableHttpClient client = HttpClients.custom()
+                    .setSSLContext(sslContext)
+                    .setSSLHostnameVerifier(new NoopHostnameVerifier())
+                    .build();
+
+
             HttpPost post = new HttpPost(WsArgs.get(1));
 
             post.setHeader("Content-Type", "text/xml");
