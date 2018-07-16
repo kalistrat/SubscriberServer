@@ -103,15 +103,18 @@ public class internalMqttServer extends Server {
             String message = StandardCharsets.UTF_8.decode(msg.getPayload().nioBuffer()).toString();
 
             String topicUID = getUIDfromTopicName(topic);
+            String topicPreffix = topicUID.substring(0, 3);
 
             if (isDroppedDevice(topicUID)) {
-                sendRicochetMessage(topicUID,"DROP");
+                if (topicPreffix.equals("SEN")) {
+                    sendRicochetDropMessage(topicUID, iUserLog);
+                }
             } else {
 
                 if (message.contains("CONNECTED") && message.contains("STATE")) {
                     List<String> messageArgs = MessageHandling.GetListFromStringDevider(message.replace(" ", ""), ":");
                     String sentUID = messageArgs.get(1);
-                    sendRicochetMessage(sentUID, "SYNC");
+                    sendRicochetSyncMessage(sentUID);
                     overAllWsSetUserDevice(sentUID, iUserLog, "CONNECTED");
                 } else if (message.contains("CHARGE")) {
                     System.out.println(topicUID + " : data about the charge of devices are not processed");
@@ -717,14 +720,25 @@ public class internalMqttServer extends Server {
         return res;
     }
 
-    private void sendRicochetMessage(String inUID,String recType){
+    private void sendRicochetSyncMessage(String inUID){
         List<String> connectionArgs = MessageHandling.getMqttConnetionArgsUID(inUID);
         MessageHandling.publishMqttMessage(
                 connectionArgs.get(0)
                 ,connectionArgs.get(3)
                 ,connectionArgs.get(1)
                 ,connectionArgs.get(2)
-                ,connectionArgs.get(4) + ":"+recType+":" + MessageHandling.getUnixTime(connectionArgs.get(5))
+                ,connectionArgs.get(4) + ":SYNC:" + MessageHandling.getUnixTime(connectionArgs.get(5))
+        );
+    }
+
+    private void sendRicochetDropMessage(String inUID,String sLogin){
+        List<String> connectionArgs = MessageHandling.getMqttConnetionArgsDropUID(inUID,sLogin);
+        MessageHandling.publishMqttMessage(
+                connectionArgs.get(0)
+                ,connectionArgs.get(3)
+                ,connectionArgs.get(1)
+                ,connectionArgs.get(2)
+                ,connectionArgs.get(4) + ":DROP:" + MessageHandling.getUnixTime(connectionArgs.get(5))
         );
     }
 
