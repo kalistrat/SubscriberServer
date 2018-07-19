@@ -105,23 +105,28 @@ public class internalMqttServer extends Server {
             String topicUID = getUIDfromTopicName(topic);
             String topicPreffix = topicUID.substring(0, 3);
 
-            if (isDroppedDevice(topicUID)) {
-                if (topicPreffix.equals("SEN")) {
-                    sendRicochetDropMessage(topicUID, iUserLog);
-                }
-            } else {
-
-                if (message.contains("CONNECTED") && message.contains("STATE")) {
-                    List<String> messageArgs = MessageHandling.GetListFromStringDevider(message.replace(" ", ""), ":");
-                    String sentUID = messageArgs.get(1);
-                    sendRicochetSyncMessage(sentUID);
-                    overAllWsSetUserDevice(sentUID, iUserLog, "CONNECTED");
-                } else if (message.contains("CHARGE")) {
-                    System.out.println(topicUID + " : data about the charge of devices are not processed");
-                } else {
-                    addMessageIntoDB(topic, message, iUserLog);
-                }
-            }
+//            if (isDroppedDevice(topicUID)) {
+//                if (topicPreffix.equals("SEN")) {
+//                    sendRicochetDropMessage(topicUID, iUserLog);
+//                }
+//            } else {
+//
+//                if (message.contains("CONNECTED") && message.contains("STATE")) {
+//                    List<String> messageArgs = MessageHandling.GetListFromStringDevider(message.replace(" ", ""), ":");
+//                    String sentUID = messageArgs.get(1);
+//                    sendRicochetSyncMessage(sentUID);
+//                    overAllWsSetUserDevice(sentUID, iUserLog, "CONNECTED");
+//                } else if (message.contains("CHARGE")) {
+//                    System.out.println(topicUID + " : data about the charge of devices are not processed");
+//                } else {
+//                    addMessageIntoDB(topic, message, iUserLog);
+//                }
+//            }
+            //REGISTERED:BRI-1012U012E256:1514768400
+//            REBOOTED:SEN-7012F12E256R:1514768400
+//            CONNECTED:SEN-7012F12E256R:1514768400
+//            DROPED:SEN-7012F12E256R:1514768400
+//            BATTERY:SEN-7012F12E256R:20:1514768400
 
         }
     }
