@@ -713,14 +713,27 @@ public class MessageHandling {
         String res;
         try {
             List<String> connectionArgs = MessageHandling.getMqttConnetionArgs(leafId, userLogin);
-            MessageHandling.publishMqttMessage(
-                    connectionArgs.get(0)
-                    , connectionArgs.get(3)
-                    , connectionArgs.get(1)
-                    , connectionArgs.get(2)
-                    , connectionArgs.get(4) + ":" + messCode + ":" + MessageHandling.getUnixTime(connectionArgs.get(5))
-            );
-            res = "Y|"+"Сообщение  " + messCode+ " от пользователя " + userLogin + " опубликовано в тезнический топик" + "|";
+            if (messCode.equals("DROP")) {
+                MessageHandling.publishMqttMessage(
+                        connectionArgs.get(0)
+                        , connectionArgs.get(3)
+                        , connectionArgs.get(1)
+                        , connectionArgs.get(2)
+                        , messCode + ":" + connectionArgs.get(4)
+                );
+                res = "Y|"+"Сообщение  " + messCode+ " от пользователя " + userLogin + " опубликовано в технический топик" + "|";
+            } else if (messCode.equals("SYNC")) {
+                MessageHandling.publishMqttMessage(
+                        connectionArgs.get(0)
+                        , connectionArgs.get(3)
+                        , connectionArgs.get(1)
+                        , connectionArgs.get(2)
+                        , messCode + ":" + MessageHandling.getUnixTime(connectionArgs.get(5))
+                );
+                res = "Y|"+"Сообщение  " + messCode+ " от пользователя " + userLogin + " опубликовано в технический топик" + "|";
+            } else {
+                res = "N|"+"Сообщение  " + messCode+ " от пользователя " + userLogin + " имеет неверный тип" + "|";
+            }
         } catch (Exception e) {
             e.printStackTrace();
             res = "N|"+"Сообщение  " + messCode+ " от пользователя " + userLogin + " завершилось ошибкой" + "|";

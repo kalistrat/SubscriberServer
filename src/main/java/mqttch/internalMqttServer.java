@@ -104,6 +104,27 @@ public class internalMqttServer extends Server {
 
             String topicUID = getUIDfromTopicName(topic);
             String topicPreffix = topicUID.substring(0, 3);
+            List<String> messageArgs = MessageHandling.GetListFromStringDevider(message.replace(" ", ""), ":");
+            String sentUID;
+            String sentUnixTime;
+            String sentCode;
+
+            if (messageArgs.size() == 3) {
+                sentCode = messageArgs.get(0);
+                sentUID = messageArgs.get(1);
+                sentUnixTime = messageArgs.get(2);
+
+                addTechMessageIntoDB(sentCode,sentUID,sentUnixTime);
+
+                if (message.contains("REGISTERED")){
+                    overAllWsSetUserDevice(sentUID, iUserLog, "CONNECTED");
+                }
+                if (message.contains("DROPED")){
+                    overAllWsSetUserDevice(sentUID, iUserLog, "OUTSIDE");
+                }
+            } else {
+                System.out.println("topic : " + topic + "incorrect format message");
+            }
 
 //            if (isDroppedDevice(topicUID)) {
 //                if (topicPreffix.equals("SEN")) {
@@ -332,6 +353,38 @@ public class internalMqttServer extends Server {
             Stmt.setString(1, qTopicName);
             Stmt.setString(2, qMessAge);
             Stmt.setString(3, QUserLog);
+
+            Stmt.execute();
+            Con.close();
+
+        }catch(SQLException se){
+            //Handle errors for JDBC
+            se.printStackTrace();
+        }catch(Exception e) {
+            //Handle errors for Class.forName
+            e.printStackTrace();
+        }
+
+    }
+
+    private void addTechMessageIntoDB(
+            String messageCode
+            ,String UID
+            ,String unixTime
+    ){
+        try {
+
+            Class.forName(MessageHandling.JDBC_DRIVER);
+            Connection Con = DriverManager.getConnection(
+                    MessageHandling.DB_URL
+                    , MessageHandling.USER
+                    , MessageHandling.PASS
+            );
+
+            CallableStatement Stmt = Con.prepareCall("{call s_add_tech_message(?, ?, ?)}");
+            Stmt.setString(1, messageCode);
+            Stmt.setString(2, UID);
+            Stmt.setString(3, unixTime);
 
             Stmt.execute();
             Con.close();

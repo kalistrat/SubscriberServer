@@ -141,7 +141,7 @@ public class PublisherTask {
 
             Date syncDate = MessageHandling.redefineSyncDate(iMessageValue);
             long unixSyncDate = syncDate.getTime() / 1000L;
-            String MessCode = String.valueOf(unixSyncDate);
+            String MessCode = "SYNC:"+String.valueOf(unixSyncDate);
             String clientIdPostFix = String.valueOf((new Date()).getTime() / 1000L);
             //MqttClient client = new MqttClient(iServerIp, iControlLog + clientIdPostFix, null);
 
