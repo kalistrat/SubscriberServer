@@ -108,19 +108,29 @@ public class internalMqttServer extends Server {
             String sentUID;
             String sentUnixTime;
             String sentCode;
+            String sentData;
 
             if (messageArgs.size() == 3) {
-                sentCode = messageArgs.get(0);
-                sentUID = messageArgs.get(1);
-                sentUnixTime = messageArgs.get(2);
 
-                addTechMessageIntoDB(sentCode,sentUID,sentUnixTime);
-
-                if (message.contains("REGISTERED")){
-                    overAllWsSetUserDevice(sentUID, iUserLog, "CONNECTED");
-                }
-                if (message.contains("DROPED")){
-                    overAllWsSetUserDevice(sentUID, iUserLog, "OUTSIDE");
+                if (!message.contains("DATA")) {
+                    sentCode = messageArgs.get(0);
+                    sentUID = messageArgs.get(1);
+                    sentUnixTime = messageArgs.get(2);
+                    addTechMessageIntoDB(sentCode, sentUID, sentUnixTime);
+                    if (message.contains("REGISTERED")) {
+                        overAllWsSetUserDevice(sentUID, iUserLog, "CONNECTED");
+                    }
+                    if (message.contains("DROPED")) {
+                        overAllWsSetUserDevice(sentUID, iUserLog, "OUTSIDE");
+                    }
+                } else {
+                    sentData = messageArgs.get(2);
+                    sentUnixTime = messageArgs.get(1);
+                    if (MessageHandling.StrToIntValue(sentUnixTime)!=null) {
+                        addDataMessageIntoDB(topic, sentUnixTime+":"+sentData,iUserLog);
+                    } else {
+                        System.out.println("topic : " + topic + "incorrect format message");
+                    }
                 }
             } else {
                 System.out.println("topic : " + topic + "incorrect format message");
@@ -336,9 +346,9 @@ public class internalMqttServer extends Server {
 
     }
 
-    private void addMessageIntoDB(String qTopicName
-        ,String qMessAge
-        ,String QUserLog
+    private void addDataMessageIntoDB(String qTopicName
+        ,String mesValue
+        ,String userLog
     ){
         try {
 
@@ -351,8 +361,8 @@ public class internalMqttServer extends Server {
 
             CallableStatement Stmt = Con.prepareCall("{call s_message_recerve(?, ?, ?)}");
             Stmt.setString(1, qTopicName);
-            Stmt.setString(2, qMessAge);
-            Stmt.setString(3, QUserLog);
+            Stmt.setString(2, mesValue);
+            Stmt.setString(3, userLog);
 
             Stmt.execute();
             Con.close();
